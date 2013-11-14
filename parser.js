@@ -67,22 +67,48 @@ exports.parse = {
 				} else {
 					requestOptions.method = 'POST';
 					var data = 'act=login&name=' + config.nick + '&pass=' + config.pass + '&challengekeyid=' + id + '&challenge=' + str;
+					requestOptions.headers = {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Content-Length': data.length
+					};
 				}
 
 				var req = https.request(requestOptions, function(res) {
 					res.setEncoding('utf8');
+					var data = '';
 					res.on('data', function(chunk) {
-						if (chunk === ';') {
+						data += chunk;
+					});
+					res.on('end', function() {
+						if (data === ';') {
 							error('failed to log in; nick is registered - invalid or no password given');
 							process.exit(-1);
 						}
-						if (chunk.length < 50) {
-							error('failed to log in: ' + chunk);
+						if (data.length < 50) {
+							error('failed to log in: ' + data);
 							process.exit(-1);
 						}
-						send(connection, '|/trn ' + config.nick + ',0,' + chunk);
-					});
-				});
+
+						if (data.indexOf('heavy load') !== -1) {
+							error('the login server is under heavy load; trying again in one minute');
+							setTimeout(function() {
+								this.message(message);
+							}.bind(this), 60000);
+							return;
+						}
+
+						try {
+							data = JSON.parse(data.substr(1));
+							if (data.actionsuccess) {
+								data = data.assertion;
+							} else {
+								error('could not log in; action was not successful: ' + JSON.stringify(data));
+								process.exit(-1);
+							}
+						} catch (e) {}
+						send(connection, '|/trn ' + config.nick + ',0,' + data);
+					}.bind(this));
+				}.bind(this));
 				
 				req.on('error', function(err) {
 					error('login error: ' + sys.inspect(err));
