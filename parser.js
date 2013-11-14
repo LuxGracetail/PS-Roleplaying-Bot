@@ -151,7 +151,7 @@ exports.parse = {
 				this.chatMessage(spl.join('|'), by, this.room, connection);
 				break;
 			case 'pm':
-				var by = spl[2].substr(1);
+				var by = spl[2];
 				if (by.substr(1) === config.nick) return;
 				spl.splice(0, 4);
 				this.chatMessage(spl.join('|'), by, ',' + by, connection);
