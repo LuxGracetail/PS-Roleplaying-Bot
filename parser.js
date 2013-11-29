@@ -197,12 +197,7 @@ exports.parse = {
 		}
 	},
 	hasRank: function(user, rank) {
-		var ranks = rank.split('');
-		for (var i = 0; i < ranks.length; i++) {
-			if (ranks[i] === user.substr(0, 1)) return true;
-		}
-
-		return false;
+		return (rank.split('').indexOf(user.charAt(0)) !== -1);
 	},
 	uncacheTree: function(root) {
 		var uncache = [require.resolve(root)];
