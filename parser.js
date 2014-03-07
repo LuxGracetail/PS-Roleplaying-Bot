@@ -18,8 +18,6 @@ exports.parse = {
 
 	data: function(data, connection) {
 		if (data.substr(0, 1) === 'a') {
-			this.room = 'lobby';
-
 			data = JSON.parse(data.substr(1));
 			if (data instanceof Array) {
 				for (var i = 0; i < data.length; i++) {
@@ -38,6 +36,7 @@ exports.parse = {
 			for (var i = 0; i < spl.length; i++) {
 				this.message(spl[i], connection);
 			}
+			return;
 		}
 
 		var spl = message.split('|');
@@ -45,7 +44,7 @@ exports.parse = {
 			spl = message.split('>');
 			if (!spl[1])
 				return;
-			this.channel = spl[1];
+			this.room = spl[1];
 		}
 
 		switch (spl[1]) {
@@ -141,20 +140,33 @@ exports.parse = {
 					cmds.push('|/join ' + room);
 				}
 				send(connection, cmds);
+				this.room = '';
 				break;
 			case 'title':
 				ok('joined ' + spl[2]);
+				this.room = '';
 				break;
 			case 'c':
 				var by = spl[2];
 				spl.splice(0, 3);
-				this.chatMessage(spl.join('|'), by, this.room, connection);
+				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
+				this.room = '';
 				break;
 			case 'pm':
 				var by = spl[2];
 				if (by.substr(1) === config.nick) return;
 				spl.splice(0, 4);
 				this.chatMessage(spl.join('|'), by, ',' + by, connection);
+				this.room = '';
+				break;
+			case 'raw':
+				if (!this.room) break;
+				if (spl[2].indexOf('<div class="broadcast-') > -1 && spl[2].indexOf('Moderated chat') > -1) {
+					if (!this.modchatData) this.modchatData = {};
+					var modchatStr = spl[2].slice(spl[2].indexOf('Moderated chat') + 19, spl[2].indexOf('!') + 1);
+					var modchatSetting = (modchatStr.indexOf(' ') === -1 ? false : modchatStr.slice(-2, -1));
+					this.modchatData[toId(this.room)] = (modchatSetting === 'd' ? 'autoconfirmed' : modchatSetting);
+				}
 				break;
 		}
 	},
