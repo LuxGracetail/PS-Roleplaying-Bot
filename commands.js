@@ -60,4 +60,13 @@ exports.commands = {
 		req.end();
 	},
 
+	/**
+	* The following commands are all used for Jeopardy in the Academics room
+	* on the Smogon server. Feel free to remove any/all if you so desire.
+	*/
+
+	buzz: function(arg, by, room, con) {
+		if (room !== 'academics') return false;
+		this.say(con, room, '**' + by + ' has buzzed in!**'); 
+	},
 };

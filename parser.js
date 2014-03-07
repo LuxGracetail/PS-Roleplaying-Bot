@@ -161,6 +161,9 @@ exports.parse = {
 				break;
 			case 'raw':
 				if (!this.room) break;
+				// The following code checks for and updates the current modchat settings. It can currently be
+				// fooled by a room owner/leader/admin declaring the modchat box manually. I'll change it to use
+				// /modchat to check what modchat is currently active, but for now it works
 				if (spl[2].indexOf('<div class="broadcast-') > -1 && spl[2].indexOf('Moderated chat') > -1) {
 					if (!this.modchatData) this.modchatData = {};
 					var modchatStr = spl[2].slice(spl[2].indexOf('Moderated chat') + 19, spl[2].indexOf('!') + 1);
