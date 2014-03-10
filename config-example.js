@@ -46,3 +46,11 @@ exports.secprotocols = [];
 // 3 = error, ok
 // 4 = error
 exports.debuglevel = 2;
+
+// Users who can use all commands regardless of their rank. Be very cautious
+// with this, especially on servers other than main.
+exports.excepts = [];
+
+// This controls which rooms the buzzer is enabled or disabled in by default.
+// Set rooms to true to allow the buzzer by default or false to disallow.
+exports.buzz = {};

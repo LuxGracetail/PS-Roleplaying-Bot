@@ -170,12 +170,13 @@ exports.parse = {
 					var modchatSetting = (modchatStr.indexOf(' ') === -1 ? false : modchatStr.slice(-2, -1));
 					this.modchatData[toId(this.room)] = (modchatSetting === 'd' ? 'autoconfirmed' : modchatSetting);
 				}
+				this.room = '';
 				break;
 		}
 	},
 	chatMessage: function(message, by, room, connection) {
 		message = message.trim();
-		if (message.substr(0, config.commandcharacter.length) !== config.commandcharacter) {
+		if (message.substr(0, config.commandcharacter.length) !== config.commandcharacter || toId(by) === toId(config.nick)) {
 			return;
 		}
 
@@ -184,7 +185,7 @@ exports.parse = {
 		var arg = '';
 		if (index > -1) {
 			var cmd = message.substr(0, index);
-			arg = message.substr(index + 1);
+			arg = message.substr(index + 1).trim();
 		} else {
 			var cmd = message;
 		}
@@ -212,7 +213,11 @@ exports.parse = {
 		}
 	},
 	hasRank: function(user, rank) {
-		return (rank.split('').indexOf(user.charAt(0)) !== -1);
+		var hasRank = (rank.split('').indexOf(user.charAt(0)) !== -1) || (config.excepts.indexOf(toId(user.substr(1))) !== -1);
+		return hasRank;
+	},
+	recordChatData: function(user) {
+		// does nothing for now
 	},
 	uncacheTree: function(root) {
 		var uncache = [require.resolve(root)];
