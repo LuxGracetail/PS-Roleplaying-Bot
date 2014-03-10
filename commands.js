@@ -93,25 +93,15 @@ exports.commands = {
 	buzz: function(arg, by, room, con) {
 		var opts = arg.split(',');
 		switch(toId(opts[0])) {
-			case 'on': case 'enable':
+			case 'on': case 'enable': case 'off': case 'disable':
 				if (!this.hasRank(by, '#~')) return false;
 				var tarRoom = (opts[1] ? opts[1].trim() : room);
 				if (tarRoom.charAt(0) === ',') {
 					this.say(con, room, 'You cannot disable or enable the buzzer for PMs.');
 					return;
 				}
-				config.buzz[toId(tarRoom)] = true;
-				this.say(con, room, 'The buzzer is now enabled in ' + tarRoom + '.');
-				break;
-			case 'off': case 'disable':
-				if (!this.hasRank(by, '#~')) return false;
-				var tarRoom = (opts[1] ? opts[1].trim() : room);
-				if (tarRoom.charAt(0) === ',') {
-					this.say(con, room, 'You cannot disable or enable the buzzer for PMs.');
-					return;
-				}
-				config.buzz[toId(tarRoom)] = false;
-				this.say(con, room, 'The buzzer is now disabled in ' + tarRoom + '.');
+				config.buzz[toId(tarRoom)] = (toId(opts[0]) === 'on' || toId(opts[0]) === 'enable') ? true : false;
+				this.say(con, room, 'The buzzer is now ' + (config.buzz[toId(tarRoom)] ? 'enabled' : 'disabled') + ' in ' + tarRoom + '.');
 				break;
 			default:
 				if (this.buzzed || !config.buzz[room] || room.charAt(0) === ',') return false;
