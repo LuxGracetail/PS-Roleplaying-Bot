@@ -76,10 +76,11 @@ exports.commands = {
 	choose: function(arg, by, room, con) {
 		if (arg.indexOf(',') === -1) {
 			var choices = arg.split(' ');
-			if (choices.length === 1) return false;
 		} else {
 			var choices = arg.split(',');
 		}
+		choices = choices.filter(function(i) {return (i.trim() !== '')});
+		if (choices.length === 1) return this.say(con, room, (room.charAt(0) === ',' ? '': '/pm ' + by + ', ') + '.choose: You must give at least 2 valid choices.');
 		var choice = choices[Math.floor(Math.random()*choices.length)];
 		this.say(con, room, ((this.hasRank(by, '+%@#~') || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + choice);
 	},
@@ -118,7 +119,6 @@ exports.commands = {
 		if (!this.hasRank(by, '%@&#~') || !config.buzz[room]) return false;
 		clearTimeout(this.buzzer);
 		this.buzzed = '';
-		this.buzzMessage = '';
 		this.say(con, room, 'The buzzer has been reset.');
 	},
 };
