@@ -81,7 +81,7 @@ exports.commands = {
 			var choices = arg.split(',');
 		}
 		var choice = choices[Math.floor(Math.random()*choices.length)];
-		this.say(con, room, (this.hasRank(by, '+%@#~') ? '':'/pm ' + by + ', ') + choice);
+		this.say(con, room, ((this.hasRank(by, '+%@#~') || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + choice);
 	},
 
 	/**
