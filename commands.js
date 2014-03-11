@@ -10,7 +10,7 @@ var sys = require('sys');
 exports.commands = {
 	// Default commands
 	about: function(arg, by, room, con) {
-		if (this.hasRank(by, '#~')) {
+		if (this.hasRank(by, '#~') || room.charAt(0) === ',') {
 			var text = '';
 		} else {
 			var text = '/pm ' + by + ', ';
@@ -79,10 +79,20 @@ exports.commands = {
 		} else {
 			var choices = arg.split(',');
 		}
-		choices = choices.filter(function(i) {return (i.trim() !== '')});
-		if (choices.length === 1) return this.say(con, room, (room.charAt(0) === ',' ? '': '/pm ' + by + ', ') + '.choose: You must give at least 2 valid choices.');
+		choices = choices.filter(function(i) {return (toId(i) !== '')});
+		if (choices.length < 2) return this.say(con, room, (room.charAt(0) === ',' ? '': '/pm ' + by + ', ') + '.choose: You must give at least 2 valid choices.');
 		var choice = choices[Math.floor(Math.random()*choices.length)];
 		this.say(con, room, ((this.hasRank(by, '+%@#~') || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + choice);
+	},
+	usage: 'usagestats',
+	usagestats: function(arg, by, room, con) {
+		if (this.hasRank(by, '+%@&#~') || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+		text += 'http://www.smogon.com/forums/threads/official-smogon-university-simulator-statistics-%E2%80%94-february-2014.3501320/';
+		this.say(con, room, text);
 	},
 
 	/**
