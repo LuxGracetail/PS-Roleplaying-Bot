@@ -94,9 +94,6 @@ exports.commands = {
 		text += 'http://www.smogon.com/forums/threads/official-smogon-university-simulator-statistics-%E2%80%94-february-2014.3501320/';
 		this.say(con, room, text);
 	},
-	logs: function(arg, by, room, con) {
-		console.log(this.chatData[toId(room)][toId(by)].times);
-	},
 
 	/**
 	* The following commands are all used for Jeopardy in the Academics room

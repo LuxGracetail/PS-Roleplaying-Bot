@@ -58,7 +58,7 @@ exports.buzz = {};
 // This allows the bot to act as an automated moderator. If enabled, the bot will
 // mute users who send 6 lines or more in 6 or fewer seconds for 7 minutes. NOTE: THIS IS
 // BY NO MEANS A PERFECT MODERATOR OR SCRIPT. It is a bot and so cannot think for itself or
-// exercise moderator descretion. In addition, it currently uses a very simple method of 
+// exercise moderator discretion. In addition, it currently uses a very simple method of 
 // determining who to mute and so may miss people who should be muted, or mute those who 
 // shouldn't. Use with caution.
 exports.allowmute = false;
