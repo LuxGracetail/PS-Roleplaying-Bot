@@ -15,6 +15,7 @@ var url = require('url');
 exports.parse = {
 	actionUrl: url.parse('https://play.pokemonshowdown.com/~~' + config.serverid + '/action.php'),
 	room: 'lobby',
+	chatData: {},
 
 	data: function(data, connection) {
 		if (data.substr(0, 1) === 'a') {
@@ -138,6 +139,7 @@ exports.parse = {
 						continue;
 					}
 					cmds.push('|/join ' + room);
+					this.chatData[toId(room)] = {};
 				}
 				send(connection, cmds);
 				this.room = '';
@@ -150,6 +152,7 @@ exports.parse = {
 				var by = spl[2];
 				spl.splice(0, 3);
 				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
+				this.recordChatData(by, this.room || ',', connection);
 				this.room = '';
 				break;
 			case 'pm':
@@ -216,8 +219,34 @@ exports.parse = {
 		var hasRank = (rank.split('').indexOf(user.charAt(0)) !== -1) || (config.excepts.indexOf(toId(user.substr(1))) !== -1);
 		return hasRank;
 	},
-	recordChatData: function(user) {
-		// does nothing for now
+	recordChatData: function(user, room, connection) {
+		// NOTE: this is still in early stages
+		user = toId(user);
+		if (room.charAt(0) === ',' || user === 'bottt') return;
+		room = toId(room);
+		if (!this.chatData[room]) this.chatData[room] = {};
+		if (!this.chatData[room][user]) this.chatData[room][user] = {times:[]};
+
+		this.chatData[room][user].times.push(Date.now());
+		if (!this.chatData[room][user].timer) {
+			var self = this;
+			this.chatData[room][user].timer = setTimeout(function(self, room, user) {
+				if (self.chatData[room][user].times && self.chatData[room][user].times.length) {
+					self.chatData[room][user].times.sort();
+					var newTimes = [];
+					var now = Date.now();
+					for (var i in self.chatData[room][user].times) {
+						if (now - self.chatData[room][user].times[i] <= 6*1000) newTimes.push(self.chatData[room][user].times[i]);
+					}
+					self.chatData[room][user].times = newTimes;
+				}
+			}, 10*60*1000, self, room, user)
+		}
+
+		if (config.allowmute && this.chatData[room][user].times.length >= 6 && Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 6] < 6*1000) {
+			this.say(connection, room, '/mute ' + user + ', Automated mute: 6 or more lines in 6 seconds is considered flooding.');
+			console.log(room + ': User "' + user + '" muted for flooding (or muting was attempted).');
+		}
 	},
 	uncacheTree: function(root) {
 		var uncache = [require.resolve(root)];
