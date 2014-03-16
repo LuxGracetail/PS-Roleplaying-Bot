@@ -152,7 +152,7 @@ exports.parse = {
 				var by = spl[2];
 				spl.splice(0, 3);
 				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
-				this.recordChatData(by, this.room || ',', connection);
+				this.recordChatData(by, this.room || 'lobby', connection, spl.join('|'));
 				this.room = '';
 				break;
 			case 'pm':
@@ -219,7 +219,7 @@ exports.parse = {
 		var hasRank = (rank.split('').indexOf(user.charAt(0)) !== -1) || (config.excepts.indexOf(toId(user.substr(1))) !== -1);
 		return hasRank;
 	},
-	recordChatData: function(user, room, connection) {
+	recordChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
 		user = toId(user);
 		if (room.charAt(0) === ',' || user === 'bottt') return;
@@ -243,9 +243,16 @@ exports.parse = {
 			}, 10*60*1000, self, room, user)
 		}
 
-		if (config.allowmute && this.chatData[room][user].times.length >= 6 && Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 6] < 6*1000) {
-			this.say(connection, room, '/mute ' + user + ', Automated mute: 6 or more lines in 6 seconds is considered flooding.');
-			console.log(room + ': User "' + user + '" muted for flooding (or muting was attempted).');
+		if (config.allowmute) {
+			var muteMessage = '';
+			if (this.chatData[room][user].times.length >= 6 && Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 6] < 6*1000) {
+				muteMessage = ', Automated mute: 6 or more lines in 6 seconds is considered flooding.';
+			}
+			if (msg.match(/snen/g) && msg.match(/snen/g).length > 6) muteMessage = ', Automated mute: possible "snen" spammer.';
+			if (muteMessage.length !== 0) {
+				this.say(connection, room, '/mute ' + user + muteMessage);
+				console.log(room + ': User "' + user + '" muted (or muting was attempted).');
+			}
 		}
 	},
 	uncacheTree: function(root) {
