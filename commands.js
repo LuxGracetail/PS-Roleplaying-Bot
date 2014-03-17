@@ -29,7 +29,7 @@ exports.commands = {
 		}
 	},
 	custom: function(arg, by, room, con) {
-		if (!this.hasRank(by, '#~')) return false;
+		if (!this.hasRank(by, '~')) return false;
 		// Custom commands can be executed in an arbitrary room using the syntax
 		// ".custom [room] command", e.g., to do !data pikachu in the room lobby,
 		// the command would be ".custom [lobby] !data pikachu". However, using
@@ -49,11 +49,11 @@ exports.commands = {
 	// Misc commands
 	tell: 'say',
 	say: function(arg, by, room, con) {
-		if (!this.hasRank(by, '+%@&#~')) return false;
+		if (!this.hasRank(by, '#~')) return false;
 		this.say(con, room, arg + ' (' + by + ' said this)');
 	},
 	joke: function(arg, by, room, con) {
-		if (!this.hasRank(by, '%@&#~')) return false;
+		if (!this.hasRank(by, '#~')) return false;
 		var self = this;
 
 		var reqOpt = {
