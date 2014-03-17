@@ -41,10 +41,6 @@ exports.commands = {
 		}
 		this.say(con, tarRoom || room, arg);
 	},
-	modchats: function(arg, by, room, con) {
-		if (!this.hasRank(by, '#~')) return false;
-		this.say(con, room, JSON.stringify(this.modchatData || {}));
-	},
 
 	// Misc commands
 	tell: 'say',
