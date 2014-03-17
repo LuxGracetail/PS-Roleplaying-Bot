@@ -132,7 +132,7 @@ exports.parse = {
 				ok('logged in as ' + spl[2]);
 
 				// Now join the rooms
-				var cmds = [];
+				var cmds = ['/idle'];
 				for (var i in config.rooms) {
 					var room = config.rooms[i].toLowerCase();
 					if (room === 'lobby' && config.serverid === 'showdown') {
@@ -141,8 +141,24 @@ exports.parse = {
 					cmds.push('|/join ' + room);
 					this.chatData[toId(room)] = {};
 				}
-				send(connection, cmds);
+
 				var self = this;
+				if (cmds.length > 6) {
+					self.nextJoin = 0;
+					self.joinSpacer = setInterval(function(con, cmds) {
+						if (cmds.length > self.nextJoin + 5) {
+							send(con, cmds.slice(self.nextJoin, self.nextJoin + 5));
+							self.nextJoin += 5;
+						} else {
+							send(con, cmds.slice(self.nextJoin));
+							delete self.nextJoin;
+							clearInterval(self.joinSpacer);
+						}
+					}, 8*1000, connection, cmds);
+				} else {
+					send(connection, cmds);
+				}
+
 				this.chatDataTimer = setInterval(
 					function() {self.chatData = cleanChatData(self.chatData);},
 					60*1000
