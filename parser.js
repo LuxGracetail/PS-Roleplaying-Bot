@@ -173,7 +173,7 @@ exports.parse = {
 				var by = spl[2];
 				spl.splice(0, 3);
 				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
-				this.recordChatData(by, this.room || 'lobby', connection, spl.join('|'));
+				this.processChatData(by, this.room || 'lobby', connection, spl.join('|'));
 				this.room = '';
 				break;
 			case 'pm':
@@ -240,7 +240,7 @@ exports.parse = {
 		var hasRank = (rank.split('').indexOf(user.charAt(0)) !== -1) || (config.excepts.indexOf(toId(user.substr(1))) !== -1);
 		return hasRank;
 	},
-	recordChatData: function(user, room, connection, msg) {
+	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
 		user = toId(user);
 		if (room.charAt(0) === ',' || user === 'bottt') return;
