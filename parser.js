@@ -142,6 +142,11 @@ exports.parse = {
 					this.chatData[toId(room)] = {};
 				}
 				send(connection, cmds);
+				var self = this;
+				this.chatDataTimer = setInterval(
+					function() {self.chatData = cleanChatData(self.chatData);},
+					60*1000
+				);
 				this.room = '';
 				break;
 			case 'title':
@@ -228,20 +233,6 @@ exports.parse = {
 		if (!this.chatData[room][user]) this.chatData[room][user] = {times:[]};
 
 		this.chatData[room][user].times.push(Date.now());
-		if (!this.chatData[room][user].timer) {
-			var self = this;
-			this.chatData[room][user].timer = setTimeout(function(self, room, user) {
-				if (self.chatData[room][user].times && self.chatData[room][user].times.length) {
-					self.chatData[room][user].times.sort();
-					var newTimes = [];
-					var now = Date.now();
-					for (var i in self.chatData[room][user].times) {
-						if (now - self.chatData[room][user].times[i] <= 6*1000) newTimes.push(self.chatData[room][user].times[i]);
-					}
-					self.chatData[room][user].times = newTimes;
-				}
-			}, 10*60*1000, self, room, user)
-		}
 
 		if (config.allowmute) {
 			var muteMessage = '';

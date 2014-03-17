@@ -114,6 +114,24 @@ if (!fs.existsSync('./config.js')) {
 }
 
 global.config = require('./config.js');
+global.cleanChatData = function(chatData) {
+	for (var room in chatData) {
+		for (var user in chatData[room]) {
+			if (!chatData[room][user].times || !chatData[room][user].times.length) {
+				delete chatData[room][user];
+				continue;
+			}
+			var newTimes = [];
+			var now = Date.now();
+			for (var i in chatData[room][user].times) {
+					if ((now - chatData[room][user].times[i]) < 5*1000) newTimes.push(chatData[room][user].times[i]);
+			}
+			newTimes.sort();
+			chatData[room][user].times = newTimes;
+		}
+	}
+	return chatData;
+}
 
 var checkCommandCharacter = function() {
 	if (!/[^a-z0-9 ]/i.test(config.commandcharacter)) {
