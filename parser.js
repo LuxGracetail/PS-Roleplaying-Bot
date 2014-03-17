@@ -252,8 +252,8 @@ exports.parse = {
 
 		if (config.allowmute) {
 			var muteMessage = '';
-			if (this.chatData[room][user].times.length >= 6 && Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 6] < 6*1000) {
-				muteMessage = ', Automated mute: 6 or more lines in 6 seconds is considered flooding.';
+			if (this.chatData[room][user].times.length >= 5 && Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 5] < 5*1000) {
+				muteMessage = ', Automated mute: flooding.';
 			}
 			if (msg.match(/snen/g) && msg.match(/snen/g).length > 6) muteMessage = ', Automated mute: possible "snen" spammer.';
 			if (muteMessage.length !== 0) {
