@@ -259,14 +259,14 @@ exports.parse = {
 					pointVal = (room === 'lobby') ? 5 : 4;
 				}
 			}
-			if (this.chatData[room][user].times.length >= 5 && (Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 5]) < 5*1000) {
+			if (this.chatData[room][user].times.length >= 5 && (Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 5]) < 6*1000) {
 				if (pointVal < 2) {
 					pointVal = 2;
 					muteMessage = ', Automated response: flooding';
 				}
 			}
 			var capsMatch = msg.match(/[A-Z]/g);
-			if (capsMatch && toId(msg).length > 18 && capsMatch.length >= Math.floor(toId(msg).length * 0.9)) {
+			if (capsMatch && toId(msg).length > 18 && (capsMatch.length >= Math.floor(toId(msg).length * 0.8))) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: caps';
