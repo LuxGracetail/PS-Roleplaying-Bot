@@ -41,10 +41,6 @@ exports.commands = {
 		}
 		this.say(con, tarRoom || room, arg);
 	},
-	modchats: function(arg, by, room, con) {
-		if (!this.hasRank(by, '#~')) return false;
-		this.say(con, room, JSON.stringify(this.modchatData || {}));
-	},
 
 	// Misc commands
 	tell: 'say',
@@ -82,7 +78,7 @@ exports.commands = {
 		choices = choices.filter(function(i) {return (toId(i) !== '')});
 		if (choices.length < 2) return this.say(con, room, (room.charAt(0) === ',' ? '': '/pm ' + by + ', ') + '.choose: You must give at least 2 valid choices.');
 		var choice = choices[Math.floor(Math.random()*choices.length)];
-		this.say(con, room, ((this.hasRank(by, '+%@#~') || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + choice);
+		this.say(con, room, ((this.hasRank(by, '+%@#~') || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + ((choice.charAt(0) === '/' || choice.charAt(0) === '!') ? ' ':'') + choice);
 	},
 	usage: 'usagestats',
 	usagestats: function(arg, by, room, con) {
