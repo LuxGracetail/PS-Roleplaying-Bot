@@ -16,6 +16,7 @@ exports.parse = {
 	actionUrl: url.parse('https://play.pokemonshowdown.com/~~' + config.serverid + '/action.php'),
 	room: 'lobby',
 	chatData: {},
+	ranks: {},
 
 	data: function(data, connection) {
 		if (data.substr(0, 1) === 'a') {
@@ -35,6 +36,10 @@ exports.parse = {
 		if (message.indexOf('\n') > -1) {
 			var spl = message.split('\n');
 			for (var i = 0; i < spl.length; i++) {
+				if (spl[i].split('|')[1] && spl[i].split('|')[1] === 'init') {
+					this.room = '';
+					break;
+				}
 				this.message(spl[i], connection);
 			}
 			return;
@@ -183,6 +188,12 @@ exports.parse = {
 				this.chatMessage(spl.join('|'), by, ',' + by, connection);
 				this.room = '';
 				break;
+			case 'N': case 'J': case 'j':
+				var by = spl[2];
+				if (by.substr(1) !== config.nick || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
+				this.ranks[(this.room === ''?'lobby':this.room)] = by.charAt(0);
+				this.room = '';
+				break;
 		}
 	},
 	chatMessage: function(message, by, room, connection) {
@@ -238,7 +249,7 @@ exports.parse = {
 		this.chatData[room][user].times.push(Date.now());
 
 		// this deals with punishing rulebreakers, but note that the bot can't think, so it might make mistakes
-		if (config.allowmute) {
+		if (config.allowmute && this.hasRank(this.ranks[room] || ' ', '%@&#~')) {
 			var pointVal = 0;
 			var muteMessage = '';
 
@@ -271,6 +282,7 @@ exports.parse = {
 					cmd = config.punishvals[pointVal] || cmd;
 					this.chatData[room][user].points = pointVal;
 				}
+				if (this.chatData[room][user].points >= 4 && !this.hasRank(this.ranks[room] || ' ', '@&#~')) cmd = 'hourmute';
 				this.chatData[room][user].lastAction = Date.now();
 				this.say(connection, room, '/' + cmd + ' ' + user + muteMessage);
 			}
