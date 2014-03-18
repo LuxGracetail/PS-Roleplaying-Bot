@@ -266,7 +266,7 @@ exports.parse = {
 				}
 			}
 			var capsMatch = msg.match(/[A-Z]/g);
-			if (capsMatch && toId(msg).length >= 8 && capsMatch.length >= Math.floor(toId(msg).length * 0.9)) {
+			if (capsMatch && toId(msg).length > 18 && capsMatch.length >= Math.floor(toId(msg).length * 0.9)) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: caps';
