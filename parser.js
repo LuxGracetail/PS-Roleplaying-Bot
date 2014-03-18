@@ -161,7 +161,7 @@ exports.parse = {
 
 				this.chatDataTimer = setInterval(
 					function() {self.chatData = cleanChatData(self.chatData);},
-					60*1000
+					20*60*1000
 				);
 				this.room = '';
 				break;
@@ -246,19 +246,46 @@ exports.parse = {
 		if (room.charAt(0) === ',' || user === 'bottt') return;
 		room = toId(room);
 		if (!this.chatData[room]) this.chatData[room] = {};
-		if (!this.chatData[room][user]) this.chatData[room][user] = {times:[]};
+		if (!this.chatData[room][user]) this.chatData[room][user] = {times:[], points:0, lastAction:0};
 
 		this.chatData[room][user].times.push(Date.now());
 
+		// this deals with punishing rulebreakers, but note that the bot can't think, so it might make mistakes
 		if (config.allowmute) {
+			var pointVal = 0;
 			var muteMessage = '';
-			if (this.chatData[room][user].times.length >= 5 && Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 5] < 5*1000) {
-				muteMessage = ', Automated mute: flooding.';
+
+			if (msg.match(/snen/g) && msg.match(/snen/g).length > 6) {
+				if (pointVal < 4) {
+					muteMessage = ', Automated response: possible "snen" spammer';
+					pointVal = (room === 'lobby') ? 5 : 4;
+				}
 			}
-			if (msg.match(/snen/g) && msg.match(/snen/g).length > 6) muteMessage = ', Automated mute: possible "snen" spammer.';
-			if (muteMessage.length !== 0) {
-				this.say(connection, room, '/mute ' + user + muteMessage);
-				console.log(room + ': User "' + user + '" muted (or muting was attempted).');
+			if (this.chatData[room][user].times.length >= 5 && (Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 5]) < 5*1000) {
+				if (pointVal < 2) {
+					pointVal = 2;
+					muteMessage = ', Automated response: flooding';
+				}
+			}
+			var capsMatch = msg.match(/[A-Z]/g);
+			if (capsMatch && toId(msg).length >= 8 && capsMatch.length >= Math.floor(toId(msg).length * 0.9)) {
+				if (pointVal < 1) {
+					pointVal = 1;
+					muteMessage = ', Automated response: caps';
+				}
+			}
+
+			if (pointVal > 0 && !(Date.now() - this.chatData[room][user].lastAction < 5*1000)) {
+				var cmd = 'mute';
+				if (this.chatData[room][user].points >= pointVal && pointVal < 4) {
+					cmd = config.punishvals[this.chatData[room][user].points + 1] || cmd;
+					this.chatData[room][user].points++;
+				} else {
+					cmd = config.punishvals[pointVal] || cmd;
+					this.chatData[room][user].points = pointVal;
+				}
+				this.chatData[room][user].lastAction = Date.now();
+				this.say(connection, room, '/' + cmd + ' ' + user + muteMessage);
 			}
 		}
 	},

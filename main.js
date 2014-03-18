@@ -128,6 +128,7 @@ global.cleanChatData = function(chatData) {
 			}
 			newTimes.sort();
 			chatData[room][user].times = newTimes;
+			if (chatData[room][user].points > 0) chatData[room][user].points--;
 		}
 	}
 	return chatData;
