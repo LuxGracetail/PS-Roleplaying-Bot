@@ -115,20 +115,20 @@ if (!fs.existsSync('./config.js')) {
 
 global.config = require('./config.js');
 global.cleanChatData = function(chatData) {
-	for (var room in chatData) {
-		for (var user in chatData[room]) {
-			if (!chatData[room][user].times || !chatData[room][user].times.length) {
-				delete chatData[room][user];
+	for (var user in chatData) {
+		for (var room in chatData[user]) {
+			if (!chatData[user][room].times || !chatData[user][room].times.length) {
+				delete chatData[user][room];
 				continue;
 			}
 			var newTimes = [];
 			var now = Date.now();
-			for (var i in chatData[room][user].times) {
-					if ((now - chatData[room][user].times[i]) < 5*1000) newTimes.push(chatData[room][user].times[i]);
+			for (var i in chatData[user][room].times) {
+					if ((now - chatData[user][room].times[i]) < 5*1000) newTimes.push(chatData[user][room].times[i]);
 			}
 			newTimes.sort();
-			chatData[room][user].times = newTimes;
-			if (chatData[room][user].points > 0) chatData[room][user].points--;
+			chatData[user][room].times = newTimes;
+			if (chatData[user][room].points > 0 && chatData[user][room].points < 4) chatData[user][room].points--;
 		}
 	}
 	return chatData;

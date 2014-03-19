@@ -144,7 +144,6 @@ exports.parse = {
 						continue;
 					}
 					cmds.push('|/join ' + room);
-					this.chatData[toId(room)] = {};
 				}
 
 				var self = this;
@@ -166,7 +165,7 @@ exports.parse = {
 
 				this.chatDataTimer = setInterval(
 					function() {self.chatData = cleanChatData(self.chatData);},
-					20*60*1000
+					30*60*1000
 				);
 				this.room = '';
 				break;
@@ -243,10 +242,10 @@ exports.parse = {
 		user = toId(user);
 		if (room.charAt(0) === ',' || user === 'bottt') return;
 		room = toId(room);
-		if (!this.chatData[room]) this.chatData[room] = {};
-		if (!this.chatData[room][user]) this.chatData[room][user] = {times:[], points:0, lastAction:0};
+		if (!this.chatData[user]) this.chatData[user] = {zeroTol:0};
+		if (!this.chatData[user][room]) this.chatData[user][room] = {times:[], points:0, lastAction:0};
 
-		this.chatData[room][user].times.push(Date.now());
+		this.chatData[user][room].times.push(Date.now());
 
 		// this deals with punishing rulebreakers, but note that the bot can't think, so it might make mistakes
 		if (config.allowmute && this.hasRank(this.ranks[room] || ' ', '%@&#~')) {
@@ -259,7 +258,7 @@ exports.parse = {
 					pointVal = (room === 'lobby') ? 5 : 4;
 				}
 			}
-			if (this.chatData[room][user].times.length >= 5 && (Date.now() - this.chatData[room][user].times[this.chatData[room][user].times.length - 5]) < 6*1000) {
+			if (this.chatData[user][room].times.length >= 5 && (Date.now() - this.chatData[user][room].times[this.chatData[user][room].times.length - 5]) < 6*1000) {
 				if (pointVal < 2) {
 					pointVal = 2;
 					muteMessage = ', Automated response: flooding';
@@ -273,17 +272,22 @@ exports.parse = {
 				}
 			}
 
-			if (pointVal > 0 && !(Date.now() - this.chatData[room][user].lastAction < 5*1000)) {
+			if (pointVal > 0 && !(Date.now() - this.chatData[user][room].lastAction < 3*1000)) {
 				var cmd = 'mute';
-				if (this.chatData[room][user].points >= pointVal && pointVal < 4) {
-					cmd = config.punishvals[this.chatData[room][user].points + 1] || cmd;
-					this.chatData[room][user].points++;
+				if (this.chatData[user][room].points >= pointVal && pointVal < 4) {
+					this.chatData[user][room].points++;
+					cmd = config.punishvals[this.chatData[user][room].points] || cmd;
 				} else {
 					cmd = config.punishvals[pointVal] || cmd;
-					this.chatData[room][user].points = pointVal;
+					this.chatData[user][room].points = pointVal;
 				}
-				if (this.chatData[room][user].points >= 4 && !this.hasRank(this.ranks[room] || ' ', '@&#~')) cmd = 'hourmute';
-				this.chatData[room][user].lastAction = Date.now();
+				if (this.chatData[user][room].points >= 4 && !this.hasRank(this.ranks[room] || ' ', '@&#~')) cmd = 'hourmute';
+				if (this.chatData[user].zeroTol > 4) {
+					muteMessage = ', Automated response: zero tolerance user';
+					cmd = this.hasRank(this.ranks[room] || ' ', '@&#~') ? 'roomban' : 'hourmute';
+				}
+				if (this.chatData[user][room].points >= 2) this.chatData[user].zeroTol++;
+				this.chatData[user][room].lastAction = Date.now();
 				this.say(connection, room, '/' + cmd + ' ' + user + muteMessage);
 			}
 		}
