@@ -18,6 +18,15 @@ exports.commands = {
 		text += '**Pokémon Showdown Bot** by: Quinella and TalkTakesTime';
 		this.say(con, room, text);
 	},
+	guide: function(arg, by, room, con) {
+		if (this.hasRank(by, '+%@#~') || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+		text += 'My guide can be found here: http://pastebin.com/ZxuaJYn1';
+		this.say(con, room, text);
+	},
 	reload: function(arg, by, room, con) {
 		if (!this.hasRank(by, '#~')) return false;
 		try {
