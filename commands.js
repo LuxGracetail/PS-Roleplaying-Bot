@@ -18,13 +18,14 @@ exports.commands = {
 		text += '**Pokémon Showdown Bot** by: Quinella and TalkTakesTime';
 		this.say(con, room, text);
 	},
+	help: 'guide',
 	guide: function(arg, by, room, con) {
-		if (this.hasRank(by, '+%@#~') || room.charAt(0) === ',') {
+		if (this.hasRank(by, '+%@&#~') || room.charAt(0) === ',') {
 			var text = '';
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'My guide can be found here: http://pastebin.com/ZxuaJYn1';
+		text += 'A guide on how to use this bot can be found here: http://pastebin.com/W8abpuSS';
 		this.say(con, room, text);
 	},
 	reload: function(arg, by, room, con) {
@@ -55,7 +56,7 @@ exports.commands = {
 	tell: 'say',
 	say: function(arg, by, room, con) {
 		if (!this.hasRank(by, '#~')) return false;
-		this.say(con, room, arg + ' (' + by + ' said this)');
+		this.say(con, room, stripCommands(arg) + ' (' + by + ' said this)');
 	},
 	joke: function(arg, by, room, con) {
 		if (!this.hasRank(by, '#~')) return false;
@@ -87,7 +88,7 @@ exports.commands = {
 		choices = choices.filter(function(i) {return (toId(i) !== '')});
 		if (choices.length < 2) return this.say(con, room, (room.charAt(0) === ',' ? '': '/pm ' + by + ', ') + '.choose: You must give at least 2 valid choices.');
 		var choice = choices[Math.floor(Math.random()*choices.length)];
-		this.say(con, room, ((this.hasRank(by, '+%@#~') || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + ((choice.charAt(0) === '/' || choice.charAt(0) === '!') ? ' ':'') + choice);
+		this.say(con, room, ((this.hasRank(by, '+%@#~') || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + stripCommands(choice));
 	},
 	usage: 'usagestats',
 	usagestats: function(arg, by, room, con) {

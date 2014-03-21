@@ -47,6 +47,10 @@ global.toId = function(text) {
 	return text.toLowerCase().replace(/[^a-z0-9]/g, '');
 };
 
+global.stripCommands = function(text) {
+	return ((text.charAt(0) === '/' || text.charAt(0) === '!') ? ' ':'') + text;
+};
+
 global.send = function(connection, data) {
 	if (connection.connected) {
 		if (!(data instanceof Array)) {
