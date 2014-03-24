@@ -271,7 +271,7 @@ exports.parse = {
 					muteMessage = ', Automated response: caps';
 				}
 			}
-			var stretchMatch = msg.match(/(.)\1{7,}/g); // matches the same character 8 or more times in a row
+			var stretchMatch = msg.toLowerCase().match(/(.)\1{7,}/g); // matches the same character 8 or more times in a row
 			if (stretchMatch) {
 				if (pointVal < 1) {
 					pointVal = 1;
