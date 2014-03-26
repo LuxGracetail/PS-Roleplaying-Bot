@@ -242,6 +242,7 @@ exports.parse = {
 		user = toId(user);
 		if (room.charAt(0) === ',' || user === 'bottt') return;
 		room = toId(room);
+		msg = msg.trim().replace(/ +/g, " ");
 		if (!this.chatData[user]) this.chatData[user] = {zeroTol:0};
 		if (!this.chatData[user][room]) this.chatData[user][room] = {times:[], points:0, lastAction:0};
 
