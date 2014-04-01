@@ -51,6 +51,15 @@ exports.commands = {
 		}
 		this.say(con, tarRoom || room, arg);
 	},
+	js: function(arg, by, room, con) {
+		if (config.excepts.indexOf(toId(by)) === -1) return false;
+		try {
+			var result = eval(arg.trim());
+			this.say(con, room, JSON.stringify(result));
+		} catch (e) {
+			this.say(con, room, e.name + ": " + e.message);
+		}
+	},
 
 	// Misc commands
 	tell: 'say',
