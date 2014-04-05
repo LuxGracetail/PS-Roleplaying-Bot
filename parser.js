@@ -240,7 +240,7 @@ exports.parse = {
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
 		user = toId(user);
-		if (room.charAt(0) === ',' || user === 'bottt') return;
+		if (room.charAt(0) === ',' || user === toId(config.nick)) return;
 		room = toId(room);
 		msg = msg.trim().replace(/ +/g, " ");
 		if (!this.chatData[user]) this.chatData[user] = {zeroTol:0};
