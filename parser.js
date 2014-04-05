@@ -36,7 +36,7 @@ exports.parse = {
 		if (message.indexOf('\n') > -1) {
 			var spl = message.split('\n');
 			for (var i = 0; i < spl.length; i++) {
-				if (spl[i].split('|')[1] && spl[i].split('|')[1] === 'init') {
+				if (spl[i].split('|')[1] && (spl[i].split('|')[1] === 'init' || spl[i].split('|')[1] === 'tournament')) {
 					this.room = '';
 					break;
 				}
