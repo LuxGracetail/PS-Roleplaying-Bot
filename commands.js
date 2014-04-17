@@ -8,7 +8,12 @@ var http = require('http');
 var sys = require('sys');
 
 exports.commands = {
-	// Default commands
+	/**
+	 * Help commands
+	 *
+	 * These commands are here to provide information about the bot.
+	 */
+
 	about: function(arg, by, room, con) {
 		if (this.hasRank(by, '#~') || room.charAt(0) === ',') {
 			var text = '';
@@ -25,9 +30,22 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'A guide on how to use this bot can be found here: http://pastebin.com/W8abpuSS';
+		if (config.botguide) {
+			text += 'A guide on how to use this bot can be found here: ' + config.botguide;
+		} else {
+			text += 'There is no guide for this bot. PM the owner with any questions.';
+		}
 		this.say(con, room, text);
 	},
+
+	/**
+	 * Dev commands
+	 *
+	 * These commands are here for highly ranked users (or the creator) to use
+	 * to perform arbitrary actions that can't be done through any other commands
+	 * or to help with upkeep of the bot.
+	 */
+
 	reload: function(arg, by, room, con) {
 		if (!this.hasRank(by, '#~')) return false;
 		try {
@@ -61,7 +79,12 @@ exports.commands = {
 		}
 	},
 
-	// Misc commands
+	/**
+	 * General commands
+	 *
+	 * Add custom commands here.
+	 */
+
 	settings: 'set',
 	set: function(arg, by, room, con) {
 		if (!this.hasRank(by, '%@&#~') || room.charAt(0) === ',') return false;
@@ -216,9 +239,11 @@ exports.commands = {
 	},
 
 	/**
-	* The following commands are all used for Jeopardy in the Academics room
-	* on the Smogon server. Feel free to remove any/all if you so desire.
-	*/
+	 * Jeopardy commands
+	 *
+	 * The following commands are used for Jeopardy in the Academics room
+	 * on the Smogon server.
+	 */
 
 	b: 'buzz',
 	buzz: function(arg, by, room, con) {

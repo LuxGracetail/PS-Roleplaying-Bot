@@ -55,6 +55,10 @@ exports.debuglevel = 2;
 // with this, especially on servers other than main.
 exports.excepts = [];
 
+// Add a link to the help for the bot here. When there is a link here, .help and .guide
+// will link to it.
+exports.botguide = '';
+
 // This allows the bot to act as an automated moderator. If enabled, the bot will
 // mute users who send 6 lines or more in 6 or fewer seconds for 7 minutes. NOTE: THIS IS
 // BY NO MEANS A PERFECT MODERATOR OR SCRIPT. It is a bot and so cannot think for itself or
