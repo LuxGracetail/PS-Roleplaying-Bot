@@ -62,13 +62,87 @@ exports.commands = {
 	},
 
 	// Misc commands
+	settings: 'set',
+	set: function(arg, by, room, con) {
+		if (!this.hasRank(by, '%@&#~') || room.charAt(0) === ',') return false;
+
+		var settable = {
+			say: 1,
+			joke: 1,
+			choose: 1,
+			usagestats: 1,
+			buzz: 1
+		};
+		var opts = arg.split(',');
+		var cmd = toId(opts[0]);
+		if (!Commands[cmd]) return this.say(con, room, opts[0] + ' is not a valid command.');
+		var failsafe = 0;
+		while (!(cmd in settable)) {
+			if (typeof Commands[cmd] === 'string') {
+				cmd = Commands[cmd];
+			} else if (typeof Commands[cmd] === 'function') {
+				if (cmd in settable) {
+					break;
+				} else {
+					this.say(con, room, 'The settings for ' + opts[0] + ' cannot be changed.');
+					return;
+				}
+			} else {
+				this.say(con, room, 'Something went wrong. PM TalkTakesTime here or on Smogon with the command you tried.');
+				return;
+			}
+			failsafe++;
+			if (failsafe > 5) {
+				this.say(con, room, 'The command "' + opts[0] + '" could not be found.');
+			}
+		}
+
+		var settingsLevels = {
+			off: false,
+			disable: false,
+			'+': '+',
+			'%': '%',
+			'@': '@',
+			'&': '&',
+			'#': '#',
+			'~': '~',
+			on: true,
+			enable: true
+		};
+		if (!opts[1] || !opts[1].trim()) {
+			var msg = '';
+			if (!this.settings[cmd] || !this.settings[cmd][room]) {
+				msg = '.' + cmd + ' is available for users of rank ' + config.defaultrank + ' and above.';
+			} else if (this.settings[cmd][room] in settingsLevels) {
+				msg = '.' + cmd + ' is available for users of rank ' + this.settings[cmd][room] + ' and above.';
+			} else if (this.settings[cmd][room] === true) {
+				msg = '.' + cmd + ' is available for all users in this room.';
+			} else if (this.settings[cmd][room] === false) {
+				msg = '.' + cmd + ' is not available for use in this room.';
+			}
+			this.say(con, room, msg);
+			return;
+		} else if (opts[1].trim() in settingsLevels) {
+			if (!this.hasRank(by, '#~')) return false;
+			if (!this.settings[cmd]) this.settings[cmd] = {};
+			this.settings[cmd][room] = settingsLevels[opts[1].trim()];
+			var self = this;
+			this.writeSettings();
+			this.say(con, room, 'The command .'+cmd+' is now ' + 
+				(settingsLevels[opts[1].trim()] === opts[1].trim() ? ' available for users of rank ' + opts[1].trim() + ' and above.' :
+				(this.settings[cmd][room] ? 'available for all users in this room.' : 'unavailable for use in this room.')))
+			return;
+		} else {
+			this.say(con, room, 'Unknown option: "' + opts[1] + '". Valid settings are: off/disable, +, %, @, &, #, ~, on/enable.');
+		}
+	},
 	tell: 'say',
 	say: function(arg, by, room, con) {
-		if (!this.hasRank(by, '#~')) return false;
+		if (!this.canUse('say', room, by)) return false;
 		this.say(con, room, stripCommands(arg) + ' (' + by + ' said this)');
 	},
 	joke: function(arg, by, room, con) {
-		if (!this.hasRank(by, '#~')) return false;
+		if (!this.canUse('joke', room, by)) return false;
 		var self = this;
 
 		var reqOpt = {
@@ -97,11 +171,11 @@ exports.commands = {
 		choices = choices.filter(function(i) {return (toId(i) !== '')});
 		if (choices.length < 2) return this.say(con, room, (room.charAt(0) === ',' ? '': '/pm ' + by + ', ') + '.choose: You must give at least 2 valid choices.');
 		var choice = choices[Math.floor(Math.random()*choices.length)];
-		this.say(con, room, ((this.hasRank(by, '+%@#~') || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + stripCommands(choice));
+		this.say(con, room, ((this.canUse('choose', room, by) || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + stripCommands(choice));
 	},
 	usage: 'usagestats',
 	usagestats: function(arg, by, room, con) {
-		if (this.hasRank(by, '+%@&#~') || room.charAt(0) === ',') {
+		if (this.canUse('usagestats', room, by) || room.charAt(0) === ',') {
 			var text = '';
 		} else {
 			var text = '/pm ' + by + ', ';
@@ -117,31 +191,17 @@ exports.commands = {
 
 	b: 'buzz',
 	buzz: function(arg, by, room, con) {
-		var opts = arg.split(',');
-		switch(toId(opts[0])) {
-			case 'on': case 'enable': case 'off': case 'disable':
-				if (!this.hasRank(by, '#~')) return false;
-				var tarRoom = (opts[1] ? opts[1].trim() : room);
-				if (tarRoom.charAt(0) === ',') {
-					this.say(con, room, 'You cannot disable or enable the buzzer for PMs.');
-					return;
-				}
-				config.buzz[toId(tarRoom)] = (toId(opts[0]) === 'on' || toId(opts[0]) === 'enable') ? true : false;
-				this.say(con, room, 'The buzzer is now ' + (config.buzz[toId(tarRoom)] ? 'enabled' : 'disabled') + ' in ' + tarRoom + '.');
-				break;
-			default:
-				if (this.buzzed || !config.buzz[room] || room.charAt(0) === ',') return false;
-				this.say(con, room, '**' + by.substr(1) + ' has buzzed in!**');
-				this.buzzed = by;
-				var self = this;
-				this.buzzer = setTimeout(function(con, room, buzzMessage) {
-					self.say(con, room, buzzMessage);
-					self.buzzed = '';
-				}, 7000, con, room, by + ', your time to answer is up!');
-		}
+		if (this.buzzed || !this.canUse('buzz', room, by) || room.charAt(0) === ',') return false;
+		this.say(con, room, '**' + by.substr(1) + ' has buzzed in!**');
+		this.buzzed = by;
+		var self = this;
+		this.buzzer = setTimeout(function(con, room, buzzMessage) {
+			self.say(con, room, buzzMessage);
+			self.buzzed = '';
+		}, 7000, con, room, by + ', your time to answer is up!');
 	},
 	reset: function(arg, by, room, con) {
-		if (!this.hasRank(by, '%@&#~') || !config.buzz[room]) return false;
+		if (!this.buzzed || !this.hasRank(by, '%@&#~') || room.charAt(0) === ',') return false;
 		clearTimeout(this.buzzer);
 		this.buzzed = '';
 		this.say(con, room, 'The buzzer has been reset.');

@@ -12,9 +12,16 @@ var sys = require('sys');
 var https = require('https');
 var url = require('url');
 
+settings = {};
+try {
+	settings = JSON.parse(fs.readFileSync('settings.json'));
+	if (!Object.keys(settings).length && settings !== {}) settings = {};
+} catch (e) {} // file doesn't exist [yet]
+
 exports.parse = {
 	actionUrl: url.parse('https://play.pokemonshowdown.com/~~' + config.serverid + '/action.php'),
 	room: 'lobby',
+	'settings': settings,
 	chatData: {},
 	ranks: {},
 
@@ -242,6 +249,18 @@ exports.parse = {
 		var hasRank = (rank.split('').indexOf(user.charAt(0)) !== -1) || (config.excepts.indexOf(toId(user.substr(1))) !== -1);
 		return hasRank;
 	},
+	canUse: function(cmd, room, user) {
+		var canUse = false;
+		var ranks = ' +%@&#~';
+		if (!this.settings[cmd] || !(room in this.settings[cmd])) {
+			canUse = this.hasRank(user, ranks.substr(ranks.indexOf(config.defaultrank)));
+		} else if (this.settings[cmd][room] === true) {
+			canUse = true;
+		} else if (ranks.indexOf(this.settings[cmd][room]) > -1) {
+			canUse = this.hasRank(user, ranks.substr(ranks.indexOf(this.settings[cmd][room])));
+		}
+		return canUse;
+	},
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
 		user = toId(user);
@@ -321,5 +340,35 @@ exports.parse = {
 			}
 			uncache = newuncache;
 		} while (uncache.length > 0);
+	},
+	writeSettings: function() {
+		var writing = false;
+		var writePending = false; // whether or not a new write is pending
+		var finishWriting = function() {
+			writing = false;
+			if (writePending) {
+				writePending = false;
+				self.writeSettings();
+			}
+		};
+		return function() {
+			if (writing) {
+				writePending = true;
+				return;
+			}
+			writing = true;
+			var data = JSON.stringify(self.settings);
+			fs.writeFile('settings.json.0', data, function() {
+				// rename is atomic on POSIX, but will throw an error on Windows
+				fs.rename('settings.json.0', 'settings.json', function(err) {
+					if (err) {
+						// This should only happen on Windows.
+						fs.writeFile('settings.json', data, finishWriting);
+						return;
+					}
+					finishWriting();
+				});
+			});
+		};
 	}
 };

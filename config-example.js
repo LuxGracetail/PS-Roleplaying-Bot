@@ -30,6 +30,10 @@ exports.rooms = ['example room name', 'another example'];
 // Using only alphanumeric characters and spaces is not allowed.
 exports.commandcharacter = '.';
 
+// The default rank is the minimum rank that can use a command in a room when
+// no rank is specified in settings.json
+exports.defaultrank = '%';
+
 // Whether this file should be watched for changes or not.
 // If you change this option, the server has to be restarted in order for it to
 // take effect.
@@ -50,10 +54,6 @@ exports.debuglevel = 2;
 // Users who can use all commands regardless of their rank. Be very cautious
 // with this, especially on servers other than main.
 exports.excepts = [];
-
-// This controls which rooms the buzzer is enabled or disabled in by default.
-// Set rooms to true to allow the buzzer by default or false to disallow.
-exports.buzz = {};
 
 // This allows the bot to act as an automated moderator. If enabled, the bot will
 // mute users who send 6 lines or more in 6 or fewer seconds for 7 minutes. NOTE: THIS IS
