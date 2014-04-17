@@ -127,13 +127,44 @@ exports.commands = {
 			if (!this.settings[cmd]) this.settings[cmd] = {};
 			this.settings[cmd][room] = settingsLevels[opts[1].trim()];
 			var self = this;
+			this.writeSettings = (function() {
+				var writing = false;
+				var writePending = false; // whether or not a new write is pending
+				var finishWriting = function() {
+					writing = false;
+					if (writePending) {
+						writePending = false;
+						self.writeSettings();
+					}
+				};
+				return function() {
+					if (writing) {
+						writePending = true;
+						return;
+					}
+					writing = true;
+					var data = JSON.stringify(self.settings);
+					console.log(data);
+					fs.writeFile('settings.json', data, function() {
+						// rename is atomic on POSIX, but will throw an error on Windows
+						fs.rename('settings.json', 'settings.json', function(err) {
+							if (err) {
+								// This should only happen on Windows.
+								fs.writeFile('settings.json', data, finishWriting);
+								return;
+							}
+							finishWriting();
+						});
+					});
+				};
+			})();
 			this.writeSettings();
 			this.say(con, room, 'The command .'+cmd+' is now ' + 
 				(settingsLevels[opts[1].trim()] === opts[1].trim() ? ' available for users of rank ' + opts[1].trim() + ' and above.' :
 				(this.settings[cmd][room] ? 'available for all users in this room.' : 'unavailable for use in this room.')))
 			return;
 		} else {
-			this.say(con, room, 'Unknown option: "' + opts[1] + '". Valid settings are: off/disable, +, %, @, &, #, ~, on/enable.');
+			this.say(con, room, 'Unknown option: "' + opts[1].trim() + '". Valid settings are: off/disable, +, %, @, &, #, ~, on/enable.');
 		}
 	},
 	tell: 'say',

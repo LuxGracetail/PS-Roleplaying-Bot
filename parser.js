@@ -340,35 +340,5 @@ exports.parse = {
 			}
 			uncache = newuncache;
 		} while (uncache.length > 0);
-	},
-	writeSettings: function() {
-		var writing = false;
-		var writePending = false; // whether or not a new write is pending
-		var finishWriting = function() {
-			writing = false;
-			if (writePending) {
-				writePending = false;
-				self.writeSettings();
-			}
-		};
-		return function() {
-			if (writing) {
-				writePending = true;
-				return;
-			}
-			writing = true;
-			var data = JSON.stringify(self.settings);
-			fs.writeFile('settings.json.0', data, function() {
-				// rename is atomic on POSIX, but will throw an error on Windows
-				fs.rename('settings.json.0', 'settings.json', function(err) {
-					if (err) {
-						// This should only happen on Windows.
-						fs.writeFile('settings.json', data, finishWriting);
-						return;
-					}
-					finishWriting();
-				});
-			});
-		};
 	}
 };

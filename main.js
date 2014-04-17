@@ -107,7 +107,7 @@ console.log('------------------------------------'.yellow);
 console.log('');
 
 // Config and config.js watching...
-var fs = require('fs');
+global.fs = require('fs');
 if (!('existsSync' in fs)) {
 	fs.existsSync = require('path').existsSync;
 }
