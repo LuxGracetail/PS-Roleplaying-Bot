@@ -224,7 +224,7 @@ exports.parse = {
 		}
 		
 		// auto accept invitations to rooms
-		if (room.charAt(0) === ',' && message.substr(0,8) === '/invite ') {
+		if (room.charAt(0) === ',' && message.substr(0,8) === '/invite ' && !(config.serverid === 'showdown' && toId(message.substr(8)) === 'lobby')) {
 			this.say(connection, '', '/join ' + message.substr(8));
 		}
 	},
