@@ -234,7 +234,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'http://www.smogon.com/forums/threads/official-smogon-university-simulator-statistics-%E2%80%94-february-2014.3501320/';
+		text += 'http://sim.smogon.com:8080/Stats/2014-03/';
 		this.say(con, room, text);
 	},
 
