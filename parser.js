@@ -222,6 +222,11 @@ exports.parse = {
 				error("invalid command type for " + cmd + ": " + (typeof Commands[cmd]));
 			}
 		}
+		
+		// auto accept invitations to rooms
+		if (room.charAt(0) === ',' && message.substr(0,8) === '/invite ') {
+			this.say(connection, '', '/join ' + message.substr(8));
+		}
 	},
 	say: function(connection, room, text) {
 		if (room.substr(0, 1) !== ',') {
