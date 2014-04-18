@@ -117,6 +117,7 @@ exports.commands = {
 			failsafe++;
 			if (failsafe > 5) {
 				this.say(con, room, 'The command "' + opts[0] + '" could not be found.');
+				return;
 			}
 		}
 
