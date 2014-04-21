@@ -241,10 +241,10 @@ exports.commands = {
 	},
 	guia: function(arg, by, room, con) {
 		// this command is a guide for the Spanish room
-		if (this.canUse('guia', room, by) || !(toId(room) === 'espaol' && config.serverid === 'showdown')) {
-			var text = '';
-		} else {
-			var text = '/pm ' + by + ', ';
+		if (!(toId(room) === 'espaol' && config.serverid === 'showdown')) return false;
+		var text = '';
+		if (!this.canUse('guia', room, by)) {
+			text += '/pm ' + by + ', ';
 		}
 		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
 		this.say(con, room, text);
