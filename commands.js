@@ -94,7 +94,8 @@ exports.commands = {
 			joke: 1,
 			choose: 1,
 			usagestats: 1,
-			buzz: 1
+			buzz: 1,
+			guia: 1
 		};
 		var opts = arg.split(',');
 		var cmd = toId(opts[0]);
@@ -236,6 +237,16 @@ exports.commands = {
 			var text = '/pm ' + by + ', ';
 		}
 		text += 'http://sim.smogon.com:8080/Stats/2014-03/';
+		this.say(con, room, text);
+	},
+	guia: function(arg, by, room, con) {
+		// this command is a guide for the Spanish room
+		if (this.canUse('guia', room, by) || !(toId(room) === 'espaol' && config.serverid === 'showdown')) {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
 		this.say(con, room, text);
 	},
 
