@@ -146,7 +146,14 @@ exports.parse = {
 				// Now join the rooms
 				var cmds = ['/idle'];
 				for (var i in config.rooms) {
-					var room = config.rooms[i].toLowerCase();
+					var room = toId(config.rooms[i]);
+					if (room === 'lobby' && config.serverid === 'showdown') {
+						continue;
+					}
+					cmds.push('|/join ' + room);
+				}
+				for (var i in config.privaterooms) {
+					var room = toId(config.privaterooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') {
 						continue;
 					}
