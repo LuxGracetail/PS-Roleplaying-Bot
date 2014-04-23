@@ -24,6 +24,11 @@ exports.pass = '';
 // Joining Smogon's Showdown's Lobby is not allowed.
 exports.rooms = ['example room name', 'another example'];
 
+// Any private rooms that should be joined.
+// Private rooms will be moderated differently (since /warn doesn't work in them).
+// They can be added to rooms instead if the different moderation rules aren't desired
+exports.privaterooms = [];
+
 // The character text should start with to be seen as a command.
 // Note that using / and ! might be 'dangerous' since these are used in
 // Showdown itself.

@@ -313,6 +313,7 @@ exports.parse = {
 					cmd = config.punishvals[pointVal] || cmd;
 					this.chatData[user][room].points = pointVal;
 				}
+				if (config.privaterooms.indexOf(room) >= 0 && cmd === 'warn') cmd = 'mute';
 				if (this.chatData[user][room].points >= 4 && !this.hasRank(this.ranks[room] || ' ', '@&#~')) cmd = 'hourmute';
 				if (this.chatData[user].zeroTol > 4) {
 					muteMessage = ', Automated response: zero tolerance user';
