@@ -249,6 +249,17 @@ exports.commands = {
 		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
 		this.say(con, room, text);
 	},
+	seen: function(arg, by, room, con) {
+		var text = (room.charAt(0) === ',' ? '' : '/pm ' + by + ', ');
+		if (toId(arg) === toId(by)) {
+			text += 'Have you looked in the mirror lately?';
+		} else if (!this.chatData[toId(arg)] || this.chatData[toId(arg)].lastSeen === '') {
+			text += 'The user ' + arg.trim() + ' has never been seen.';
+		} else {
+			text += arg.trim() + ' was last seen ' + this.getTimeAgo(this.chatData[toId(arg)].seenAt) + ' ago, ' + this.chatData[toId(arg)].lastSeen;
+		}
+		this.say(con, room, text);
+	},
 
 	/**
 	 * Jeopardy commands
@@ -256,6 +267,7 @@ exports.commands = {
 	 * The following commands are used for Jeopardy in the Academics room
 	 * on the Smogon server.
 	 */
+
 
 	b: 'buzz',
 	buzz: function(arg, by, room, con) {

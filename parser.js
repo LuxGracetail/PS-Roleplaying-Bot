@@ -190,8 +190,8 @@ exports.parse = {
 			case 'c':
 				var by = spl[2];
 				spl.splice(0, 3);
-				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
 				this.processChatData(by, this.room || 'lobby', connection, spl.join('|'));
+				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
 				this.room = '';
 				break;
 			case 'pm':
@@ -201,10 +201,22 @@ exports.parse = {
 				this.chatMessage(spl.join('|'), by, ',' + by, connection);
 				this.room = '';
 				break;
-			case 'N': case 'J': case 'j':
+			case 'N':
 				var by = spl[2];
+				this.updateSeen(spl[3], spl[1], by);
+				this.room = '';
+				break;
+			case 'J': case 'j':
+				var by = spl[2];
+				if (spl[1] === 'N') console.log('N');
+				this.updateSeen(by, spl[1], (toId(spl[1]) === 'n' ? spl[3] : (this.room === ''?'lobby':this.room)));
 				if (by.substr(1) !== config.nick || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[(this.room === ''?'lobby':this.room)] = by.charAt(0);
+				this.room = '';
+				break;
+			case 'l': case 'L':
+				var by = spl[2];
+				this.updateSeen(by, spl[1], (this.room === ''?'lobby':this.room));
 				this.room = '';
 				break;
 		}
@@ -274,7 +286,12 @@ exports.parse = {
 		if (room.charAt(0) === ',' || user === toId(config.nick)) return;
 		room = toId(room);
 		msg = msg.trim().replace(/ +/g, " ");
-		if (!this.chatData[user]) this.chatData[user] = {zeroTol:0};
+		if (!this.chatData[user]) this.chatData[user] = {
+			zeroTol: 0,
+			lastSeen: '',
+			seenAt: Date.now()
+		};
+		this.updateSeen(user, 'c', room);
 		if (!this.chatData[user][room]) this.chatData[user][room] = {times:[], points:0, lastAction:0};
 
 		this.chatData[user][room].times.push(Date.now());
@@ -331,6 +348,50 @@ exports.parse = {
 				this.say(connection, room, '/' + cmd + ' ' + user + muteMessage);
 			}
 		}
+	},
+	updateSeen: function(user, type, detail) {
+		user = toId(user);
+		if (!detail) return;
+		var time = Date.now();
+		if (!this.chatData[user]) this.chatData[user] = {
+			zeroTol: 0,
+			lastSeen: '',
+			seenAt: time
+		};
+		if (type === 'N') console.log("seen n");
+		var msg = '';
+		if (type in {j:1, J:1, l:1, L:1, c:1}) {
+			if (config.rooms.indexOf(toId(detail)) === -1 || config.privaterooms.indexOf(toId(detail)) > -1) return;
+			msg += ((type === 'j' || type === 'J') ? 'joining' : ((type === 'l' || type === 'L') ? 'leaving' : 'chatting in')) + ' ' + detail.trim() + '.';
+		} else if (type in {n:1, N:1}) {
+			msg += 'changing nick to ' + ('+%@&#~'.indexOf(detail.trim().charAt(0)) === -1 ? detail.trim() : detail.trim().substr(1)) + '.';
+		}
+		this.chatData[user].lastSeen = msg;
+		this.chatData[user].seenAt = time;
+	},
+	getTimeAgo: function(time) {
+		time = Date.now() - time;
+		time = Math.round(time/1000); // rounds to nearest second
+		var seconds = time%60;
+		var times = [];
+		if (seconds) times.push(String(seconds) + (seconds === 1?' second':' seconds'));
+		var minutes, hours, days;
+		if (time >= 60) {
+			time = (time - seconds)/60; // converts to minutes
+			minutes = time%60;
+			if (minutes) times = [String(minutes) + (minutes === 1?' minute':' minutes')].concat(times);
+			if (time >= 60) {
+				time = (time - minutes)/60; // converts to hours
+				hours = time%24;
+				if (hours) times = [String(hours) + (hours === 1?' hour':' hours')].concat(times);
+				if (time >= 24) {
+					days = (time - hours)/24; // you can probably guess this one
+					if (days) times = [String(days) + (days === 1?' day':' days')].concat(times);
+				}
+			}
+		}
+		if (!times.length) times.push('0 seconds');
+		return times.join(', ');
 	},
 	uncacheTree: function(root) {
 		var uncache = [require.resolve(root)];
