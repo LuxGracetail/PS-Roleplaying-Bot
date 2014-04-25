@@ -208,8 +208,7 @@ exports.parse = {
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
-				if (spl[1] === 'N') console.log('N');
-				this.updateSeen(by, spl[1], (toId(spl[1]) === 'n' ? spl[3] : (this.room === ''?'lobby':this.room)));
+				this.updateSeen(by, spl[1], (this.room === ''?'lobby':this.room));
 				if (by.substr(1) !== config.nick || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[(this.room === ''?'lobby':this.room)] = by.charAt(0);
 				this.room = '';
