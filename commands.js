@@ -253,7 +253,7 @@ exports.commands = {
 		var text = (room.charAt(0) === ',' ? '' : '/pm ' + by + ', ');
 		if (toId(arg) === toId(by)) {
 			text += 'Have you looked in the mirror lately?';
-		} else if (!this.chatData[toId(arg)] || this.chatData[toId(arg)].lastSeen === '') {
+		} else if (!this.chatData[toId(arg)] || !this.chatData[toId(arg)].lastSeen) {
 			text += 'The user ' + arg.trim() + ' has never been seen.';
 		} else {
 			text += arg.trim() + ' was last seen ' + this.getTimeAgo(this.chatData[toId(arg)].seenAt) + ' ago, ' + this.chatData[toId(arg)].lastSeen;

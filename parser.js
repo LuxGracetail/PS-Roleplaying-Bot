@@ -286,11 +286,6 @@ exports.parse = {
 		if (room.charAt(0) === ',' || user === toId(config.nick)) return;
 		room = toId(room);
 		msg = msg.trim().replace(/ +/g, " ");
-		if (!this.chatData[user]) this.chatData[user] = {
-			zeroTol: 0,
-			lastSeen: '',
-			seenAt: Date.now()
-		};
 		this.updateSeen(user, 'c', room);
 		if (!this.chatData[user][room]) this.chatData[user][room] = {times:[], points:0, lastAction:0};
 
@@ -351,6 +346,7 @@ exports.parse = {
 	},
 	updateSeen: function(user, type, detail) {
 		user = toId(user);
+		type = toId(type);
 		if (!detail) return;
 		var time = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
@@ -358,12 +354,11 @@ exports.parse = {
 			lastSeen: '',
 			seenAt: time
 		};
-		if (type === 'N') console.log("seen n");
 		var msg = '';
-		if (type in {j:1, J:1, l:1, L:1, c:1}) {
+		if (type in {j:1, l:1, c:1}) {
 			if (config.rooms.indexOf(toId(detail)) === -1 || config.privaterooms.indexOf(toId(detail)) > -1) return;
-			msg += ((type === 'j' || type === 'J') ? 'joining' : ((type === 'l' || type === 'L') ? 'leaving' : 'chatting in')) + ' ' + detail.trim() + '.';
-		} else if (type in {n:1, N:1}) {
+			msg += (type === 'j' ? 'joining' : (type === 'l' ? 'leaving' : 'chatting in')) + ' ' + detail.trim() + '.';
+		} else if (type === 'n') {
 			msg += 'changing nick to ' + ('+%@&#~'.indexOf(detail.trim().charAt(0)) === -1 ? detail.trim() : detail.trim().substr(1)) + '.';
 		}
 		this.chatData[user].lastSeen = msg;
