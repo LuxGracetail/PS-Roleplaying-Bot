@@ -136,7 +136,7 @@ exports.commands = {
 		};
 		if (!opts[1] || !opts[1].trim()) {
 			var msg = '';
-			if (!this.settings[cmd] || !this.settings[cmd][room]) {
+			if (!this.settings[cmd] || (!this.settings[cmd][room] && this.settings[cmd][room] !== false)) {
 				msg = '.' + cmd + ' is available for users of rank ' + config.defaultrank + ' and above.';
 			} else if (this.settings[cmd][room] in settingsLevels) {
 				msg = '.' + cmd + ' is available for users of rank ' + this.settings[cmd][room] + ' and above.';
@@ -170,9 +170,9 @@ exports.commands = {
 					writing = true;
 					var data = JSON.stringify(self.settings);
 					console.log(data);
-					fs.writeFile('settings.json', data, function() {
+					fs.writeFile('settings.json.0', data, function() {
 						// rename is atomic on POSIX, but will throw an error on Windows
-						fs.rename('settings.json', 'settings.json', function(err) {
+						fs.rename('settings.json.0', 'settings.json', function(err) {
 							if (err) {
 								// This should only happen on Windows.
 								fs.writeFile('settings.json', data, finishWriting);

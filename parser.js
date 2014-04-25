@@ -346,13 +346,13 @@ exports.parse = {
 	updateSeen: function(user, type, detail) {
 		user = toId(user);
 		type = toId(type);
-		if (!detail) return;
 		var time = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
 			zeroTol: 0,
 			lastSeen: '',
 			seenAt: time
 		};
+		if (!detail) return;
 		var msg = '';
 		if (type in {j:1, l:1, c:1}) {
 			if (config.rooms.indexOf(toId(detail)) === -1 || config.privaterooms.indexOf(toId(detail)) > -1) return;
