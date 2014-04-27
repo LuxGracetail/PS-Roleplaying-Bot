@@ -295,7 +295,7 @@ exports.parse = {
 			var pointVal = 0;
 			var muteMessage = '';
 
-			if (msg.match(/[Ss]nen/g) && msg.match(/[Ss]nen/g).length > 6) {
+			if (msg.toLowerCase().match(/snen/g) && msg.toLowerCase().match(/snen/g).length > 6) {
 				if (pointVal < 4) {
 					muteMessage = ', Automated response: possible "snen" spammer';
 					pointVal = (room === 'lobby') ? 5 : 4;
