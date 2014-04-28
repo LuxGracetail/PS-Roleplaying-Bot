@@ -128,6 +128,7 @@ exports.commands = {
 			usagestats: 1,
 			buzz: 1,
 			helix: 1,
+			survivor: 1,
 			guia: 1
 		};
 		var modOpts = {
@@ -270,16 +271,6 @@ exports.commands = {
 		text += 'http://sim.smogon.com:8080/Stats/2014-03/';
 		this.say(con, room, text);
 	},
-	guia: function(arg, by, room, con) {
-		// this command is a guide for the Spanish room
-		if (!(toId(room) === 'espaol' && config.serverid === 'showdown')) return false;
-		var text = '';
-		if (!this.canUse('guia', room, by)) {
-			text += '/pm ' + by + ', ';
-		}
-		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
-		this.say(con, room, text);
-	},
 	seen: function(arg, by, room, con) {
 		var text = (room.charAt(0) === ',' ? '' : '/pm ' + by + ', ');
 		if (toId(arg) === toId(by)) {
@@ -326,6 +317,44 @@ exports.commands = {
 		}
 		this.say(con, room, text);
 	},
+
+	/**
+	 * Room specific commands
+	 *
+	 * These commands are used in specific rooms on the Smogon server.
+	 */
+	guia: function(arg, by, room, con) {
+		// this command is a guide for the Spanish room
+		if (!(toId(room) === 'espaol' && config.serverid === 'showdown')) return false;
+		var text = '';
+		if (!this.canUse('guia', room, by)) {
+			text += '/pm ' + by + ', ';
+		}
+		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
+		this.say(con, room, text);
+	},
+	survivor: function(arg, by, room, con) {
+		// contains links and info for survivor in the Survivor room
+		if (!(toId(room) === 'survivor' && config.serverid === 'showdown')) return false;
+		var text = '';
+		if (!this.canUse('survivor', room, by)) {
+			text += '/pm ' + by + ', ';
+		}
+		var gameTypes = {
+			hg: "http://survivor-ps.weebly.com/hunger-games.html",
+			hungergames: "http://survivor-ps.weebly.com/hunger-games.html",
+			classic: "http://survivor-ps.weebly.com/classic.html"
+		};
+		arg = toId(arg);
+		if (arg) {
+			if (!(arg in gameTypes)) return this.say(con, room, "Invalid game type. The game types can be found here: http://survivor-ps.weebly.com/themes.html");
+			text += "The rules for this game type can be found here: " + gameTypes[arg];
+		} else {
+			text += "The list of game types can be found here: http://survivor-ps.weebly.com/themes.html";
+		}
+		this.say(con, room, text);
+	},
+
 
 	/**
 	 * Jeopardy commands
