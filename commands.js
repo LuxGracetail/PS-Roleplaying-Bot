@@ -89,6 +89,38 @@ exports.commands = {
 	set: function(arg, by, room, con) {
 		if (!this.hasRank(by, '%@&#~') || room.charAt(0) === ',') return false;
 
+		this.writeSettings = (function() {
+			var writing = false;
+			var writePending = false; // whether or not a new write is pending
+			var finishWriting = function() {
+				writing = false;
+				if (writePending) {
+					writePending = false;
+					self.writeSettings();
+				}
+			};
+			return function() {
+				if (writing) {
+					writePending = true;
+					return;
+				}
+				writing = true;
+				var data = JSON.stringify(self.settings);
+				console.log(data);
+				fs.writeFile('settings.json.0', data, function() {
+					// rename is atomic on POSIX, but will throw an error on Windows
+					fs.rename('settings.json.0', 'settings.json', function(err) {
+						if (err) {
+							// This should only happen on Windows.
+							fs.writeFile('settings.json', data, finishWriting);
+							return;
+						}
+						finishWriting();
+					});
+				});
+			};
+		})();
+
 		var settable = {
 			say: 1,
 			joke: 1,
@@ -98,99 +130,97 @@ exports.commands = {
 			helix: 1,
 			guia: 1
 		};
+		var modOpts = {
+			flooding: 1,
+			caps: 1,
+			stretching: 1,
+			snen: 1
+		};
+
 		var opts = arg.split(',');
 		var cmd = toId(opts[0]);
-		if (!Commands[cmd]) return this.say(con, room, '.' + opts[0] + ' is not a valid command.');
-		var failsafe = 0;
-		while (!(cmd in settable)) {
-			if (typeof Commands[cmd] === 'string') {
-				cmd = Commands[cmd];
-			} else if (typeof Commands[cmd] === 'function') {
-				if (cmd in settable) {
-					break;
-				} else {
-					this.say(con, room, 'The settings for .' + opts[0] + ' cannot be changed.');
-					return;
-				}
-			} else {
-				this.say(con, room, 'Something went wrong. PM TalkTakesTime here or on Smogon with the command you tried.');
-				return;
-			}
-			failsafe++;
-			if (failsafe > 5) {
-				this.say(con, room, 'The command ".' + opts[0] + '" could not be found.');
-				return;
-			}
-		}
+		if (cmd === 'mod' || cmd === 'm' || cmd === 'modding') {
+			if (!opts[1] || !toId(opts[1]) || !(toId(opts[1]) in modOpts)) return this.say(con, room, 'Incorrect command: correct syntax is .set mod, [' +
+				Object.keys(modOpts).join('/') + '](, [on/off])');
 
-		var settingsLevels = {
-			off: false,
-			disable: false,
-			'+': '+',
-			'%': '%',
-			'@': '@',
-			'&': '&',
-			'#': '#',
-			'~': '~',
-			on: true,
-			enable: true
-		};
-		if (!opts[1] || !opts[1].trim()) {
-			var msg = '';
-			if (!this.settings[cmd] || (!this.settings[cmd][room] && this.settings[cmd][room] !== false)) {
-				msg = '.' + cmd + ' is available for users of rank ' + config.defaultrank + ' and above.';
-			} else if (this.settings[cmd][room] in settingsLevels) {
-				msg = '.' + cmd + ' is available for users of rank ' + this.settings[cmd][room] + ' and above.';
-			} else if (this.settings[cmd][room] === true) {
-				msg = '.' + cmd + ' is available for all users in this room.';
-			} else if (this.settings[cmd][room] === false) {
-				msg = '.' + cmd + ' is not available for use in this room.';
+			if (!this.settings['modding']) this.settings['modding'] = {};
+			if (!this.settings['modding'][room]) this.settings['modding'][room] = {};
+			if (opts[2] && toId(opts[2])) {
+				if (!this.hasRank(by, '#~')) return false;
+				if (!(toId(opts[2]) in {on: 1, off: 1}))  return this.say(con, room, 'Incorrect command: correct syntax is .set mod, [' +
+					Object.keys(modOpts).join('/') + '](, [on/off])');
+				this.settings['modding'][room][toId(opts[1])] = (toId(opts[2]) === 'on' ? true : false);
+				var self = this;
+				this.writeSettings();
+				this.say(con, room, 'Moderation for ' + toId(opts[1]) + ' in this room is now ' + toId(opts[2]).toUpperCase() + '.');
+				return;
+			} else {
+				this.say(con, room, 'Moderation for ' + toId(opts[1]) + ' in this room is currently ' +
+					(this.settings['modding'][room][toId(opts[1])] ? 'ON' : 'OFF') + '.');
+				return;
 			}
-			this.say(con, room, msg);
-			return;
-		} else if (opts[1].trim() in settingsLevels) {
-			if (!this.hasRank(by, '#~')) return false;
-			if (!this.settings[cmd]) this.settings[cmd] = {};
-			this.settings[cmd][room] = settingsLevels[opts[1].trim()];
-			var self = this;
-			this.writeSettings = (function() {
-				var writing = false;
-				var writePending = false; // whether or not a new write is pending
-				var finishWriting = function() {
-					writing = false;
-					if (writePending) {
-						writePending = false;
-						self.writeSettings();
-					}
-				};
-				return function() {
-					if (writing) {
-						writePending = true;
+		} else {
+			if (!Commands[cmd]) return this.say(con, room, '.' + opts[0] + ' is not a valid command.');
+			var failsafe = 0;
+			while (!(cmd in settable)) {
+				if (typeof Commands[cmd] === 'string') {
+					cmd = Commands[cmd];
+				} else if (typeof Commands[cmd] === 'function') {
+					if (cmd in settable) {
+						break;
+					} else {
+						this.say(con, room, 'The settings for .' + opts[0] + ' cannot be changed.');
 						return;
 					}
-					writing = true;
-					var data = JSON.stringify(self.settings);
-					console.log(data);
-					fs.writeFile('settings.json.0', data, function() {
-						// rename is atomic on POSIX, but will throw an error on Windows
-						fs.rename('settings.json.0', 'settings.json', function(err) {
-							if (err) {
-								// This should only happen on Windows.
-								fs.writeFile('settings.json', data, finishWriting);
-								return;
-							}
-							finishWriting();
-						});
-					});
-				};
-			})();
-			this.writeSettings();
-			this.say(con, room, 'The command .'+cmd+' is now ' + 
-				(settingsLevels[opts[1].trim()] === opts[1].trim() ? ' available for users of rank ' + opts[1].trim() + ' and above.' :
-				(this.settings[cmd][room] ? 'available for all users in this room.' : 'unavailable for use in this room.')))
-			return;
-		} else {
-			this.say(con, room, 'Unknown option: "' + opts[1].trim() + '". Valid settings are: off/disable, +, %, @, &, #, ~, on/enable.');
+				} else {
+					this.say(con, room, 'Something went wrong. PM TalkTakesTime here or on Smogon with the command you tried.');
+					return;
+				}
+				failsafe++;
+				if (failsafe > 5) {
+					this.say(con, room, 'The command ".' + opts[0] + '" could not be found.');
+					return;
+				}
+			}
+
+			var settingsLevels = {
+				off: false,
+				disable: false,
+				'+': '+',
+				'%': '%',
+				'@': '@',
+				'&': '&',
+				'#': '#',
+				'~': '~',
+				on: true,
+				enable: true
+			};
+			if (!opts[1] || !opts[1].trim()) {
+				var msg = '';
+				if (!this.settings[cmd] || (!this.settings[cmd][room] && this.settings[cmd][room] !== false)) {
+					msg = '.' + cmd + ' is available for users of rank ' + config.defaultrank + ' and above.';
+				} else if (this.settings[cmd][room] in settingsLevels) {
+					msg = '.' + cmd + ' is available for users of rank ' + this.settings[cmd][room] + ' and above.';
+				} else if (this.settings[cmd][room] === true) {
+					msg = '.' + cmd + ' is available for all users in this room.';
+				} else if (this.settings[cmd][room] === false) {
+					msg = '.' + cmd + ' is not available for use in this room.';
+				}
+				this.say(con, room, msg);
+				return;
+			} else if (opts[1].trim() in settingsLevels) {
+				if (!this.hasRank(by, '#~')) return false;
+				if (!this.settings[cmd]) this.settings[cmd] = {};
+				this.settings[cmd][room] = settingsLevels[opts[1].trim()];
+				var self = this;
+				this.writeSettings();
+				this.say(con, room, 'The command .'+cmd+' is now ' + 
+					(settingsLevels[opts[1].trim()] === opts[1].trim() ? ' available for users of rank ' + opts[1].trim() + ' and above.' :
+					(this.settings[cmd][room] ? 'available for all users in this room.' : 'unavailable for use in this room.')))
+				return;
+			} else {
+				this.say(con, room, 'Unknown option: "' + opts[1].trim() + '". Valid settings are: off/disable, +, %, @, &, #, ~, on/enable.');
+			}
 		}
 	},
 	tell: 'say',
