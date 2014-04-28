@@ -23,41 +23,6 @@ exports.commands = {
 		text += '**Pokémon Showdown Bot** by: Quinella and TalkTakesTime';
 		this.say(con, room, text);
 	},
-	helix: function(arg, by, room, con) {
-		if (this.hasRank(by, '+%@#~') || room.charAt(0) === ',') {
-			var text = '';
-		} else {
-			var text = '/pm ' + by + ', ';
-		}
-		
-		var random = Math.floor(20 * Math.random()) + 1;
-		var results = '';
-
-	switch (random) {
- 		case 1: results = "Signs point to yes."; break;
-  		case 2: results = "Yes."; break;
-		case 3: results = "Reply hazy, try again."; break;
-		case 4: results = "Without a doubt."; break;
-		case 5: results = "My sources say no."; break;
-		case 6: results = "As I see it, yes."; break;
-		case 7: results = "You may rely on it."; break;
-		case 8: results = "Concentrate and ask again."; break;
-		case 9: results = "Outlook not so good."; break;
-		case 10: results = "It is decidedly so."; break;
-		case 11: results = "Better not tell you now."; break;
-		case 12: results = "Very doubtful."; break;
-		case 13: results = "Yes - definitely."; break;
-		case 14: results = "It is certain."; break;
-		case 15: results = "Cannot predict now."; break;
-		case 16: results = "Most likely."; break;
-		case 17: results = "Ask again later."; break;
-		case 18: results = "My reply is no."; break;
-		case 19: results = "Outlook good."; break;
-		case 20: results = "Don't count on it."; break;
-			}
-		text += ''+results+'';
-		this.say(con, room, text);
-	},
 	help: 'guide',
 	guide: function(arg, by, room, con) {
 		if (this.hasRank(by, '+%@&#~') || room.charAt(0) === ',') {
@@ -130,6 +95,7 @@ exports.commands = {
 			choose: 1,
 			usagestats: 1,
 			buzz: 1,
+			helix: 1,
 			guia: 1
 		};
 		var opts = arg.split(',');
@@ -294,6 +260,39 @@ exports.commands = {
 			text += 'The user ' + arg.trim() + ' has never been seen.';
 		} else {
 			text += arg.trim() + ' was last seen ' + this.getTimeAgo(this.chatData[toId(arg)].seenAt) + ' ago, ' + this.chatData[toId(arg)].lastSeen;
+		}
+		this.say(con, room, text);
+	},
+	helix: function(arg, by, room, con) {
+		if (this.canUse('helix', room, by) || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+		
+		var rand = Math.floor(20 * Math.random()) + 1;
+
+		switch (rand) {
+	 		case 1: text += "Signs point to yes."; break;
+	  		case 2: text += "Yes."; break;
+			case 3: text += "Reply hazy, try again."; break;
+			case 4: text += "Without a doubt."; break;
+			case 5: text += "My sources say no."; break;
+			case 6: text += "As I see it, yes."; break;
+			case 7: text += "You may rely on it."; break;
+			case 8: text += "Concentrate and ask again."; break;
+			case 9: text += "Outlook not so good."; break;
+			case 10: text += "It is decidedly so."; break;
+			case 11: text += "Better not tell you now."; break;
+			case 12: text += "Very doubtful."; break;
+			case 13: text += "Yes - definitely."; break;
+			case 14: text += "It is certain."; break;
+			case 15: text += "Cannot predict now."; break;
+			case 16: text += "Most likely."; break;
+			case 17: text += "Ask again later."; break;
+			case 18: text += "My reply is no."; break;
+			case 19: text += "Outlook good."; break;
+			case 20: text += "Don't count on it."; break;
 		}
 		this.say(con, room, text);
 	},
