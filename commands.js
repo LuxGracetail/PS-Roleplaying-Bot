@@ -23,7 +23,6 @@ exports.commands = {
 		text += '**Pokémon Showdown Bot** by: Quinella and TalkTakesTime';
 		this.say(con, room, text);
 	},
-	
 	helix: function(arg, by, room, con) {
 		if (this.hasRank(by, '+%@#~') || room.charAt(0) === ',') {
 			var text = '';
@@ -34,71 +33,31 @@ exports.commands = {
 		var random = Math.floor(20 * Math.random()) + 1;
 		var results = '';
 
-		if (random == 1) {
-		results = 'Signs point to yes.';
-		}
-		if (random == 2) {
-		results = 'Yes.';
-		}
-		if (random == 3) {
-		results = 'Reply hazy, try again.';
-		}
-		if (random == 4) {
-		results = 'Without a doubt.';
-		}
-		if (random == 5) {
-		results = 'My sources say no.';
-		}
-		if (random == 6) {
-		results = 'As I see it, yes.';
-		}
-		if (random == 7) {
-		results = 'You may rely on it.';
-		}
-		if (random == 8) {
-		results = 'Concentrate and ask again.';
-		}
-		if (random == 9) {
-		results = 'Outlook not so good.';
-		}
-		if (random == 10) {
-		results = 'It is decidedly so.';
-		}
-		if (random == 11) {
-		results = 'Better not tell you now.';
-		}
-		if (random == 12) {
-		results = 'Very doubtful.';
-		}
-		if (random == 13) {
-		results = 'Yes - definitely.';
-		}
-		if (random == 14) {
-		results = 'It is certain.';
-		}
-		if (random == 15) {
-		results = 'Cannot predict now.';
-		}
-		if (random == 16) {
-		results = 'Most likely.';
-		}
-		if (random == 17) {
-		results = 'Ask again later.';
-		}
-		if (random == 18) {
-		results = 'My reply is no.';
-		}
-		if (random == 19) {
-		results = 'Outlook good.';
-		}
-		if (random == 20) {
-		results = 'Don\'t count on it.';
-		}
-
+	switch (random) {
+ 		case 1: results = "Signs point to yes."; break;
+  		case 2: results = "Yes."; break;
+		case 3: results = "Reply hazy, try again."; break;
+		case 4: results = "Without a doubt."; break;
+		case 5: results = "My sources say no."; break;
+		case 6: results = "As I see it, yes."; break;
+		case 7: results = "You may rely on it."; break;
+		case 8: results = "Concentrate and ask again."; break;
+		case 9: results = "Outlook not so good."; break;
+		case 10: results = "It is decidedly so."; break;
+		case 11: results = "Better not tell you now."; break;
+		case 12: results = "Very doubtful."; break;
+		case 13: results = "Yes - definitely."; break;
+		case 14: results = "It is certain."; break;
+		case 15: results = "Cannot predict now."; break;
+		case 16: results = "Most likely."; break;
+		case 17: results = "Ask again later."; break;
+		case 18: results = "My reply is no."; break;
+		case 19: results = "Outlook good."; break;
+		case 20: results = "Don't count on it."; break;
+			}
 		text += ''+results+'';
 		this.say(con, room, text);
 	},
-	
 	help: 'guide',
 	guide: function(arg, by, room, con) {
 		if (this.hasRank(by, '+%@&#~') || room.charAt(0) === ',') {
@@ -132,7 +91,6 @@ exports.commands = {
 			error('failed to reload: ' + sys.inspect(e));
 		}
 	},
-	
 	custom: function(arg, by, room, con) {
 		if (!this.hasRank(by, '~')) return false;
 		// Custom commands can be executed in an arbitrary room using the syntax
@@ -146,7 +104,6 @@ exports.commands = {
 		}
 		this.say(con, tarRoom || room, arg);
 	},
-	
 	js: function(arg, by, room, con) {
 		if (config.excepts.indexOf(toId(by)) === -1) return false;
 		try {
@@ -270,13 +227,11 @@ exports.commands = {
 			this.say(con, room, 'Unknown option: "' + opts[1].trim() + '". Valid settings are: off/disable, +, %, @, &, #, ~, on/enable.');
 		}
 	},
-	
 	tell: 'say',
 	say: function(arg, by, room, con) {
 		if (!this.canUse('say', room, by)) return false;
 		this.say(con, room, stripCommands(arg) + ' (' + by + ' said this)');
 	},
-	
 	joke: function(arg, by, room, con) {
 		if (!this.canUse('joke', room, by)) return false;
 		var self = this;
@@ -298,7 +253,6 @@ exports.commands = {
 		});
 		req.end();
 	},
-	
 	choose: function(arg, by, room, con) {
 		if (arg.indexOf(',') === -1) {
 			var choices = arg.split(' ');
@@ -310,7 +264,6 @@ exports.commands = {
 		var choice = choices[Math.floor(Math.random()*choices.length)];
 		this.say(con, room, ((this.canUse('choose', room, by) || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + stripCommands(choice));
 	},
-	
 	usage: 'usagestats',
 	usagestats: function(arg, by, room, con) {
 		if (this.canUse('usagestats', room, by) || room.charAt(0) === ',') {
@@ -321,7 +274,6 @@ exports.commands = {
 		text += 'http://sim.smogon.com:8080/Stats/2014-03/';
 		this.say(con, room, text);
 	},
-	
 	guia: function(arg, by, room, con) {
 		// this command is a guide for the Spanish room
 		if (!(toId(room) === 'espaol' && config.serverid === 'showdown')) return false;
@@ -332,7 +284,6 @@ exports.commands = {
 		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
 		this.say(con, room, text);
 	},
-	
 	seen: function(arg, by, room, con) {
 		var text = (room.charAt(0) === ',' ? '' : '/pm ' + by + ', ');
 		if (toId(arg) === toId(by)) {
@@ -366,7 +317,6 @@ exports.commands = {
 			self.buzzed = '';
 		}, 7000, con, room, by + ', your time to answer is up!');
 	},
-	
 	reset: function(arg, by, room, con) {
 		if (!this.buzzed || !this.hasRank(by, '%@&#~') || room.charAt(0) === ',') return false;
 		clearTimeout(this.buzzer);
