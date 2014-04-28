@@ -61,7 +61,7 @@ exports.commands = {
 		// Custom commands can be executed in an arbitrary room using the syntax
 		// ".custom [room] command", e.g., to do !data pikachu in the room lobby,
 		// the command would be ".custom [lobby] !data pikachu". However, using
-		// "[" and "]" in the custom command to be executed can mess this up, so 
+		// "[" and "]" in the custom command to be executed can mess this up, so
 		// be careful with them.
 		if (arg.indexOf('[') === 0 && arg.indexOf(']') > -1) {
 			var tarRoom = arg.slice(1, arg.indexOf(']'));
@@ -215,7 +215,7 @@ exports.commands = {
 				this.settings[cmd][room] = settingsLevels[opts[1].trim()];
 				var self = this;
 				this.writeSettings();
-				this.say(con, room, 'The command .'+cmd+' is now ' + 
+				this.say(con, room, 'The command .'+cmd+' is now ' +
 					(settingsLevels[opts[1].trim()] === opts[1].trim() ? ' available for users of rank ' + opts[1].trim() + ' and above.' :
 					(this.settings[cmd][room] ? 'available for all users in this room.' : 'unavailable for use in this room.')))
 				return;
@@ -290,7 +290,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		
+
 		var rand = Math.floor(20 * Math.random()) + 1;
 
 		switch (rand) {
