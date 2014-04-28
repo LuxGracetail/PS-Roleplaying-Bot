@@ -100,7 +100,7 @@ exports.commands = {
 		};
 		var opts = arg.split(',');
 		var cmd = toId(opts[0]);
-		if (!Commands[cmd]) return this.say(con, room, opts[0] + ' is not a valid command.');
+		if (!Commands[cmd]) return this.say(con, room, '.' + opts[0] + ' is not a valid command.');
 		var failsafe = 0;
 		while (!(cmd in settable)) {
 			if (typeof Commands[cmd] === 'string') {
@@ -109,7 +109,7 @@ exports.commands = {
 				if (cmd in settable) {
 					break;
 				} else {
-					this.say(con, room, 'The settings for ' + opts[0] + ' cannot be changed.');
+					this.say(con, room, 'The settings for .' + opts[0] + ' cannot be changed.');
 					return;
 				}
 			} else {
@@ -118,7 +118,7 @@ exports.commands = {
 			}
 			failsafe++;
 			if (failsafe > 5) {
-				this.say(con, room, 'The command "' + opts[0] + '" could not be found.');
+				this.say(con, room, 'The command ".' + opts[0] + '" could not be found.');
 				return;
 			}
 		}
