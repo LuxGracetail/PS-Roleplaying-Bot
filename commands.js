@@ -97,6 +97,7 @@ exports.commands = {
 			buzz: 1,
 			helix: 1,
 			survivor: 1,
+			games: 1,
 			guia: 1
 		};
 		var modOpts = {
@@ -370,6 +371,16 @@ exports.commands = {
 			text += "The list of game types can be found here: http://survivor-ps.weebly.com/themes.html";
 		}
 		this.say(con, room, text);
+	},
+	games: function(arg, by, room, con) {
+		// lists the games for the games room
+		if (!(toId(room) === 'gamecorner' && config.serverid === 'showdown')) return false;
+		var text = '';
+		if (!this.canUse('games', room, by)) {
+			text += '/pm ' + by + ', ';
+		};
+		this.say(con, room, text + 'Game List: 1. Would You Rather, 2. NickGames, 3. Scattegories, 4. Commonyms, 5. Questionnaires, 6. Funarios, 7. Anagrams, 8. Spot the Reference, 9. Pokemath, 10. Liar\'s Dice');
+		this.say(con, room, text + '11. Pun Game, 12. Dice Cup, 13. Who\'s That Pokemon?, 14. Pokemon V Pokemon (BST GAME), 15. Letter Getter, 16. Missing Link, 17. Parameters, 18. Anagrams! More information can be found here: http://psgamecorner.weebly.com/games.html');
 	},
 
 
