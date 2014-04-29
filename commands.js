@@ -124,7 +124,7 @@ exports.commands = {
 				return;
 			} else {
 				this.say(con, room, 'Moderation for ' + toId(opts[1]) + ' in this room is currently ' +
-					(this.settings['modding'][room][toId(opts[1])] ? 'ON' : 'OFF') + '.');
+					(this.settings['modding'][room][toId(opts[1])] === false ? 'OFF' : 'ON') + '.');
 				return;
 			}
 		} else {
@@ -198,8 +198,8 @@ exports.commands = {
 
 		var e = '';
 		arg = toId(arg);
-		if (arg.length > 18) e ='Invalid username: names must be less than 19 characters long';
-		if (!e && !this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = 'Cannot (un)blacklist a user without rank of at least @.';
+		if (arg.length > 18) e ='Invalid username: names must be less than 19 characters long.';
+		if (!e && !this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = config.nick + ' requires rank of @ or higher to (un)blacklist.';
 		if (!e) e = this.blacklistUser(arg, room);
 		if (!e) this.say(con, room, '/roomban ' + arg + ', Blacklisted user');
 		this.say(con, room, (e ? e : 'User "' + arg + '" added to blacklist successfully.'));
@@ -213,7 +213,7 @@ exports.commands = {
 		var e = '';
 		arg = toId(arg);
 		if (arg.length > 18) e ='Invalid username: names must be less than 19 characters long';
-		if (!e && !this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = 'Cannot (un)blacklist a user without rank of at least @.';
+		if (!e && !this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = config.nick + ' requires rank of @ or higher to (un)blacklist.';
 		if (!e) e = this.unblacklistUser(arg, room);
 		if (!e) this.say(con, room, '/roomunban ' + arg);
 		this.say(con, room, (e ? e : 'User "' + arg + '" removed from blacklist successfully.'));
