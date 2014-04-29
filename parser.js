@@ -191,7 +191,7 @@ exports.parse = {
 				var by = spl[2];
 				spl.splice(0, 3);
 				this.processChatData(by, this.room || 'lobby', connection, spl.join('|'));
-				if (this.isBlacklisted(toId(by), room) && this.room) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
+				if (this.room && this.isBlacklisted(toId(by), this.room)) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
 				this.room = '';
 				break;
@@ -209,7 +209,7 @@ exports.parse = {
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
-				if (this.isBlacklisted(toId(by), room) && this.room) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
+				if (this.room && this.isBlacklisted(toId(by), this.room)) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(by, spl[1], (this.room === ''?'lobby':this.room));
 				if (by.substr(1) !== config.nick || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[(this.room === ''?'lobby':this.room)] = by.charAt(0);
