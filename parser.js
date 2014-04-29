@@ -191,6 +191,7 @@ exports.parse = {
 				var by = spl[2];
 				spl.splice(0, 3);
 				this.processChatData(by, this.room || 'lobby', connection, spl.join('|'));
+				if (this.isBlacklisted(toId(by), room) && this.room) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
 				this.room = '';
 				break;
@@ -208,6 +209,7 @@ exports.parse = {
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
+				if (this.isBlacklisted(toId(by), room) && this.room) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(by, spl[1], (this.room === ''?'lobby':this.room));
 				if (by.substr(1) !== config.nick || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[(this.room === ''?'lobby':this.room)] = by.charAt(0);
@@ -278,6 +280,24 @@ exports.parse = {
 			canUse = this.hasRank(user, ranks.substr(ranks.indexOf(this.settings[cmd][room])));
 		}
 		return canUse;
+	},
+	isBlacklisted: function(user, room) {
+		return (this.settings.blacklist && this.settings.blacklist[room] && this.settings.blacklist[room][user]);
+	},
+	blacklistUser: function(user, room) {
+		if (!this.settings['blacklist']) this.settings['blacklist'] = {};
+		if (!this.settings.blacklist[room]) this.settings.blacklist[room] = {};
+
+		if (this.settings.blacklist[room][user]) return 'User "' + user + '" already blacklisted.';
+		this.settings.blacklist[room][user] = true;
+		this.writeSettings();
+		return;
+	},
+	unblacklistUser: function(user, room) {
+		if (!this.isBlacklisted(user, room)) return 'User "' + user + '" not blacklisted.';
+		delete this.settings.blacklist[room][user];
+		this.writeSettings();
+		return;
 	},
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
@@ -392,6 +412,36 @@ exports.parse = {
 		if (!times.length) times.push('0 seconds');
 		return times.join(', ');
 	},
+	writeSettings: (function() {
+		var writing = false;
+		var writePending = false; // whether or not a new write is pending
+		var finishWriting = function() {
+			writing = false;
+			if (writePending) {
+				writePending = false;
+				this.writeSettings();
+			}
+		};
+		return function() {
+			if (writing) {
+				writePending = true;
+				return;
+			}
+			writing = true;
+			var data = JSON.stringify(this.settings);
+			fs.writeFile('settings.json.0', data, function() {
+				// rename is atomic on POSIX, but will throw an error on Windows
+				fs.rename('settings.json.0', 'settings.json', function(err) {
+					if (err) {
+						// This should only happen on Windows.
+						fs.writeFile('settings.json', data, finishWriting);
+						return;
+					}
+					finishWriting();
+				});
+			});
+		};
+	})(),
 	uncacheTree: function(root) {
 		var uncache = [require.resolve(root)];
 		do {

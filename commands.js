@@ -80,46 +80,14 @@ exports.commands = {
 	},
 
 	/**
-	 * General commands
+	 * Room Owner commands
 	 *
-	 * Add custom commands here.
+	 * These commands allow room owners to personalise settings for moderation and command use.
 	 */
 
 	settings: 'set',
 	set: function(arg, by, room, con) {
 		if (!this.hasRank(by, '%@&#~') || room.charAt(0) === ',') return false;
-
-		this.writeSettings = (function() {
-			var writing = false;
-			var writePending = false; // whether or not a new write is pending
-			var finishWriting = function() {
-				writing = false;
-				if (writePending) {
-					writePending = false;
-					self.writeSettings();
-				}
-			};
-			return function() {
-				if (writing) {
-					writePending = true;
-					return;
-				}
-				writing = true;
-				var data = JSON.stringify(self.settings);
-				console.log(data);
-				fs.writeFile('settings.json.0', data, function() {
-					// rename is atomic on POSIX, but will throw an error on Windows
-					fs.rename('settings.json.0', 'settings.json', function(err) {
-						if (err) {
-							// This should only happen on Windows.
-							fs.writeFile('settings.json', data, finishWriting);
-							return;
-						}
-						finishWriting();
-					});
-				});
-			};
-		})();
 
 		var settable = {
 			say: 1,
@@ -151,7 +119,6 @@ exports.commands = {
 				if (!(toId(opts[2]) in {on: 1, off: 1}))  return this.say(con, room, 'Incorrect command: correct syntax is .set mod, [' +
 					Object.keys(modOpts).join('/') + '](, [on/off])');
 				this.settings['modding'][room][toId(opts[1])] = (toId(opts[2]) === 'on' ? true : false);
-				var self = this;
 				this.writeSettings();
 				this.say(con, room, 'Moderation for ' + toId(opts[1]) + ' in this room is now ' + toId(opts[2]).toUpperCase() + '.');
 				return;
@@ -213,7 +180,6 @@ exports.commands = {
 				if (!this.hasRank(by, '#~')) return false;
 				if (!this.settings[cmd]) this.settings[cmd] = {};
 				this.settings[cmd][room] = settingsLevels[opts[1].trim()];
-				var self = this;
 				this.writeSettings();
 				this.say(con, room, 'The command .'+cmd+' is now ' +
 					(settingsLevels[opts[1].trim()] === opts[1].trim() ? ' available for users of rank ' + opts[1].trim() + ' and above.' :
@@ -224,6 +190,41 @@ exports.commands = {
 			}
 		}
 	},
+	autoban: 'blacklist',
+	ban: 'blacklist',
+	ab: 'blacklist',
+	blacklist: function(arg, by, room, con) {
+		if (!this.hasRank(by, '#~') || room.charAt(0) === ',') return false;
+
+		var e = '';
+		arg = toId(arg);
+		if (arg.length > 18) e ='Invalid username: names must be less than 19 characters long';
+		if (!this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = 'Cannot (un)blacklist a user without rank of at least @.';
+		e = this.blacklistUser(arg, room);
+		if (!e) this.say(con, room, '/roomban ' + arg + ', Blacklisted user');
+		this.say(con, room, (e ? e : 'User "' + arg + '" added to blacklist successfully.'));
+	},
+	unautoban: 'unblacklist',
+	unban: 'unblacklist',
+	unab: 'unblacklist',
+	unblacklist: function(arg, by, room, con) {
+		if (!this.hasRank(by, '#~') || room.charAt(0) === ',') return false;
+
+		var e = '';
+		arg = toId(arg);
+		if (arg.length > 18) e ='Invalid username: names must be less than 19 characters long';
+		if (!this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = 'Cannot (un)blacklist a user without rank of at least @.';
+		e = this.unblacklistUser(arg, room);
+		if (!e) this.say(con, room, '/roomunban ' + arg);
+		this.say(con, room, (e ? e : 'User "' + arg + '" removed from blacklist successfully.'));
+	},
+
+	/**
+	 * General commands
+	 *
+	 * Add custom commands here.
+	 */
+
 	tell: 'say',
 	say: function(arg, by, room, con) {
 		if (!this.canUse('say', room, by)) return false;
