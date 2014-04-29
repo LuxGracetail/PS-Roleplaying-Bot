@@ -363,8 +363,10 @@ exports.parse = {
 		} else if (type === 'n') {
 			msg += 'changing nick to ' + ('+%@&#~'.indexOf(detail.trim().charAt(0)) === -1 ? detail.trim() : detail.trim().substr(1)) + '.';
 		}
-		this.chatData[user].lastSeen = msg;
-		this.chatData[user].seenAt = time;
+		if (msg) {
+			this.chatData[user].lastSeen = msg;
+			this.chatData[user].seenAt = time;
+		}
 	},
 	getTimeAgo: function(time) {
 		time = Date.now() - time;
