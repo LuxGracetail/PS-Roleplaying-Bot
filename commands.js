@@ -219,6 +219,23 @@ exports.commands = {
 		if (!e) this.say(con, room, '/roomunban ' + arg);
 		this.say(con, room, (e ? e : 'User "' + arg + '" removed from blacklist successfully.'));
 	},
+	viewbans: 'viewblacklist',
+	vab: 'viewblacklist',
+	viewautobans: 'viewblacklist',
+	viewblacklist: function(arg, by, room, con) {
+		if (!this.hasRank(by, '@&#~') || room.charAt(0) === ',') return false;
+
+		var text = '';
+		if (!this.settings.blacklist || !this.settings.blacklist[room]) {
+			text = 'No users are blacklisted in this room.';
+		} else {
+			var nickList = Object.keys(this.settings.blacklist[room]);
+			text = 'The following users are blacklisted: ' + nickList.join(', ');
+			if (text.length > 300) text = 'Too many users to list.';
+			if (!nickList.length) text = 'No users are blacklisted in this room.';
+		}
+		this.say(con, room, text);
+	},
 	banword: function(arg, by, room, con) {
 		if (!this.hasRank(by, '~')) return false;
 
