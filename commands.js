@@ -234,7 +234,7 @@ exports.commands = {
 			if (text.length > 300) text = 'Too many users to list.';
 			if (!nickList.length) text = 'No users are blacklisted in this room.';
 		}
-		this.say(con, room, text);
+		this.say(con, room, '/pm ' + by + ', ' + text);
 	},
 	banword: function(arg, by, room, con) {
 		if (!this.hasRank(by, '~')) return false;
