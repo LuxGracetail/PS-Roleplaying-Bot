@@ -316,6 +316,13 @@ exports.parse = {
 			var pointVal = 0;
 			var muteMessage = '';
 
+			for (var i in this.settings.bannedwords) {
+				if (msg.toLowerCase().indexOf(i) > -1) {
+					pointVal = 3;
+					muteMessage = ', Automated response: your message contained a banned phrase';
+				}
+			}
+
 			var snenMatch = msg.toLowerCase().match(/snen/g);
 			if ((useDefault || this.settings['modding'][room]['snen'] !== false) && snenMatch && snenMatch.length > 6) {
 				if (pointVal < 4) {

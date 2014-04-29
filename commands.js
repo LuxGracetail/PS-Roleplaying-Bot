@@ -218,6 +218,22 @@ exports.commands = {
 		if (!e) this.say(con, room, '/roomunban ' + arg);
 		this.say(con, room, (e ? e : 'User "' + arg + '" removed from blacklist successfully.'));
 	},
+	banword: function(arg, by, room, con) {
+		if (!this.hasRank(by, '~')) return false;
+
+		if (!this.settings['bannedwords']) this.settings['bannedwords'] = {};
+		this.settings['bannedwords'][arg.trim().toLowerCase()] = 1;
+		this.writeSettings();
+		this.say(con, room, 'Word "' + arg.trim().toLowerCase() + '" banned.');
+	},
+	unbanword: function(arg, by, room, con) {
+		if (!this.hasRank(by, '~')) return false;
+
+		if (!this.settings['bannedwords']) this.settings['bannedwords'] = {};
+		delete this.settings['bannedwords'][arg.trim().toLowerCase()];
+		this.writeSettings();
+		this.say(con, room, 'Word "' + arg.trim().toLowerCase() + '" unbanned.');
+	},
 
 	/**
 	 * General commands
