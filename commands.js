@@ -199,8 +199,8 @@ exports.commands = {
 		var e = '';
 		arg = toId(arg);
 		if (arg.length > 18) e ='Invalid username: names must be less than 19 characters long';
-		if (!this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = 'Cannot (un)blacklist a user without rank of at least @.';
-		e = this.blacklistUser(arg, room);
+		if (!e && !this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = 'Cannot (un)blacklist a user without rank of at least @.';
+		if (!e) e = this.blacklistUser(arg, room);
 		if (!e) this.say(con, room, '/roomban ' + arg + ', Blacklisted user');
 		this.say(con, room, (e ? e : 'User "' + arg + '" added to blacklist successfully.'));
 	},
@@ -213,8 +213,8 @@ exports.commands = {
 		var e = '';
 		arg = toId(arg);
 		if (arg.length > 18) e ='Invalid username: names must be less than 19 characters long';
-		if (!this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = 'Cannot (un)blacklist a user without rank of at least @.';
-		e = this.unblacklistUser(arg, room);
+		if (!e && !this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = 'Cannot (un)blacklist a user without rank of at least @.';
+		if (!e) e = this.unblacklistUser(arg, room);
 		if (!e) this.say(con, room, '/roomunban ' + arg);
 		this.say(con, room, (e ? e : 'User "' + arg + '" removed from blacklist successfully.'));
 	},
