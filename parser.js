@@ -12,6 +12,12 @@ var sys = require('sys');
 var https = require('https');
 var url = require('url');
 
+const ACTION_COOLDOWN = 3*1000;
+const FLOOD_MESSAGE_NUM = 5;
+const FLOOD_MESSAGE_TIME = 6*1000;
+const MIN_CAPS_LENGTH = 18;
+const MIN_CAPS_PROPORTION = 0.8;
+
 settings = {};
 try {
 	settings = JSON.parse(fs.readFileSync('settings.json'));
@@ -318,7 +324,7 @@ exports.parse = {
 
 			for (var i in this.settings.bannedwords) {
 				if (msg.toLowerCase().indexOf(i) > -1) {
-					pointVal = 3;
+					pointVal = 2;
 					muteMessage = ', Automated response: your message contained a banned phrase';
 				}
 			}
@@ -330,7 +336,7 @@ exports.parse = {
 					pointVal = (room === 'lobby') ? 5 : 4;
 				}
 			}
-			var isFlooding = (this.chatData[user][room].times.length >= 5 && (Date.now() - this.chatData[user][room].times[this.chatData[user][room].times.length - 5]) < 6*1000);
+			var isFlooding = (this.chatData[user][room].times.length >= FLOOD_MESSAGE_NUM && (Date.now() - this.chatData[user][room].times[this.chatData[user][room].times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME);
 			if ((useDefault || this.settings['modding'][room]['flooding'] !== 0) && isFlooding) {
 				if (pointVal < 2) {
 					pointVal = 2;
@@ -338,7 +344,7 @@ exports.parse = {
 				}
 			}
 			var capsMatch = msg.replace(/[^A-Za-z]/g, '').match(/[A-Z]/g);
-			if ((useDefault || this.settings['modding'][room]['caps'] !== 0) && capsMatch && toId(msg).length > 18 && (capsMatch.length >= Math.floor(toId(msg).length * 0.8))) {
+			if ((useDefault || this.settings['modding'][room]['caps'] !== 0) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= Math.floor(toId(msg).length * MIN_CAPS_PROPORTION))) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: caps';
@@ -352,7 +358,7 @@ exports.parse = {
 				}
 			}
 
-			if (pointVal > 0 && !(Date.now() - this.chatData[user][room].lastAction < 3*1000)) {
+			if (pointVal > 0 && !(Date.now() - this.chatData[user][room].lastAction < ACTION_COOLDOWN)) {
 				var cmd = 'mute';
 				if (this.chatData[user][room].points >= pointVal && pointVal < 4) {
 					this.chatData[user][room].points++;
