@@ -289,7 +289,7 @@ exports.parse = {
 		if (!this.settings.blacklist[room]) this.settings.blacklist[room] = {};
 
 		if (this.settings.blacklist[room][user]) return 'User "' + user + '" already blacklisted.';
-		this.settings.blacklist[room][user] = true;
+		this.settings.blacklist[room][user] = 1;
 		this.writeSettings();
 		return;
 	},
@@ -324,28 +324,28 @@ exports.parse = {
 			}
 
 			var snenMatch = msg.toLowerCase().match(/snen/g);
-			if ((useDefault || this.settings['modding'][room]['snen'] !== false) && snenMatch && snenMatch.length > 6) {
+			if ((useDefault || this.settings['modding'][room]['snen'] !== 0) && snenMatch && snenMatch.length > 6) {
 				if (pointVal < 4) {
 					muteMessage = ', Automated response: possible "snen" spammer';
 					pointVal = (room === 'lobby') ? 5 : 4;
 				}
 			}
 			var isFlooding = (this.chatData[user][room].times.length >= 5 && (Date.now() - this.chatData[user][room].times[this.chatData[user][room].times.length - 5]) < 6*1000);
-			if ((useDefault || this.settings['modding'][room]['flooding'] !== false) && isFlooding) {
+			if ((useDefault || this.settings['modding'][room]['flooding'] !== 0) && isFlooding) {
 				if (pointVal < 2) {
 					pointVal = 2;
 					muteMessage = ', Automated response: flooding';
 				}
 			}
 			var capsMatch = msg.replace(/[^A-Za-z]/g, '').match(/[A-Z]/g);
-			if ((useDefault || this.settings['modding'][room]['caps'] !== false) && capsMatch && toId(msg).length > 18 && (capsMatch.length >= Math.floor(toId(msg).length * 0.8))) {
+			if ((useDefault || this.settings['modding'][room]['caps'] !== 0) && capsMatch && toId(msg).length > 18 && (capsMatch.length >= Math.floor(toId(msg).length * 0.8))) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: caps';
 				}
 			}
 			var stretchMatch = msg.toLowerCase().match(/(.)\1{7,}/g); // matches the same character 8 or more times in a row
-			if ((useDefault || this.settings['modding'][room]['stretching'] !== false) && stretchMatch) {
+			if ((useDefault || this.settings['modding'][room]['stretching'] !== 0) && stretchMatch) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: stretching';

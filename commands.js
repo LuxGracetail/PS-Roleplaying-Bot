@@ -120,13 +120,17 @@ exports.commands = {
 				if (!this.hasRank(by, '#~')) return false;
 				if (!(toId(opts[2]) in {on: 1, off: 1}))  return this.say(con, room, 'Incorrect command: correct syntax is .set mod, [' +
 					Object.keys(modOpts).join('/') + '](, [on/off])');
-				this.settings['modding'][room][toId(opts[1])] = (toId(opts[2]) === 'on' ? true : false);
+				if (toId(opts[2]) === 'off') {
+					this.settings['modding'][room][toId(opts[1])] = 0;
+				} else {
+					delete this.settings['modding'][room][toId(opts[1])];
+				}
 				this.writeSettings();
 				this.say(con, room, 'Moderation for ' + toId(opts[1]) + ' in this room is now ' + toId(opts[2]).toUpperCase() + '.');
 				return;
 			} else {
 				this.say(con, room, 'Moderation for ' + toId(opts[1]) + ' in this room is currently ' +
-					(this.settings['modding'][room][toId(opts[1])] === false ? 'OFF' : 'ON') + '.');
+					(this.settings['modding'][room][toId(opts[1])] === 0 ? 'OFF' : 'ON') + '.');
 				return;
 			}
 		} else {
