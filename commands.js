@@ -99,6 +99,7 @@ exports.commands = {
 			survivor: 1,
 			games: 1,
 			wifi: 1,
+			monotype: 1,
 			guia: 1
 		};
 		var modOpts = {
@@ -393,6 +394,28 @@ exports.commands = {
 			lists: 'Major and minor list compilation: http://tinyurl.com/WifiSheets'
 		};
 		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html');
+		this.say(con, room, text);
+	},
+	mono: 'monotype',
+	monotype: function(arg, by, room, con) {
+		// links and info for the monotype room
+		if (!(toId(room) === 'monotype' && config.serverid === 'showdown')) return false;
+		var text = '';
+		if (!this.canUse('monotype', room, by)) {
+			text += '/pm ' + by + ', ';
+		}
+		var messages = {
+			forums: 'The monotype room\'s forums can be found here: http://psmonotypeforum.createaforum.com/index.php',
+			plug: 'The monotype room\'s plug can be found here: http://plug.dj/monotype-3-am-club/',
+			rules: 'The monotype room\'s rules can be found here: http://themonotypeleague.weebly.com/rules.html',
+			site: 'The monotype room\'s site can be found here: http://themonotypeleague.weebly.com/',
+			gym: 'Information about the monotype room\'s Gym Leaders can be found here: http://themonotypeleague.weebly.com/gym-leaders.html',
+			e5: 'Information about the monotype room\'s Elite Five can be found here: http://themonotypeleague.weebly.com/elite-five.html',
+			champ: 'Information about the monotype room\'s Champion can be found here: http://themonotypeleague.weebly.com/champion.html',
+			halloffame: 'The Hall of Fame can be found here: http://themonotypeleague.weebly.com/hall-of-fame.html',
+			events: 'Information on upcoming events can be found here: http://themonotypeleague.weebly.com/events.html'
+		};
+		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General information can be found here: http://themonotypeleague.weebly.com/') : 'Welcome to the monotype room! Please visit our site to find more information. The site can be found here: http://themonotypeleague.weebly.com/');
 		this.say(con, room, text);
 	},
 	survivor: function(arg, by, room, con) {
