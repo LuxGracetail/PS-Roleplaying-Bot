@@ -25,7 +25,7 @@ exports.commands = {
 	},
 	help: 'guide',
 	guide: function(arg, by, room, con) {
-		if (this.hasRank(by, '+%@&#~') || room.charAt(0) === ',') {
+		if (this.hasRank(by, '#~') || room.charAt(0) === ',') {
 			var text = '';
 		} else {
 			var text = '/pm ' + by + ', ';
