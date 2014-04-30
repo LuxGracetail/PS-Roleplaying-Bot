@@ -383,12 +383,13 @@ exports.commands = {
 			scammers: 'List of known scammers: http://tiny.cc/scammerreport',
 			cloners: 'List of approved cloners: http://goo.gl/WO8Mf4',
 			tips: 'Scamming prevention tips: http://pstradingroom.weebly.com/scamming-prevention-tips.html',
+			breeders: 'List of breeders: http://tinyurl.com/WiFIBReedingBrigade',
 			signup: 'Breeders Sign Up: http://tinyurl.com/GetBreeding',
 			bans: 'Ban appeals: http://pstradingroom.weebly.com/ban-appeals.html',
 			banappeals: 'Ban appeals: http://pstradingroom.weebly.com/ban-appeals.html',
 			lists: 'Major and minor list compilation: http://tinyurl.com/WifiSheets'
 		};
-		text += messages[toId(arg)] || 'Links can be found here: http://pstradingroom.weebly.com/links.html';
+		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html');
 		this.say(con, room, text);
 	},
 	survivor: function(arg, by, room, con) {
