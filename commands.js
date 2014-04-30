@@ -182,17 +182,16 @@ exports.commands = {
 				}
 				this.say(con, room, msg);
 				return;
-			} else if (opts[1].trim() in settingsLevels) {
-				if (!this.hasRank(by, '#~')) return false;
-				if (!this.settings[cmd]) this.settings[cmd] = {};
-				this.settings[cmd][room] = settingsLevels[opts[1].trim()];
-				this.writeSettings();
-				this.say(con, room, 'The command .'+cmd+' is now ' +
-					(settingsLevels[opts[1].trim()] === opts[1].trim() ? ' available for users of rank ' + opts[1].trim() + ' and above.' :
-					(this.settings[cmd][room] ? 'available for all users in this room.' : 'unavailable for use in this room.')))
-				return;
 			} else {
-				this.say(con, room, 'Unknown option: "' + opts[1].trim() + '". Valid settings are: off/disable, +, %, @, &, #, ~, on/enable.');
+				if (!this.hasRank(by, '#~')) return false;
+				var newRank = opts[1].trim();
+				if (!(newRank in settingsLevels)) return this.say(con, room, 'Unknown option: "' + newRank + '". Valid settings are: off/disable, +, %, @, &, #, ~, on/enable.');
+				if (!this.settings[cmd]) this.settings[cmd] = {};
+				this.settings[cmd][room] = settingsLevels[newRank];
+				this.writeSettings();
+				this.say(con, room, 'The command .' + cmd + ' is now ' +
+					(settingsLevels[newRank] === newRank ? ' available for users of rank ' + newRank + ' and above.' :
+					(this.settings[cmd][room] ? 'available for all users in this room.' : 'unavailable for use in this room.')))
 			}
 		}
 	},
