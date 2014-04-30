@@ -98,6 +98,7 @@ exports.commands = {
 			helix: 1,
 			survivor: 1,
 			games: 1,
+			wifi: 1,
 			guia: 1
 		};
 		var modOpts = {
@@ -366,6 +367,28 @@ exports.commands = {
 			text += '/pm ' + by + ', ';
 		}
 		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
+		this.say(con, room, text);
+	},
+	wifi: function(arg, by, room, con) {
+		// links to the 
+		if (!(toId(room) === 'wifi' && config.serverid === 'showdown')) return false;
+		var text = '';
+		if (!this.canUse('wifi', room, by)) {
+			text += '/pm ' + by + ', ';
+		}
+		var messages = {
+			rules: 'The rules for the Wi-Fi room can be found here: http://pstradingroom.weebly.com/rules.html',
+			faq: 'Wi-Fi room FAQs: http://pstradingroom.weebly.com/faqs.html',
+			faqs: 'Wi-Fi room FAQs: http://pstradingroom.weebly.com/faqs.html',
+			scammers: 'List of known scammers: http://tiny.cc/scammerreport',
+			cloners: 'List of approved cloners: http://goo.gl/WO8Mf4',
+			tips: 'Scamming prevention tips: http://pstradingroom.weebly.com/scamming-prevention-tips.html',
+			signup: 'Breeders Sign Up: http://tinyurl.com/GetBreeding',
+			bans: 'Ban appeals: http://pstradingroom.weebly.com/ban-appeals.html',
+			banappeals: 'Ban appeals: http://pstradingroom.weebly.com/ban-appeals.html',
+			lists: 'Major and minor list compilation: http://tinyurl.com/WifiSheets'
+		};
+		text += messages[toId(arg)] || 'Links can be found here: http://pstradingroom.weebly.com/links.html';
 		this.say(con, room, text);
 	},
 	survivor: function(arg, by, room, con) {
