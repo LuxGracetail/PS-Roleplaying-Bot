@@ -408,15 +408,11 @@ exports.commands = {
 		var messages = {
 			forums: 'The monotype room\'s forums can be found here: http://psmonotypeforum.createaforum.com/index.php',
 			plug: 'The monotype room\'s plug can be found here: http://plug.dj/monotype-3-am-club/',
-			rules: 'The monotype room\'s rules can be found here: http://themonotypeleague.weebly.com/rules.html',
-			site: 'The monotype room\'s site can be found here: http://themonotypeleague.weebly.com/',
-			gym: 'Information about the monotype room\'s Gym Leaders can be found here: http://themonotypeleague.weebly.com/gym-leaders.html',
-			e5: 'Information about the monotype room\'s Elite Five can be found here: http://themonotypeleague.weebly.com/elite-five.html',
-			champ: 'Information about the monotype room\'s Champion can be found here: http://themonotypeleague.weebly.com/champion.html',
-			halloffame: 'The Hall of Fame can be found here: http://themonotypeleague.weebly.com/hall-of-fame.html',
-			events: 'Information on upcoming events can be found here: http://themonotypeleague.weebly.com/events.html'
+			rules: 'The monotype room\'s rules can be found here: http://psmonotype.wix.com/psmono#!rules/cnnz',
+			site: 'The monotype room\'s site can be found here: http://www.psmonotype.wix.com/psmono',
+			league: 'Information on the Monotype League can be found here: http://themonotypeleague.weebly.com/'
 		};
-		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General information can be found here: http://themonotypeleague.weebly.com/') : 'Welcome to the monotype room! Please visit our site to find more information. The site can be found here: http://themonotypeleague.weebly.com/');
+		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General information can be found here: http://www.psmonotype.wix.com/psmono') : 'Welcome to the monotype room! Please visit our site to find more information. The site can be found here: http://www.psmonotype.wix.com/psmono');
 		this.say(con, room, text);
 	},
 	survivor: function(arg, by, room, con) {
