@@ -333,11 +333,12 @@ exports.parse = {
 				}
 			}
 			// moderation for banned words
-			if (useDefault || this.settings['modding'][room]['bannedwords'] !== 0) {
+			if (useDefault || this.settings['modding'][room]['bannedwords'] !== 0 && pointVal < 2) {
 				for (var i in this.settings.bannedwords) {
 					if (msg.toLowerCase().indexOf(i) > -1) {
 						pointVal = 2;
 						muteMessage = ', Automated response: your message contained a banned phrase';
+						break;
 					}
 				}
 			}
