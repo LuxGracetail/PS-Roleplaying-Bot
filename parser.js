@@ -312,7 +312,7 @@ exports.parse = {
 		user = toId(user);
 		if (room.charAt(0) === ',' || user === toId(config.nick)) return;
 		room = toId(room);
-		msg = msg.trim().replace(/ +/g, " ");
+		msg = msg.trim().replace(/ +/g, " "); // removes extra spaces so it doesn't trigger stretching
 		this.updateSeen(user, 'c', room);
 		if (!this.chatData[user][room]) this.chatData[user][room] = {times:[], points:0, lastAction:0};
 
@@ -324,13 +324,7 @@ exports.parse = {
 			var pointVal = 0;
 			var muteMessage = '';
 
-			for (var i in this.settings.bannedwords) {
-				if (msg.toLowerCase().indexOf(i) > -1) {
-					pointVal = 2;
-					muteMessage = ', Automated response: your message contained a banned phrase';
-				}
-			}
-
+			// moderation for spamming "snen" multiple times on a line (a la the snen spammer)
 			var snenMatch = msg.toLowerCase().match(/snen/g);
 			if ((useDefault || this.settings['modding'][room]['snen'] !== 0) && snenMatch && snenMatch.length > 6) {
 				if (pointVal < 4) {
@@ -338,6 +332,16 @@ exports.parse = {
 					pointVal = (room === 'lobby') ? 5 : 4;
 				}
 			}
+			// moderation for banned words
+			if (useDefault || this.settings['modding'][room]['bannedwords'] !== 0) {
+				for (var i in this.settings.bannedwords) {
+					if (msg.toLowerCase().indexOf(i) > -1) {
+						pointVal = 2;
+						muteMessage = ', Automated response: your message contained a banned phrase';
+					}
+				}
+			}
+			// moderation for flooding (more than x lines in y seconds)
 			var isFlooding = (this.chatData[user][room].times.length >= FLOOD_MESSAGE_NUM && (Date.now() - this.chatData[user][room].times[this.chatData[user][room].times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME);
 			if ((useDefault || this.settings['modding'][room]['flooding'] !== 0) && isFlooding) {
 				if (pointVal < 2) {
@@ -345,6 +349,7 @@ exports.parse = {
 					muteMessage = ', Automated response: flooding';
 				}
 			}
+			// moderation for caps (over x% of the letters in a line of y characters are capital)
 			var capsMatch = msg.replace(/[^A-Za-z]/g, '').match(/[A-Z]/g);
 			if ((useDefault || this.settings['modding'][room]['caps'] !== 0) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= Math.floor(toId(msg).length * MIN_CAPS_PROPORTION))) {
 				if (pointVal < 1) {
@@ -352,6 +357,7 @@ exports.parse = {
 					muteMessage = ', Automated response: caps';
 				}
 			}
+			// moderation for stretching (over x consecutive characters in the message are the same)
 			var stretchMatch = msg.toLowerCase().match(/(.)\1{7,}/g); // matches the same character 8 or more times in a row
 			if ((useDefault || this.settings['modding'][room]['stretching'] !== 0) && stretchMatch) {
 				if (pointVal < 1) {
@@ -362,20 +368,23 @@ exports.parse = {
 
 			if (pointVal > 0 && !(Date.now() - this.chatData[user][room].lastAction < ACTION_COOLDOWN)) {
 				var cmd = 'mute';
+				// defaults to the next punishment in config.punishVals instead of repeating the same action (so a second warn-worthy
+				// offence would result in a mute instead of a warn, and the third an hourmute, etc)
 				if (this.chatData[user][room].points >= pointVal && pointVal < 4) {
 					this.chatData[user][room].points++;
 					cmd = config.punishvals[this.chatData[user][room].points] || cmd;
-				} else {
+				} else { // if the action hasn't been done before (is worth more points) it will be the one picked
 					cmd = config.punishvals[pointVal] || cmd;
-					this.chatData[user][room].points = pointVal;
+					this.chatData[user][room].points = pointVal; // next action will be one level higher than this one (in most cases)
 				}
-				if (config.privaterooms.indexOf(room) >= 0 && cmd === 'warn') cmd = 'mute';
+				if (config.privaterooms.indexOf(room) >= 0 && cmd === 'warn') cmd = 'mute'; // can't warn in private rooms
+				// if the bot has % and not @, it will default to hourmuting as its highest level of punishment instead of roombanning
 				if (this.chatData[user][room].points >= 4 && !this.hasRank(this.ranks[room] || ' ', '@&#~')) cmd = 'hourmute';
-				if (this.chatData[user].zeroTol > 4) {
+				if (this.chatData[user].zeroTol > 4) { // if zero tolerance users break a rule they get an instant roomban or hourmute
 					muteMessage = ', Automated response: zero tolerance user';
 					cmd = this.hasRank(this.ranks[room] || ' ', '@&#~') ? 'roomban' : 'hourmute';
 				}
-				if (this.chatData[user][room].points >= 2) this.chatData[user].zeroTol++;
+				if (this.chatData[user][room].points >= 2) this.chatData[user].zeroTol++; // getting muted or higher increases your zero tolerance level (warns do not)
 				this.chatData[user][room].lastAction = Date.now();
 				this.say(connection, room, '/' + cmd + ' ' + user + muteMessage);
 			}
