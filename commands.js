@@ -100,6 +100,7 @@ exports.commands = {
 			games: 1,
 			wifi: 1,
 			monotype: 1,
+			blacklist: 1,
 			guia: 1
 		};
 		var modOpts = {
@@ -201,7 +202,7 @@ exports.commands = {
 	ban: 'blacklist',
 	ab: 'blacklist',
 	blacklist: function(arg, by, room, con) {
-		if (!this.hasRank(by, '#~') || room.charAt(0) === ',') return false;
+		if (!this.canUse('blacklist', room, user) || room.charAt(0) === ',') return false;
 
 		var e = '';
 		arg = toId(arg);
@@ -215,7 +216,7 @@ exports.commands = {
 	unban: 'unblacklist',
 	unab: 'unblacklist',
 	unblacklist: function(arg, by, room, con) {
-		if (!this.hasRank(by, '#~') || room.charAt(0) === ',') return false;
+		if (!this.canUse('blacklist', room, user) || room.charAt(0) === ',') return false;
 
 		var e = '';
 		arg = toId(arg);
@@ -229,7 +230,7 @@ exports.commands = {
 	vab: 'viewblacklist',
 	viewautobans: 'viewblacklist',
 	viewblacklist: function(arg, by, room, con) {
-		if (!this.hasRank(by, '@&#~') || room.charAt(0) === ',') return false;
+		if (!this.canUse('blacklist', room, user) || room.charAt(0) === ',') return false;
 
 		var text = '';
 		if (!this.settings.blacklist || !this.settings.blacklist[room]) {

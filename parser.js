@@ -281,7 +281,7 @@ exports.parse = {
 		var canUse = false;
 		var ranks = ' +%@&#~';
 		if (!this.settings[cmd] || !(room in this.settings[cmd])) {
-			canUse = this.hasRank(user, ranks.substr(ranks.indexOf(config.defaultrank)));
+			canUse = this.hasRank(user, ranks.substr(ranks.indexOf(cmd === 'blacklist' ? '#' : config.defaultrank)));
 		} else if (this.settings[cmd][room] === true) {
 			canUse = true;
 		} else if (ranks.indexOf(this.settings[cmd][room]) > -1) {
@@ -451,6 +451,7 @@ exports.parse = {
 			if (writing) {
 				writePending = true;
 				return;
+
 			}
 			writing = true;
 			var data = JSON.stringify(this.settings);
