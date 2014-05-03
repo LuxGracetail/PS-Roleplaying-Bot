@@ -100,7 +100,7 @@ exports.commands = {
 			games: 1,
 			wifi: 1,
 			monotype: 1,
-			blacklist: 1,
+			bl: 1, // blacklist
 			guia: 1
 		};
 		var modOpts = {
