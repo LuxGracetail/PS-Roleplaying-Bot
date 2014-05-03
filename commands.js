@@ -100,7 +100,7 @@ exports.commands = {
 			games: 1,
 			wifi: 1,
 			monotype: 1,
-			bl: 1, // blacklist
+			autoban: 1,
 			guia: 1
 		};
 		var modOpts = {
@@ -175,7 +175,7 @@ exports.commands = {
 			if (!opts[1] || !opts[1].trim()) {
 				var msg = '';
 				if (!this.settings[cmd] || (!this.settings[cmd][room] && this.settings[cmd][room] !== false)) {
-					msg = '.' + cmd + ' is available for users of rank ' + config.defaultrank + ' and above.';
+					msg = '.' + cmd + ' is available for users of rank ' + (cmd === 'autoban' ? '#' : config.defaultrank) + ' and above.';
 				} else if (this.settings[cmd][room] in settingsLevels) {
 					msg = '.' + cmd + ' is available for users of rank ' + this.settings[cmd][room] + ' and above.';
 				} else if (this.settings[cmd][room] === true) {
@@ -198,11 +198,11 @@ exports.commands = {
 			}
 		}
 	},
-	autoban: 'blacklist',
-	ban: 'blacklist',
-	ab: 'blacklist',
-	blacklist: function(arg, by, room, con) {
-		if (!this.canUse('bl', room, by) || room.charAt(0) === ',') return false;
+	blacklist: 'autoban',
+	ban: 'autoban',
+	ab: 'autoban',
+	autoban: function(arg, by, room, con) {
+		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
 		if (!this.hasRank(this.ranks[toId(room)], '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
 		arg = arg.split(',');
@@ -233,11 +233,11 @@ exports.commands = {
 		if (illegalNick.length) text += 'All ' + (text.length ? 'other ' : '') + 'users had illegal nicks and were not blacklisted.';
 		this.say(con, room, text);
 	},
-	unautoban: 'unblacklist',
-	unban: 'unblacklist',
-	unab: 'unblacklist',
-	unblacklist: function(arg, by, room, con) {
-		if (!this.canUse('bl', room, by) || room.charAt(0) === ',') return false;
+	unblacklist: 'unautoban',
+	unban: 'unautoban',
+	unab: 'unautoban',
+	unautoban: function(arg, by, room, con) {
+		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
 		if (!this.hasRank(this.ranks[toId(room)], '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
 		arg = arg.split(',');
