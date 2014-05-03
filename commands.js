@@ -202,35 +202,75 @@ exports.commands = {
 	ban: 'blacklist',
 	ab: 'blacklist',
 	blacklist: function(arg, by, room, con) {
-		if (!this.canUse('blacklist', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('bl', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[toId(room)], '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
-		var e = '';
-		arg = toId(arg);
-		if (arg.length > 18) e ='Invalid username: names must be less than 19 characters long.';
-		if (!e && !this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = config.nick + ' requires rank of @ or higher to (un)blacklist.';
-		if (!e) e = this.blacklistUser(arg, room);
-		if (!e) this.say(con, room, '/roomban ' + arg + ', Blacklisted user');
-		this.say(con, room, (e ? e : 'User "' + arg + '" added to blacklist successfully.'));
+		arg = arg.split(',');
+		var added = [];
+		var illegalNick = [];
+		var alreadyAdded = [];
+		if (!arg.length || (arg.length === 1 && !arg[0].trim().length)) return this.say(con, room, 'You must specify at least one user to blacklist.');
+		for (var i = 0; i < arg.length; i++) {
+			var tarUser = toId(arg[i]);
+			if (tarUser.length < 1 || tarUser.length > 18) {
+				illegalNick.push(tarUser);
+				continue;
+			}
+			if (!this.blacklistUser(tarUser, room)) {
+				alreadyAdded.push(tarUser);
+				continue;
+			}
+			this.say(con, room, '/roomban ' + tarUser + ', Blacklisted user');
+			added.push(tarUser);
+		}
+
+		var text = '';
+		if (added.length) {
+			text += 'User(s) "' + added.join('", "') + '" added to blacklist successfully. ';
+			this.writeSettings();
+		}
+		if (alreadyAdded.length) text += 'User(s) "' + alreadyAdded.join('", "') + '" already present in blacklist. ';
+		if (illegalNick.length) text += 'All ' + (text.length ? 'other ' : '') + 'users had illegal nicks and were not blacklisted.';
+		this.say(con, room, text);
 	},
 	unautoban: 'unblacklist',
 	unban: 'unblacklist',
 	unab: 'unblacklist',
 	unblacklist: function(arg, by, room, con) {
-		if (!this.canUse('blacklist', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('bl', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[toId(room)], '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
-		var e = '';
-		arg = toId(arg);
-		if (arg.length > 18) e ='Invalid username: names must be less than 19 characters long';
-		if (!e && !this.hasRank(this.ranks[toId(room)] + config.nick, '@&#~')) e = config.nick + ' requires rank of @ or higher to (un)blacklist.';
-		if (!e) e = this.unblacklistUser(arg, room);
-		if (!e) this.say(con, room, '/roomunban ' + arg);
-		this.say(con, room, (e ? e : 'User "' + arg + '" removed from blacklist successfully.'));
+		arg = arg.split(',');
+		var removed = [];
+		var notRemoved = [];
+		if (!arg.length || (arg.length === 1 && !arg[0].trim().length)) return this.say(con, room, 'You must specify at least one user to unblacklist.');
+		for (var i = 0; i < arg.length; i++) {
+			var tarUser = toId(arg[i]);
+			if (tarUser.length < 1 || tarUser.length > 18) {
+				notRemoved.push(tarUser);
+				continue;
+			}
+			if (!this.unblacklistUser(tarUser, room)) {
+				notRemoved.push(tarUser);
+				continue;
+			}
+			this.say(con, room, '/roomunban ' + tarUser);
+			removed.push(tarUser);
+		}
+
+		var text = '';
+		if (removed.length) {
+			text += 'User(s) "' + removed.join('", "') + '" removed from blacklist successfully. ';
+			this.writeSettings();
+		}
+		if (notRemoved.length) text += (text.length ? 'No other ' : 'No ') + 'specified users were present in the blacklist.';
+		this.say(con, room, text);
 	},
 	viewbans: 'viewblacklist',
 	vab: 'viewblacklist',
 	viewautobans: 'viewblacklist',
 	viewblacklist: function(arg, by, room, con) {
-		if (!this.canUse('blacklist', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('bl', room, by) || room.charAt(0) === ',') return false;
 
 		var text = '';
 		if (!this.settings.blacklist || !this.settings.blacklist[room]) {

@@ -296,16 +296,14 @@ exports.parse = {
 		if (!this.settings['blacklist']) this.settings['blacklist'] = {};
 		if (!this.settings.blacklist[room]) this.settings.blacklist[room] = {};
 
-		if (this.settings.blacklist[room][user]) return 'User "' + user + '" already blacklisted.';
+		if (this.settings.blacklist[room][user]) return false;
 		this.settings.blacklist[room][user] = 1;
-		this.writeSettings();
-		return;
+		return true;
 	},
 	unblacklistUser: function(user, room) {
-		if (!this.isBlacklisted(user, room)) return 'User "' + user + '" not blacklisted.';
+		if (!this.isBlacklisted(user, room)) return false;
 		delete this.settings.blacklist[room][user];
-		this.writeSettings();
-		return;
+		return true;
 	},
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
