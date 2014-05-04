@@ -426,7 +426,7 @@ exports.commands = {
 			rules: 'The rules for the Wi-Fi room can be found here: http://pstradingroom.weebly.com/rules.html',
 			faq: 'Wi-Fi room FAQs: http://pstradingroom.weebly.com/faqs.html',
 			faqs: 'Wi-Fi room FAQs: http://pstradingroom.weebly.com/faqs.html',
-			scammers: 'List of known scammers: http://tiny.cc/scammerreport',
+			scammers: 'List of known scammers: http://tinyurl.com/psscammers',
 			cloners: 'List of approved cloners: http://goo.gl/WO8Mf4',
 			tips: 'Scamming prevention tips: http://pstradingroom.weebly.com/scamming-prevention-tips.html',
 			breeders: 'List of breeders: http://tinyurl.com/WiFIBReedingBrigade',
