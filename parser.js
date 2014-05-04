@@ -14,6 +14,7 @@ var url = require('url');
 
 const ACTION_COOLDOWN = 3*1000;
 const FLOOD_MESSAGE_NUM = 5;
+const FLOOD_PER_MSG_MIN = 500; // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
 const FLOOD_MESSAGE_TIME = 6*1000;
 const MIN_CAPS_LENGTH = 18;
 const MIN_CAPS_PROPORTION = 0.8;
@@ -312,9 +313,10 @@ exports.parse = {
 		room = toId(room);
 		msg = msg.trim().replace(/ +/g, " "); // removes extra spaces so it doesn't trigger stretching
 		this.updateSeen(user, 'c', room);
+		var time = Date.now();
 		if (!this.chatData[user][room]) this.chatData[user][room] = {times:[], points:0, lastAction:0};
 
-		this.chatData[user][room].times.push(Date.now());
+		this.chatData[user][room].times.push(time);
 
 		// this deals with punishing rulebreakers, but note that the bot can't think, so it might make mistakes
 		if (config.allowmute && this.hasRank(this.ranks[room] || ' ', '%@&#~')) {
@@ -341,7 +343,8 @@ exports.parse = {
 				}
 			}
 			// moderation for flooding (more than x lines in y seconds)
-			var isFlooding = (this.chatData[user][room].times.length >= FLOOD_MESSAGE_NUM && (Date.now() - this.chatData[user][room].times[this.chatData[user][room].times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME);
+			var isFlooding = (this.chatData[user][room].times.length >= FLOOD_MESSAGE_NUM && (time - this.chatData[user][room].times[this.chatData[user][room].times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
+				&& (time - this.chatData[user][room].times[this.chatData[user][room].times.length - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
 			if ((useDefault || this.settings['modding'][room]['flooding'] !== 0) && isFlooding) {
 				if (pointVal < 2) {
 					pointVal = 2;
@@ -365,7 +368,7 @@ exports.parse = {
 				}
 			}
 
-			if (pointVal > 0 && !(Date.now() - this.chatData[user][room].lastAction < ACTION_COOLDOWN)) {
+			if (pointVal > 0 && !(time - this.chatData[user][room].lastAction < ACTION_COOLDOWN)) {
 				var cmd = 'mute';
 				// defaults to the next punishment in config.punishVals instead of repeating the same action (so a second warn-worthy
 				// offence would result in a mute instead of a warn, and the third an hourmute, etc)
@@ -384,7 +387,7 @@ exports.parse = {
 					cmd = this.hasRank(this.ranks[room] || ' ', '@&#~') ? 'roomban' : 'hourmute';
 				}
 				if (this.chatData[user][room].points >= 2) this.chatData[user].zeroTol++; // getting muted or higher increases your zero tolerance level (warns do not)
-				this.chatData[user][room].lastAction = Date.now();
+				this.chatData[user][room].lastAction = time;
 				this.say(connection, room, '/' + cmd + ' ' + user + muteMessage);
 			}
 		}
