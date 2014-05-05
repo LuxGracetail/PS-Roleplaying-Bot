@@ -212,16 +212,16 @@ exports.parse = {
 			case 'N':
 				var by = spl[2];
 				this.updateSeen(spl[3], spl[1], by);
-				if (by.substr(1) !== config.nick || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
-				this.ranks[(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
+				if (toId(by) !== toId(config.nick) || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
+				this.ranks[toId(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
 				this.room = '';
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
 				if (this.room && this.isBlacklisted(toId(by), this.room)) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(by, spl[1], (this.room === ''?'lobby':this.room));
-				if (by.substr(1) !== config.nick || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
-				this.ranks[(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
+				if (toId(by) !== toId(config.nick) || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
+				this.ranks[toId(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
 				this.room = '';
 				break;
 			case 'l': case 'L':
