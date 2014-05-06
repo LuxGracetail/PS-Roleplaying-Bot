@@ -314,6 +314,11 @@ exports.parse = {
 		msg = msg.trim().replace(/ +/g, " "); // removes extra spaces so it doesn't trigger stretching
 		this.updateSeen(user, 'c', room);
 		var time = Date.now();
+		if (!this.chatData[user]) this.chatData[user] = {
+			zeroTol: 0,
+			lastSeen: '',
+			seenAt: time
+		};
 		if (!this.chatData[user][room]) this.chatData[user][room] = {times:[], points:0, lastAction:0};
 
 		this.chatData[user][room].times.push(time);
@@ -395,6 +400,7 @@ exports.parse = {
 	updateSeen: function(user, type, detail) {
 		user = toId(user);
 		type = toId(type);
+		if (type in {j:1, l:1, c:1} && (config.rooms.indexOf(toId(detail)) === -1 || config.privaterooms.indexOf(toId(detail)) > -1)) return;
 		var time = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
 			zeroTol: 0,
@@ -404,7 +410,6 @@ exports.parse = {
 		if (!detail) return;
 		var msg = '';
 		if (type in {j:1, l:1, c:1}) {
-			if (config.rooms.indexOf(toId(detail)) === -1 || config.privaterooms.indexOf(toId(detail)) > -1) return;
 			msg += (type === 'j' ? 'joining' : (type === 'l' ? 'leaving' : 'chatting in')) + ' ' + detail.trim() + '.';
 		} else if (type === 'n') {
 			msg += 'changing nick to ' + ('+%@&#~'.indexOf(detail.trim().charAt(0)) === -1 ? detail.trim() : detail.trim().substr(1)) + '.';
