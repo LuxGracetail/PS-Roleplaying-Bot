@@ -324,7 +324,7 @@ exports.parse = {
 		this.chatData[user][room].times.push(time);
 
 		// this deals with punishing rulebreakers, but note that the bot can't think, so it might make mistakes
-		if (config.allowmute && this.hasRank(this.ranks[room] || ' ', '%@&#~')) {
+		if (config.allowmute && this.hasRank(this.ranks[room] || ' ', '%@&#~') && config.whitelist.indexOf(user) > -1) {
 			var useDefault = !(this.settings['modding'] && this.settings['modding'][room]);
 			var pointVal = 0;
 			var muteMessage = '';

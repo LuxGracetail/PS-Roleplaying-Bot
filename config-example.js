@@ -26,7 +26,7 @@ exports.rooms = ['example room name', 'another example'];
 
 // Any private rooms that should be joined.
 // Private rooms will be moderated differently (since /warn doesn't work in them).
-// They can be added to rooms instead if the different moderation rules aren't desired
+// The bot will also avoid leaking the private rooms through .seen
 exports.privaterooms = [];
 
 // The character text should start with to be seen as a command.
@@ -59,6 +59,9 @@ exports.debuglevel = 2;
 // Users who can use all commands regardless of their rank. Be very cautious
 // with this, especially on servers other than main.
 exports.excepts = [];
+
+// Whitelisted users are those who the bot will not enforce moderation for.
+exports.whitelist = [];
 
 // Add a link to the help for the bot here. When there is a link here, .help and .guide
 // will link to it.
