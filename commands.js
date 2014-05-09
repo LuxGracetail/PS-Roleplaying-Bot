@@ -101,6 +101,7 @@ exports.commands = {
 			wifi: 1,
 			monotype: 1,
 			autoban: 1,
+			happy: 1,
 			guia: 1
 		};
 		var modOpts = {
@@ -483,9 +484,16 @@ exports.commands = {
 		var text = '';
 		if (!this.canUse('games', room, by)) {
 			text += '/pm ' + by + ', ';
-		};
+		}
 		this.say(con, room, text + 'Game List: 1. Would You Rather, 2. NickGames, 3. Scattegories, 4. Commonyms, 5. Questionnaires, 6. Funarios, 7. Anagrams, 8. Spot the Reference, 9. Pokemath, 10. Liar\'s Dice');
 		this.say(con, room, text + '11. Pun Game, 12. Dice Cup, 13. Who\'s That Pokemon?, 14. Pokemon V Pokemon (BST GAME), 15. Letter Getter, 16. Missing Link, 17. Parameters! More information can be found here: http://psgamecorner.weebly.com/games.html');
+	},
+	happy: function(arg, by, room, con) {
+		// info for The Happy Place
+		if (!(toId(room) === 'thehappyplace' && config.serverid === 'showdown')) return false;
+		var text = '';
+		if (!this.canUse('happy', room, by)) text += '/pm ' + by + ', ';
+		this.say(con, room, text + "The Happy Place, at its core, is a friendly environment for anyone just looking for a place to hang out and relax. We also specialize in taking time to give advice on life problems for users. Need a place to feel at home and unwind? Look no further!");
 	},
 
 
