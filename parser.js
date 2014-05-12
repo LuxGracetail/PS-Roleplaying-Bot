@@ -168,18 +168,18 @@ exports.parse = {
 				}
 
 				var self = this;
-				if (cmds.length > 6) {
+				if (cmds.length > 4) {
 					self.nextJoin = 0;
 					self.joinSpacer = setInterval(function(con, cmds) {
-						if (cmds.length > self.nextJoin + 5) {
-							send(con, cmds.slice(self.nextJoin, self.nextJoin + 5));
-							self.nextJoin += 5;
+						if (cmds.length > self.nextJoin + 3) {
+							send(con, cmds.slice(self.nextJoin, self.nextJoin + 3));
+							self.nextJoin += 3;
 						} else {
 							send(con, cmds.slice(self.nextJoin));
 							delete self.nextJoin;
 							clearInterval(self.joinSpacer);
 						}
-					}, 8*1000, connection, cmds);
+					}, 4*1000, connection, cmds);
 				} else {
 					send(connection, cmds);
 				}
@@ -233,6 +233,10 @@ exports.parse = {
 	},
 	chatMessage: function(message, by, room, connection) {
 		message = message.trim();
+		// auto accept invitations to rooms
+		if (room.charAt(0) === ',' && message.substr(0,8) === '/invite ' && this.hasRank(by, '%@&~') && !(config.serverid === 'showdown' && toId(message.substr(8)) === 'lobby')) {
+			this.say(connection, '', '/join ' + message.substr(8));
+		}
 		if (message.substr(0, config.commandcharacter.length) !== config.commandcharacter || toId(by) === toId(config.nick)) {
 			return;
 		}
@@ -257,11 +261,6 @@ exports.parse = {
 			} else {
 				error("invalid command type for " + cmd + ": " + (typeof Commands[cmd]));
 			}
-		}
-		
-		// auto accept invitations to rooms
-		if (room.charAt(0) === ',' && message.substr(0,8) === '/invite ' && !(config.serverid === 'showdown' && toId(message.substr(8)) === 'lobby')) {
-			this.say(connection, '', '/join ' + message.substr(8));
 		}
 	},
 	say: function(connection, room, text) {
