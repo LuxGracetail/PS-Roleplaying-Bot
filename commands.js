@@ -90,9 +90,22 @@ exports.commands = {
 		var start = roomRP.setAt;
 		var now = new Date();
 		var current = [now.getHours(), now.getMinutes(), now.getSeconds()];
-		current[2] = ((current[2] - start[2]) < 0) ? ((current[2] - start[2] + 60) && (--current[1])) : (current[2] - start[2]);
-		current[1] = ((current[1] - start[1]) < 0) ? ((current[1] - start[1] + 60) && (--current[0])) : (current[1] - start[1]);
-		current[0] = ((current[0] - start[0]) < 0) ? (current[0] - start[0] + 24) : (current[0] - start[0]);
+		var minuteCarryOver = 0;
+		var hourCarryOver = 0;
+
+		if (current[2] < start[2]) {
+			current[2] = current[2] - start[2] + 60;
+			minuteCarryOver++;
+		} else {
+			current[2] = current[2] - start[2];
+		}
+		if (current[1] - minuteCarryOver < start[1]) {
+			current[1] = current[1] - start[1] - minuteCarryOver + 60;
+			hourCarryOver++;
+		} else {
+			current[1] = current[1] - start[1];
+		}
+		current[0] = (current[0] - hourCarryOver < start[0]) ? (current[0] - start[0] - hourCarryOver + 24) : (current[0] - start[0] - hourCarryOver);
 		var progress = current[0] + ':' + ((current[1] < 10) ? ('0' + current[1]) : current[1]) + ':' + ((current[2] < 10) ? ('0' + current[2]) : current[2]);
 
 		this.say(con, room, text + 'The RP is ' + roomRP.plot + ', in progress for ' + progress + '.');
@@ -139,7 +152,7 @@ exports.commands = {
 		if (room !== 'amphyrp') return this.say(con, room, 'This command is not meant to be used outside of AmphyRP.');
 		if (amphyRP.state) return this.say(con, room, 'Please wait until the RP is over before clearing the voice list.');
 
-		// Deroomvoices list of people roomvoiced since either the last time the bot was restarted or the last time .ampclear was user. /roomauth can't be parsed, so this has to be done instead
+		// Roonmdevoices list of people roomvoiced since either the last time the bot was restarted or the last time .ampclear was user. /roomauth can't be parsed, so this has to be done instead
 		var voices = this.amphyVoices;
 		var self = this;
 		while (voices.length > 0) {
@@ -662,3 +675,4 @@ exports.commands = {
 		this.say(con, room, 'The buzzer has been reset.');
 	},
 };
+
