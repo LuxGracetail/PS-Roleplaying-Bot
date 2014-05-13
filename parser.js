@@ -11,6 +11,19 @@
 var sys = require('sys');
 var https = require('https');
 var url = require('url');
+/**
+ * This is the file where commands get parsed
+ *
+ * Some parts of this code are taken from the Pokémon Showdown server code, so
+ * credits also go to Guangcong Luo and other Pokémon Showdown contributors.
+ * https://github.com/Zarel/Pokemon-Showdown
+ *
+ * @license MIT license
+ */
+
+var sys = require('sys');
+var https = require('https');
+var url = require('url');
 
 const ACTION_COOLDOWN = 3*1000;
 const FLOOD_MESSAGE_NUM = 5;
@@ -30,6 +43,7 @@ exports.parse = {
 	room: 'lobby',
 	'settings': settings,
 	chatData: {},
+	amphyVoices: [],
 	ranks: {},
 
 	data: function(data, connection) {
@@ -211,6 +225,7 @@ exports.parse = {
 				break;
 			case 'N':
 				var by = spl[2];
+				if ('+'.indexOf(by.charAt(0) === 0) && this.amphyVoices.indexOf(spl[3]) === -1) this.amphyVoices.push(spl[3]);
 				this.updateSeen(spl[3], spl[1], by);
 				if (toId(by) !== toId(config.nick) || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[toId(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
@@ -491,3 +506,4 @@ exports.parse = {
 		} while (uncache.length > 0);
 	}
 };
+
