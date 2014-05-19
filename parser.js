@@ -219,7 +219,7 @@ exports.parse = {
 			case 'J': case 'j':
 				var by = spl[2];
 				if (this.room && this.isBlacklisted(toId(by), this.room)) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
-				this.updateSeen(by, spl[1], (this.room === ''?'lobby':this.room));
+				this.updateSeen(by, spl[1], (this.room === '' ? 'lobby' : this.room));
 				if (toId(by) !== toId(config.nick) || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[toId(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
 				this.room = '';

@@ -271,16 +271,25 @@ exports.commands = {
 	vab: 'viewblacklist',
 	viewautobans: 'viewblacklist',
 	viewblacklist: function(arg, by, room, con) {
-		if (!this.canUse('bl', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
 
 		var text = '';
 		if (!this.settings.blacklist || !this.settings.blacklist[room]) {
 			text = 'No users are blacklisted in this room.';
 		} else {
-			var nickList = Object.keys(this.settings.blacklist[room]);
-			text = 'The following users are blacklisted: ' + nickList.join(', ');
-			if (text.length > 300) text = 'Too many users to list.';
-			if (!nickList.length) text = 'No users are blacklisted in this room.';
+			if (arg.length) {
+				var nick = toId(arg);
+				if (nick.length < 1 || nick.length > 18) {
+					text = 'Invalid nickname: "' + nick + '".';
+				} else {
+					text = 'User "' + nick + '" is currently ' + (nick in this.settings.blacklist[room] ? '' : 'not ') + 'blacklisted in ' + room + '.';
+				}
+			} else {
+				var nickList = Object.keys(this.settings.blacklist[room]);
+				text = 'The following users are blacklisted: ' + nickList.join(', ');
+				if (text.length > 300) text = 'Too many users to list.';
+				if (!nickList.length) text = 'No users are blacklisted in this room.';
+			}
 		}
 		this.say(con, room, '/pm ' + by + ', ' + text);
 	},
