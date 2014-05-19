@@ -232,6 +232,7 @@ exports.parse = {
 		}
 	},
 	chatMessage: function(message, by, room, connection) {
+		var cmdrMessage = '["' + room + '|' + by + '|' + message + '"]';
 		message = message.trim();
 		// auto accept invitations to rooms
 		if (room.charAt(0) === ',' && message.substr(0,8) === '/invite ' && this.hasRank(by, '%@&~') && !(config.serverid === 'showdown' && toId(message.substr(8)) === 'lobby')) {
@@ -257,6 +258,7 @@ exports.parse = {
 				cmd = Commands[cmd];
 			}
 			if (typeof Commands[cmd] === "function") {
+				cmdr(cmdrMessage);
 				Commands[cmd].call(this, arg, by, room, connection);
 			} else {
 				error("invalid command type for " + cmd + ": " + (typeof Commands[cmd]));

@@ -50,11 +50,12 @@ exports.secprotocols = [];
 
 // What should be logged?
 // 0 = error, ok, info, debug, recv, send
-// 1 = error, ok, info, debug (recommended for development)
-// 2 = error, ok, info (recommended for production)
-// 3 = error, ok
-// 4 = error
-exports.debuglevel = 2;
+// 1 = error, ok, info, debug, cmdr, send
+// 2 = error, ok, info, debug (recommended for development)
+// 3 = error, ok, info (recommended for production)
+// 4 = error, ok
+// 5 = error
+exports.debuglevel = 3;
 
 // Users who can use all commands regardless of their rank. Be very cautious
 // with this, especially on servers other than main.

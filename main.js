@@ -9,13 +9,13 @@
  */
 
 global.info = function(text) {
-	if (config.debuglevel > 2) return;
+	if (config.debuglevel > 3) return;
 	if (!colors) global.colors = require('colors');
 	console.log('info'.cyan + '  ' + text);
 };
 
 global.debug = function(text) {
-	if (config.debuglevel > 1) return;
+	if (config.debuglevel > 2) return;
 	if (!colors) global.colors = require('colors');
 	console.log('debug'.blue + ' ' + text);
 };
@@ -26,8 +26,14 @@ global.recv = function(text) {
 	console.log('recv'.grey + '  ' + text);
 };
 
+global.cmdr = function(text) { // receiving commands
+	if (config.debuglevel !== 1) return;
+	if (!colors) global.colors = require('colors');
+	console.log('cmdr'.grey + '  ' + text);
+};
+
 global.dsend = function(text) {
-	if (config.debuglevel > 0) return;
+	if (config.debuglevel > 1) return;
 	if (!colors) global.colors = require('colors');
 	console.log('send'.grey + '  ' + text);
 };
@@ -38,7 +44,7 @@ global.error = function(text) {
 };
 
 global.ok = function(text) {
-	if (config.debuglevel > 3) return;
+	if (config.debuglevel > 4) return;
 	if (!colors) global.colors = require('colors');
 	console.log('ok'.green + '    ' + text);
 };
