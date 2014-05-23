@@ -286,9 +286,24 @@ exports.commands = {
 				}
 			} else {
 				var nickList = Object.keys(this.settings.blacklist[room]);
-				text = 'The following users are blacklisted: ' + nickList.join(', ');
-				if (text.length > 300) text = 'Too many users to list.';
-				if (!nickList.length) text = 'No users are blacklisted in this room.';
+				if (!nickList.length) return this.say(con, room, '/pm ' + by + ', No users are blacklisted in this room.');
+				var self = this;
+
+				var reqOpts = {
+					hostname: "hastebin.com",
+					method: "POST",
+					path: '/documents'
+				};
+
+				var req = http.request(reqOpts, function(res) {
+					res.on('data', function(chunk) {
+						self.say(con, room, '/pm ' + by + ', The list of banned users can be found here: hastebin.com/' + JSON.parse(chunk.toString())['key']);
+					});
+				});
+
+				req.write('The following users are banned in ' + room + ':\n\n' + nickList.join('\n'));
+				req.end();
+				return;
 			}
 		}
 		this.say(con, room, '/pm ' + by + ', ' + text);
