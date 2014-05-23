@@ -31,6 +31,8 @@ exports.parse = {
 	'settings': settings,
 	chatData: {},
 	ranks: {},
+	mainRP: {},
+	amphyRP: {},
 	amphyVoices: [],
 
 	data: function(data, connection) {
@@ -221,7 +223,7 @@ exports.parse = {
 			case 'J': case 'j':
 				var by = spl[2];
 				if (this.room && this.isBlacklisted(toId(by), this.room)) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
-				this.updateSeen(by, spl[1], (this.room === ''?'lobby':this.room));
+				this.updateSeen(by, spl[1], (this.room === '' ? 'lobby' : this.room));
 				if (toId(by) !== toId(config.nick) || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[toId(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
 				this.room = '';
@@ -234,6 +236,7 @@ exports.parse = {
 		}
 	},
 	chatMessage: function(message, by, room, connection) {
+		var cmdrMessage = '["' + room + '|' + by + '|' + message + '"]';
 		message = message.trim();
 		// auto accept invitations to rooms
 		if (room.charAt(0) === ',' && message.substr(0,8) === '/invite ' && this.hasRank(by, '%@&~') && !(config.serverid === 'showdown' && toId(message.substr(8)) === 'lobby')) {
@@ -259,6 +262,7 @@ exports.parse = {
 				cmd = Commands[cmd];
 			}
 			if (typeof Commands[cmd] === "function") {
+				cmdr(cmdrMessage);
 				Commands[cmd].call(this, arg, by, room, connection);
 			} else {
 				error("invalid command type for " + cmd + ": " + (typeof Commands[cmd]));
@@ -491,5 +495,10 @@ exports.parse = {
 			}
 			uncache = newuncache;
 		} while (uncache.length > 0);
+	},
+	getRP: function (room) {
+		if (room === 'roleplaying') return this.mainRP;
+		if (room === 'amphyrp') return this.amphyRP;
+		return false;
 	}
 };
