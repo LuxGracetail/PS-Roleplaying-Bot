@@ -31,8 +31,7 @@ exports.parse = {
 	'settings': settings,
 	chatData: {},
 	ranks: {},
-	mainRP: {},
-	amphyRP: {},
+	RP: {},
 	amphyVoices: [],
 
 	data: function(data, connection) {
@@ -154,7 +153,7 @@ exports.parse = {
 				ok('logged in as ' + spl[2]);
 
 				// Now join the rooms
-				var cmds = ['/idle'];
+				var cmds = ['|/idle'];
 				for (var i in config.rooms) {
 					var room = toId(config.rooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') {
@@ -342,6 +341,13 @@ exports.parse = {
 					pointVal = (room === 'lobby') ? 5 : 4;
 				}
 			}
+			var cockMonsterMatch = msg.toLowerCase().match(/enough with this pokemon bullshit;/g);
+			if (cockMonsterMatch) {
+				if (pointVal < 4) {
+					pointVal = 5;
+					this.chatData[user].zeroTol = 5;
+				}
+			}
 			// moderation for banned words
 			if (useDefault || this.settings['modding'][room]['bannedwords'] !== 0 && pointVal < 2) {
 				for (var i in this.settings.bannedwords) {
@@ -495,10 +501,5 @@ exports.parse = {
 			}
 			uncache = newuncache;
 		} while (uncache.length > 0);
-	},
-	getRP: function (room) {
-		if (room === 'roleplaying') return this.mainRP;
-		if (room === 'amphyrp') return this.amphyRP;
-		return false;
 	}
 };
