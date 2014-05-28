@@ -11,8 +11,8 @@ exports.commands = {
 	// Roleplaying commands
 	newrp: 'setrp',
 	setrp: function(arg, by, room, con) {
-		if (config.rprooms.indexOf(room) < 0 || !this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
-		if (!this.RP[room]) this.RP[room] = {};
+		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
+		if (config.rprooms.indexOf(room) < 0) return this.say(con, room, 'Are you seriously trying to start an RP here?');		if (!this.RP[room]) this.RP[room] = {};
 		if (!arg) return this.say(con, room, 'Please enter an RP.');
 
 		this.RP[room].plot = arg;
