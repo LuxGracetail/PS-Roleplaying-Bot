@@ -380,6 +380,7 @@ exports.commands = {
 	},
 	seen: function(arg, by, room, con) {
 		var text = (room.charAt(0) === ',' ? '' : '/pm ' + by + ', ');
+		if (!toId(arg) || toId(arg).length > 18) return this.say(con, room, text + 'Invalid username.');
 		if (toId(arg) === toId(by)) {
 			text += 'Have you looked in the mirror lately?';
 		} else if (toId(arg) === toId(config.nick)) {
