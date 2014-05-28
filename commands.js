@@ -84,7 +84,7 @@ exports.commands = {
 	},
 	rp: function(arg, by, room, con) {
 		if (config.rprooms.indexOf(room) < 0 || room.charAt(0) === ',') return false;
-		if (!this.RP[room]) return false;
+		if (!this.RP[room]) this.RP[room] = {};
 		if (this.RP[room].called) {
 			var text = '/pm ' + by + ', ';
 		} else {
@@ -110,7 +110,7 @@ exports.commands = {
 	},
 	host: function(arg, by, room, con) {
 		if (config.rprooms.indexOf(room) < 0 || room.charAt(0) === ',') return false;
-		if (!this.RP[room]) return false;
+		if (!this.RP[room]) this.RP[room] = {};
 		if (this.RP[room].hostCalled) {
 			var text = '/pm ' + by + ', ';
 		} else {
