@@ -9,10 +9,10 @@ var sys = require('sys');
 
 exports.commands = {
 	// Roleplaying commands
-	newrp: 'setrp',
 	setrp: function(arg, by, room, con) {
 		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
-		if (config.rprooms.indexOf(room) < 0) return this.say(con, room, 'Are you seriously trying to start an RP here?');		if (!this.RP[room]) this.RP[room] = {};
+		if (config.rprooms.indexOf(room) < 0) return this.say(con, room, 'Are you seriously trying to start an RP here?');
+		if (!this.RP[room]) this.RP[room] = {};
 		if (!arg) return this.say(con, room, 'Please enter an RP.');
 
 		this.RP[room].plot = arg;
@@ -22,7 +22,7 @@ exports.commands = {
 	},
 	rpstart: 'start',
 	start: function(arg, by, room, con) {
-		if (!this.canUse('start', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
 		if (!this.RP[room]) return false;
 		if (!this.RP[room].state) return this.say(con, room, 'Please set an RP before using .start');
 		if (this.RP[room].setAt) return this.say(con, room, 'The RP has already started.');
@@ -31,8 +31,9 @@ exports.commands = {
 		this.RP[room].setAt = now;
 		this.say(con, room, '/wall The RP has started.');
 	},
+	pauserp: 'rppause',
 	rppause: function(arg, by, room, con) {
-		if (!this.canUse('rppause', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
 		if (!this.RP[room]) return false;
 		if (!this.RP[room].state) return this.say(con, room, 'There is no RP to pause.'); 
 		if (!this.RP[room].setAt) return this.say(con, room, '.rppause can only be used after the RP has been started.');
@@ -41,8 +42,9 @@ exports.commands = {
 		this.RP[room].pause = true;
 		this.say(con, room,'/wall RP pause');
 	},
+	continuerp: 'rpcontinue',
 	rpcontinue: function(arg, by, room, con) {
-		if (!this.canUse('rpcontinue', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
 		if (!this.RP[room]) return false;
 		if (!this.RP[room].state) return this.say(con, room, 'There is no RP to continue.'); 
 		if (!this.RP[room].setAt) return this.say(con, room, '.rpcontinue can only be used after the RP has been started.');
@@ -51,9 +53,8 @@ exports.commands = {
 		this.RP[room].pause = false;
 		this.say(con, room, '/wall RP continue');
 	},
-	newhost: 'sethost',
 	sethost: function(arg, by, room, con) {
-		if (!this.canUse('sethost', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
 		if (!this.RP[room]) return false;
 		if (!this.RP[room].state) return this.say(con, room, 'There is no RP, so there is no host.');
 		if (!arg) return this.say(con, room, 'Please enter a host.');
@@ -62,9 +63,8 @@ exports.commands = {
 		this.RP[room].hostState = true;
 		this.say(con, room, 'The host was set to ' + arg + '.');
 	},
-	removehost: 'rmhost',
 	rmhost: function(arg, by, room, con) {
-		if (!this.canUse('rmhost', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
 		if (!this.RP[room]) return false;
 		if (!this.RP[room].hostState) return this.say(con, room, 'There is no host to remove.');
 
@@ -72,8 +72,9 @@ exports.commands = {
 		this.RP[room].hostState = false;
 		this.say(con, room, 'The host has been removed.');
 	},
+	rpend: 'endrp',
 	endrp: function(arg, by, room, con) {
-		if (!this.canUse('endrp', room, by) || room.charAt(0) === ',') return false;
+		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
 		if (!this.RP[room]) return false;
 		if (!this.RP[room].state) return this.say(con, room, 'There is no RP to end.');
 
@@ -142,18 +143,16 @@ exports.commands = {
 
 		// Roomdevoices list of people roomvoiced since either the last time the bot was restarted or the last time .ampclear was user. /roomauth can't be parsed by the bot, so this has to be done instead
 		var self = this;
-		this.say(con, room, 'Started deroomvoicing.');
+		this.say(con, room, 'Started deroomvoicing. Deroomvoicing will be finished in ' + (amphyVoices.length - 1) + ' seconds.');
 		for (var i = 0; i < this.amphyVoices.length; i++) {
 			setTimeout(function(nick) {
 				self.say(con, room, '/deroomvoice ' + nick);
 			}, 1000*i, self.amphyVoices[i]);
-			if (i === this.amphyVoices.length - 1) this.say(con, room, 'Reached the end of the list of room voices. Deroomvoicing will be finished in ' + i + ' seconds.');
 		}
 		this.amphyVoices = [];
 	},
-	rpplug: 'plug',
 	plug: function(arg, by, room, con) {
-		if (config.serverid !== 'showdown' && room !== 'roleplaying' && room !== 'amphyrp' && room.charAt(0) !== ',') return false;
+		if (config.serverid === 'showdown' && room !== 'roleplaying' && room !== 'amphyrp' && room.charAt(0) !== ',') return false;
 		if (this.hasRank(by, '+%@#~') || room.charAt(0) === ',') {
 			var text = '';
 		} else {
@@ -259,12 +258,6 @@ exports.commands = {
 			happy: 1,
 			guia: 1,
 			setrp: 1,
-			start: 1,
-			rppause: 1,
-			rpcontinue: 1,
-			sethost: 1,
-			rmhost: 1,
-			endrp: 1,
 			ampclear: 1
 		};
 		var modOpts = {
