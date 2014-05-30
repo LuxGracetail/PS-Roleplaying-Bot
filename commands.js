@@ -449,6 +449,7 @@ exports.commands = {
 			text += '/pm ' + by + ', ';
 		}
 		var messages = {
+			intro: 'Here is an introduction to Wi-Fi: http://tinyurl.com/welcome2wifi',
 			rules: 'The rules for the Wi-Fi room can be found here: http://pstradingroom.weebly.com/rules.html',
 			faq: 'Wi-Fi room FAQs: http://pstradingroom.weebly.com/faqs.html',
 			faqs: 'Wi-Fi room FAQs: http://pstradingroom.weebly.com/faqs.html',
