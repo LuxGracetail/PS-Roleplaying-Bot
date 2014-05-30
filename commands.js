@@ -152,7 +152,7 @@ exports.commands = {
 		this.amphyVoices = [];
 	},
 	plug: function(arg, by, room, con) {
-		if (config.serverid === 'showdown' && room !== 'roleplaying' && room !== 'amphyrp' && room.charAt(0) !== ',') return false;
+		if (config.serverid !== 'showdown' || (room !== 'roleplaying' && room !== 'amphyrp' && room.charAt(0) !== ',')) return false;
 		if (this.hasRank(by, '+%@#~') || room.charAt(0) === ',') {
 			var text = '';
 		} else {
