@@ -337,7 +337,7 @@ exports.commands = {
 		this.say(con, room, stripCommands(arg) + ' (' + by + ' said this)');
 	},
 	joke: function(arg, by, room, con) {
-		if (!this.canUse('joke', room, by)) return false;
+		if (!this.canUse('joke', room, by) || room.charAt(0) === ',') return false;
 		var self = this;
 
 		var reqOpt = {
