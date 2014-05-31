@@ -138,8 +138,8 @@ exports.commands = {
 	},
 	ampclear: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown' || !this.canUse('ampclear', room, by) || room.charAt(0) === ',') return false;
-		if (this.RP['amphyrp'].state) return this.say(con, room, 'Please wait until the RP is over before clearing the voice list.');
-		if (!this.amphyVoices.length) return this.say(con, room, 'No roomvoices have been added yet.');
+		if (this.RP['amphyrp'] && this.RP['amphyrp'].state) return this.say(con, room, 'Please wait until the RP is over before clearing the voice list.');
+		if (this.amphyVoices.length === 0) return this.say(con, room, 'No roomvoices have been added yet.');
 
 		// Roomdevoices list of people roomvoiced since either the last time the bot was restarted or the last time .ampclear was user. /roomauth can't be parsed by the bot, so this has to be done instead
 		var self = this;
