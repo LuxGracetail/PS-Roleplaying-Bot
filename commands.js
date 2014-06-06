@@ -375,7 +375,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'http://sim.smogon.com:8080/Stats/2014-04/';
+		text += 'http://sim.smogon.com:8080/Stats/2014-05/';
 		this.say(con, room, text);
 	},
 	seen: function(arg, by, room, con) {
