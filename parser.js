@@ -63,10 +63,9 @@ exports.parse = {
 
 		var spl = message.split('|');
 		if (!spl[1]) {
-			spl = message.split('>');
-			if (!spl[1])
-				return;
-			this.room = spl[1];
+			spl = spl[0].split('>');
+			if (spl[1]) this.room = spl[1];
+			return;
 		}
 
 		switch (spl[1]) {
@@ -214,7 +213,7 @@ exports.parse = {
 			case 'N':
 				var by = spl[2];
 				this.updateSeen(spl[3], spl[1], by);
-				if (toId(by) === spl[3] && by.charAt(0) === '+' && this.amphyVoices.indexOf(spl[3]) === -1 && this.room === 'amphyrp') this.amphyVoices.push(spl[3]);
+				if (this.room === 'amphyrp' && toId(by) === spl[3] && by.charAt(0) === '+' && this.amphyVoices.indexOf(spl[3]) === -1) this.amphyVoices.push(spl[3]);
 				if (toId(by) !== toId(config.nick) || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[toId(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
 				this.room = '';
@@ -295,14 +294,22 @@ exports.parse = {
 		return canUse;
 	},
 	isBlacklisted: function(user, room) {
-		return (this.settings.blacklist && this.settings.blacklist[room] && this.settings.blacklist[room][user]);
+		if (!this.settings.blacklist || !this.settings.blacklist[room]) return false;
+		if (this.settings.blacklist[room][user]) return true;
+		var abusers = Object.keys(this.settings.blacklist[room]);
+		for (var i = 0; i < abusers.length; i++) {
+			if (abusers[i].charAt(0) === '/') {
+				var abRegex = new RegExp(abusers[i].substring(1, abusers[i].length - 3), 'gi');
+				if (abRegex.test(user)) return true;
+			}
+		}
 	},
 	blacklistUser: function(user, room) {
 		if (!this.settings['blacklist']) this.settings['blacklist'] = {};
 		if (!this.settings.blacklist[room]) this.settings.blacklist[room] = {};
 
 		if (this.settings.blacklist[room][user]) return false;
-		this.settings.blacklist[room][user] = 1;
+		this.settings.blacklist[room][user] = 1; 
 		return true;
 	},
 	unblacklistUser: function(user, room) {
@@ -341,17 +348,11 @@ exports.parse = {
 					pointVal = (room === 'lobby') ? 5 : 4;
 				}
 			}
-			var cockMonsterMatch = msg.toLowerCase().match(/enough with this pokemon bullshit;/g);
-			if (cockMonsterMatch) {
-				if (pointVal < 4) {
-					pointVal = 5;
-					this.chatData[user].zeroTol = 5;
-				}
-			}
 			// moderation for banned words
 			if (useDefault || this.settings['modding'][room]['bannedwords'] !== 0 && pointVal < 2) {
 				for (var i in this.settings.bannedwords) {
-					if (msg.toLowerCase().indexOf(i) > -1) {
+				    	var bwRegex = new RegExp(i, 'gi');
+					if (bwRegex.test(msg)) {
 						pointVal = 2;
 						muteMessage = ', Automated response: your message contained a banned phrase';
 						break;
