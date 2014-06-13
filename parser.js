@@ -317,6 +317,24 @@ exports.parse = {
 		delete this.settings.blacklist[room][user];
 		return true;
 	},
+	uploadToHastebin: function(con, room, by, toUpload) {
+		var self = this;
+
+		var reqOpts = {
+			hostname: "hastebin.com",
+			method: "POST",
+			path: '/documents'
+		};
+
+		var req = require('http').request(reqOpts, function(res) {
+			res.on('data', function(chunk) {
+				self.say(con, room, '/pm ' + by + ', hastebin.com/raw/' + JSON.parse(chunk.toString())['key']);
+			});
+		});
+
+		req.write(toUpload);
+		req.end();
+	},
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
 		user = toId(user);
