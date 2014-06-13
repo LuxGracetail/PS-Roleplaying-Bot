@@ -32,7 +32,6 @@ exports.parse = {
 	chatData: {},
 	ranks: {},
 	RP: {},
-	amphyVoices: [],
 
 	data: function(data, connection) {
 		if (data.substr(0, 1) === 'a') {
@@ -167,6 +166,10 @@ exports.parse = {
 					}
 					cmds.push('|/join ' + room);
 				}
+				for (var i = 0; i < config.rprooms.length; i++) {
+					this.RP[toId(config.rprooms[i])] = {};
+				}
+				if (config.serverid === 'showdown') this.amphyVoices = [];
 
 				var self = this;
 				if (cmds.length > 4) {
@@ -213,7 +216,9 @@ exports.parse = {
 			case 'N':
 				var by = spl[2];
 				this.updateSeen(spl[3], spl[1], by);
-				if (this.room === 'amphyrp' && toId(by) === spl[3] && by.charAt(0) === '+' && this.amphyVoices.indexOf(spl[3]) === -1) this.amphyVoices.push(spl[3]);
+				if (typeof this.amphyVoices !== 'undefined') {
+					if (this.room === 'amphyrp' && toId(by) === spl[3] && by.charAt(0) === '+' && this.amphyVoices.indexOf(spl[3]) === -1) this.amphyVoices.push(spl[3]);
+				}
 				if (toId(by) !== toId(config.nick) || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[toId(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
 				this.room = '';
@@ -520,10 +525,5 @@ exports.parse = {
 			}
 			uncache = newuncache;
 		} while (uncache.length > 0);
-	},
-	makeRP: function() {
-		for (var i = 0; i < config.rprooms.length; i++) {
-			this.RP[toId(config.rprooms[i])] = {};
-		}
 	}
 };
