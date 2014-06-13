@@ -287,22 +287,7 @@ exports.commands = {
 			} else {
 				var nickList = Object.keys(this.settings.blacklist[room]);
 				if (!nickList.length) return this.say(con, room, '/pm ' + by + ', No users are blacklisted in this room.');
-				var self = this;
-
-				var reqOpts = {
-					hostname: "hastebin.com",
-					method: "POST",
-					path: '/documents'
-				};
-
-				var req = http.request(reqOpts, function(res) {
-					res.on('data', function(chunk) {
-						self.say(con, room, '/pm ' + by + ', The list of banned users can be found here: hastebin.com/' + JSON.parse(chunk.toString())['key']);
-					});
-				});
-
-				req.write('The following users are banned in ' + room + ':\n\n' + nickList.join('\n'));
-				req.end();
+				this.uploadToHastebin(con, room, by, 'The following users are banned in ' + room + ':\n\n' + nickList.join('\n'))
 				return;
 			}
 		}
@@ -331,6 +316,36 @@ exports.commands = {
 	 * Add custom commands here.
 	 */
 
+	tournament: 'tour',
+	tour: function(arg, by, room, con) {
+		if (room.charAt(0) === ',' || !toId(arg)) return false;
+		if (!this.hasRank(this.ranks[room] || ' ', '#~')) return this.say(con, room, config.nick + " requires # or higher to use the tournament system.");
+		arg = arg.split(',');
+		if (!this.settings.tourwhitelist) this.settings.tourwhitelist = {};
+		if (!this.settings.tourwhitelist[room]) this.settings.tourwhitelist[room] = {};
+		if (toId(arg[0]) === 'whitelist') {
+			if (!this.hasRank(by, '&#~')) return false;
+			var action = toId(arg[1] || '');
+			if (!action || action === 'view') {
+				var nickList = Object.keys(this.settings.tourwhitelist[room]);
+				if (!nickList.length) return this.say(con, room, "/pm " + by + ", No users are whitelisted in " + room + ".");
+				return this.uploadToHastebin(con, room, by, "The following users are allowed to control tournaments in " + room + ":\n\n" + nickList.join("\n"));
+			}
+			var target = toId(arg[2] || '');
+			if (!action || !(action in {'add': 1, 'remove': 1}) || !target) return this.say(con, room, "Incorrect syntax: .tour whitelist, [view/add/remove](, [user])");
+			if (action === 'add') {
+				this.settings.tourwhitelist[room][target] = 1;
+				this.say(con, room, "User " + arg[2] + " is now whitelisted and can control tournaments.");
+			} else {
+				if (target in this.settings.tourwhitelist[room]) delete this.settings.tourwhitelist[room][target];
+				this.say(con, room, "User " + arg[2] + " is no longer whitelisted.");
+			}
+			this.writeSettings();
+		} else {
+			if (!(this.hasRank(by, '&#~') || toId(by) in this.settings.tourwhitelist[room]) || toId(arg[0]) in {'join': 1, 'in': 1, 'j': 1}) return false;
+			this.say(con, room, "/tour " + arg.join(','));
+		}
+	},
 	tell: 'say',
 	say: function(arg, by, room, con) {
 		if (!this.canUse('say', room, by)) return false;
@@ -378,7 +393,7 @@ exports.commands = {
 		text += 'http://sim.smogon.com:8080/Stats/2014-05/';
 		this.say(con, room, text);
 	},
-	seen: function(arg, by, room, con) {
+	seen: function(arg, by, room, con) { // this command is still a bit buggy
 		var text = (room.charAt(0) === ',' ? '' : '/pm ' + by + ', ');
 		if (!toId(arg) || toId(arg).length > 18) return this.say(con, room, text + 'Invalid username.');
 		if (toId(arg) === toId(by)) {
