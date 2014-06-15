@@ -102,7 +102,8 @@ exports.commands = {
 			monotype: 1,
 			autoban: 1,
 			happy: 1,
-			guia: 1
+			guia: 1,
+			banword: 1
 		};
 		var modOpts = {
 			flooding: 1,
@@ -293,21 +294,70 @@ exports.commands = {
 		}
 		this.say(con, room, '/pm ' + by + ', ' + text);
 	},
+	banphrase: 'banword',
 	banword: function(arg, by, room, con) {
-		if (!this.hasRank(by, '~')) return false;
+		if (!this.canUse('banword', room, by)) return false;
+		if (!this.settings.bannedphrases) this.settings.bannedphrases = {};
+		arg = arg.trim().toLowerCase();
+		if (!arg) return false;
+		var tarRoom = room;
 
-		if (!this.settings['bannedwords']) this.settings['bannedwords'] = {};
-		this.settings['bannedwords'][arg.trim().toLowerCase()] = 1;
+		if (room.charAt(0) === ',') {
+			if (!this.hasRank(by, '~')) return false;
+			tarRoom = 'global';
+		}
+
+		if (!this.settings.bannedphrases[tarRoom]) this.settings.bannedphrases[tarRoom] = {};
+		if (arg in this.settings.bannedphrases[tarRoom]) return this.say(con, room, "Phrase \"" + arg + "\" is already banned.");
+		this.settings.bannedphrases[tarRoom][arg] = 1;
 		this.writeSettings();
-		this.say(con, room, 'Word "' + arg.trim().toLowerCase() + '" banned.');
+		this.say(con, room, "Phrase \"" + arg + "\" is now banned.");
 	},
+	unbanphrase: 'unbanphrase',
 	unbanword: function(arg, by, room, con) {
-		if (!this.hasRank(by, '~')) return false;
+		if (!this.canUse('banword', room, by)) return false;
+		arg = arg.trim().toLowerCase();
+		if (!arg) return false;
+		var tarRoom = room;
 
-		if (!this.settings['bannedwords']) this.settings['bannedwords'] = {};
-		delete this.settings['bannedwords'][arg.trim().toLowerCase()];
+		if (room.charAt(0) === ',') {
+			if (!this.hasRank(by, '~')) return false;
+			tarRoom = 'global';
+		}
+
+		if (!this.settings.bannedphrases || !this.settings.bannedphrases[tarRoom] || !(arg in this.settings.bannedphrases[tarRoom])) 
+			return this.say(con, room, "Phrase \"" + arg + "\" is not currently banned.");
+		delete this.settings.bannedphrases[tarRoom][arg];
 		this.writeSettings();
-		this.say(con, room, 'Word "' + arg.trim().toLowerCase() + '" unbanned.');
+		this.say(con, room, "Phrase \"" + arg + "\" is no longer banned.");
+	},
+	viewbannedphrases: 'viewbannedwords',
+	vbw: 'viewbannedwords',
+	viewbannedwords: function(arg, by, room, con) {
+		if (!this.canUse('banword', room, by)) return false;
+		arg = arg.trim().toLowerCase();
+		var tarRoom = room;
+
+		if (room.charAt(0) === ',') {
+			if (!this.hasRank(by, '~')) return false;
+			tarRoom = 'global';
+		}
+
+		var text = "";
+		if (!this.settings.bannedphrases || !this.settings.bannedphrases[tarRoom]) {
+			text = "No phrases are banned in this room.";
+		} else {
+			if (arg.length) {
+				text = "The phrase \"" + arg + "\" is currently " + (arg in this.settings.bannedphrases[tarRoom] ? "" : "not ") + "banned " +
+					(room.charAt(0) === ',' ? "globally" : "in " + room) + ".";
+			} else {
+				var banList = Object.keys(this.settings.bannedphrases[tarRoom]);
+				if (!banList.length) return this.say(con, room, "No phrases are banned in this room.");
+				this.uploadToHastebin(con, room, by, "The following phrases are banned " + (room.charAt(0) === ',' ? "globally" : "in " + room) + ":\n\n" + banList.join('\n'))
+				return;
+			}
+		}
+		this.say(con, room, text);
 	},
 
 	/**
