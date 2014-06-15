@@ -394,7 +394,8 @@ exports.commands = {
 			}
 			this.writeSettings();
 		} else {
-			if (!(this.hasRank(by, '&#~') || toId(by) in this.settings.tourwhitelist[room]) || toId(arg[0]) in {'join': 1, 'in': 1, 'j': 1}) return false;
+			if (!(this.hasRank(by, (toId(arg[0].split(' ')[0]) in {'dq': 1, 'disqualify': 1} ? '%@' : '') + '&#~') || toId(by) in this.settings.tourwhitelist[room])
+				|| toId(arg[0]) in {'join': 1, 'in': 1, 'j': 1}) return false;
 			this.say(con, room, "/tour " + arg.join(','));
 		}
 	},
