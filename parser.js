@@ -358,7 +358,7 @@ exports.parse = {
 			}
 			// moderation for banned words
 			if (useDefault || this.settings['modding'][room]['bannedwords'] !== 0 && pointVal < 2) {
-				var bannedPhrases = (Object.keys(this.settings.bannedphrases[room] || {})).concat(Object.keys(this.settings.bannedphrases['global'] || {}));
+				var bannedPhrases = !!this.settings.bannedphrases ? (Object.keys(this.settings.bannedphrases[room] || {})).concat(Object.keys(this.settings.bannedphrases['global'] || {})) : [];
 				for (var i = 0; i < bannedPhrases.length; i++) {
 					if (msg.toLowerCase().indexOf(bannedPhrases[i]) > -1) {
 						pointVal = 2;

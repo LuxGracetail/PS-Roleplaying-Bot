@@ -328,6 +328,8 @@ exports.commands = {
 		if (!this.settings.bannedphrases || !this.settings.bannedphrases[tarRoom] || !(arg in this.settings.bannedphrases[tarRoom])) 
 			return this.say(con, room, "Phrase \"" + arg + "\" is not currently banned.");
 		delete this.settings.bannedphrases[tarRoom][arg];
+		if (!Object.size(this.settings.bannedphrases[tarRoom])) delete this.settings.bannedphrases[tarRoom];
+		if (!Object.size(this.settings.bannedphrases)) delete this.settings.bannedphrases;
 		this.writeSettings();
 		this.say(con, room, "Phrase \"" + arg + "\" is no longer banned.");
 	},
