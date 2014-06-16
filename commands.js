@@ -313,7 +313,7 @@ exports.commands = {
 		this.writeSettings();
 		this.say(con, room, "Phrase \"" + arg + "\" is now banned.");
 	},
-	unbanphrase: 'unbanphrase',
+	unbanphrase: 'unbanword',
 	unbanword: function(arg, by, room, con) {
 		if (!this.canUse('banword', room, by)) return false;
 		arg = arg.trim().toLowerCase();
