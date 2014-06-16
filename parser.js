@@ -290,7 +290,7 @@ exports.parse = {
 		var canUse = false;
 		var ranks = ' +%@&#~';
 		if (!this.settings[cmd] || !(room in this.settings[cmd])) {
-			canUse = this.hasRank(user, ranks.substr(ranks.indexOf(cmd === 'autoban' ? '#' : config.defaultrank)));
+			canUse = this.hasRank(user, ranks.substr(ranks.indexOf((cmd === 'autoban' || cmd === 'banword') ? '#' : config.defaultrank)));
 		} else if (this.settings[cmd][room] === true) {
 			canUse = true;
 		} else if (ranks.indexOf(this.settings[cmd][room]) > -1) {
@@ -333,7 +333,7 @@ exports.parse = {
 
 		var req = require('http').request(reqOpts, function(res) {
 			res.on('data', function(chunk) {
-				self.say(con, room, '/pm ' + by + ', hastebin.com/raw/' + JSON.parse(chunk.toString())['key']);
+				self.say(con, room, (room.charAt(0) === ',' ? "" : "/pm " + by + ", ") + "hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
 			});
 		});
 
@@ -373,9 +373,9 @@ exports.parse = {
 			}
 			// moderation for banned words
 			if (useDefault || this.settings['modding'][room]['bannedwords'] !== 0 && pointVal < 2) {
-				for (var i in this.settings.bannedwords) {
-				    	var bwRegex = new RegExp(i, 'gi');
-					if (bwRegex.test(msg)) {
+				var bannedPhrases = !!this.settings.bannedphrases ? (Object.keys(this.settings.bannedphrases[room] || {})).concat(Object.keys(this.settings.bannedphrases['global'] || {})) : [];
+				for (var i = 0; i < bannedPhrases.length; i++) {
+					if (msg.toLowerCase().indexOf(bannedPhrases[i]) > -1) {
 						pointVal = 2;
 						muteMessage = ', Automated response: your message contained a banned phrase';
 						break;
