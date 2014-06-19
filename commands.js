@@ -585,9 +585,15 @@ exports.commands = {
 	happy: function(arg, by, room, con) {
 		// info for The Happy Place
 		if (!(toId(room) === 'thehappyplace' && config.serverid === 'showdown')) return false;
-		var text = '';
-		if (!this.canUse('happy', room, by)) text += '/pm ' + by + ', ';
-		this.say(con, room, text + "The Happy Place, at its core, is a friendly environment for anyone just looking for a place to hang out and relax. We also specialize in taking time to give advice on life problems for users. Need a place to feel at home and unwind? Look no further!");
+		var text = "";
+		if (!this.canUse('happy', room, by)) text += "/pm " + by + ", ";
+		arg = toId(arg);
+		if (arg === 'askstaff' || arg === 'ask' || arg === 'askannie') {
+			text += "http://thepshappyplace.weebly.com/ask-the-staff.html";
+		} else {
+			text += "The Happy Place, at its core, is a friendly environment for anyone just looking for a place to hang out and relax. We also specialize in taking time to give advice on life problems for users. Need a place to feel at home and unwind? Look no further!";
+		}
+		this.say(con, room, text);
 	},
 
 
