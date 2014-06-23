@@ -223,7 +223,7 @@ exports.commands = {
 				continue;
 			}
 			this.say(con, room, '/roomban ' + tarUser + ', Blacklisted user');
-			this.say(con,room, '/modlog ' + tarUser + ' was added to the blacklist by ' + by + '.');
+			this.say(con,room, '/modnote ' + tarUser + ' was added to the blacklist by ' + by + '.');
 			added.push(tarUser);
 		}
 
