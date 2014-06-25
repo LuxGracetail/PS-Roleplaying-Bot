@@ -418,7 +418,7 @@ exports.commands = {
 			res.on('data', function(chunk) {
 				try {
 					var data = JSON.parse(chunk);
-					self.say(con, room, data.value.joke);
+					self.say(con, room, data.value.joke.replace(/&quot;/g, "\""));
 				} catch (e) {
 					self.say(con, room, 'Sorry, couldn\'t fetch a random joke... :(');
 				}
