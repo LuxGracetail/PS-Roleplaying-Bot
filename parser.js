@@ -327,8 +327,12 @@ exports.parse = {
 	},
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
+		if (user === toId(config.nick)) {
+			this.ranks[room] = user.charAt(0);
+			return;
+		}
 		user = toId(user);
-		if (!user || room.charAt(0) === ',' || user === toId(config.nick)) return;
+		if (!user || room.charAt(0) === ',') return;
 		room = toId(room);
 		msg = msg.trim().replace(/ +/g, " "); // removes extra spaces so it doesn't trigger stretching
 		this.updateSeen(user, 'c', room);
