@@ -434,6 +434,7 @@ exports.commands = {
 		}
 		choices = choices.filter(function(i) {return (toId(i) !== '')});
 		if (choices.length < 2) return this.say(con, room, (room.charAt(0) === ',' ? '': '/pm ' + by + ', ') + '.choose: You must give at least 2 valid choices.');
+
 		var choice = choices[Math.floor(Math.random()*choices.length)];
 		this.say(con, room, ((this.canUse('choose', room, by) || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + stripCommands(choice));
 	},
@@ -449,15 +450,17 @@ exports.commands = {
 	},
 	seen: function(arg, by, room, con) { // this command is still a bit buggy
 		var text = (room.charAt(0) === ',' ? '' : '/pm ' + by + ', ');
-		if (!toId(arg) || toId(arg).length > 18) return this.say(con, room, text + 'Invalid username.');
-		if (toId(arg) === toId(by)) {
+		arg = toId(arg);
+		if (!arg || arg.length > 18) return this.say(con, room, text + 'Invalid username.');
+		if (arg === toId(by)) {
 			text += 'Have you looked in the mirror lately?';
-		} else if (toId(arg) === toId(config.nick)) {
+		} else if (arg === toId(config.nick)) {
 			text += 'You might be either blind or illiterate. Might want to get that checked out.';
-		} else if (!this.chatData[toId(arg)] || !this.chatData[toId(arg)].lastSeen) {
-			text += 'The user ' + arg.trim() + ' has never been seen.';
+		} else if (!this.chatData[arg] || !this.chatData[arg].seenAt) {
+			text += 'The user ' + arg + ' has never been seen.';
 		} else {
-			text += arg.trim() + ' was last seen ' + this.getTimeAgo(this.chatData[toId(arg)].seenAt) + ' ago, ' + this.chatData[toId(arg)].lastSeen;
+			text += arg + ' was last seen ' + this.getTimeAgo(this.chatData[arg].seenAt) + ' ago' + (
+				this.chatData[arg].lastSeen ? ', ' + this.chatData[arg].lastSeen : '.');
 		}
 		this.say(con, room, text);
 	},

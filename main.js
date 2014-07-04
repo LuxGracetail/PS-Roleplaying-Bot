@@ -142,7 +142,7 @@ global.cleanChatData = function(chatData) {
 		}
 	}
 	return chatData;
-}
+};
 
 var checkCommandCharacter = function() {
 	if (!/[^a-z0-9 ]/i.test(config.commandcharacter)) {
