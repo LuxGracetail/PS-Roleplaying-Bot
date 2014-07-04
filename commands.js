@@ -532,7 +532,9 @@ exports.commands = {
 			signup: 'Breeders Sign Up: http://tinyurl.com/GetBreeding',
 			bans: 'Ban appeals: http://pstradingroom.weebly.com/ban-appeals.html',
 			banappeals: 'Ban appeals: http://pstradingroom.weebly.com/ban-appeals.html',
-			lists: 'Major and minor list compilation: http://tinyurl.com/WifiSheets'
+			lists: 'Major and minor list compilation: http://tinyurl.com/WifiSheets',
+			trainers: 'List of EV trainers: http://tinyurl.com/WifiEVtrainingCrew',
+			league: 'Wi-Fi Room Pokemon League: http://tinyurl.com/wifiroomleague'
 		};
 		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html');
 		this.say(con, room, text);
