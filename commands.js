@@ -104,6 +104,7 @@ exports.commands = {
 			happy: 1,
 			guia: 1,
 			studio: 1,
+			'switch': 1,
 			banword: 1
 		};
 		var modOpts = {
@@ -527,6 +528,12 @@ exports.commands = {
 			plug: '/wall The Studio\'s plug.dj can be found here: http://plug.dj/the-studio-3/'
 		};
 		this.say(con, room, text + (messages[toId(arg)] || ('Welcome to The Studio, a music sharing room on PS!. If you have any questions, feel free to PM a room staff member. Available commands for .studio: ' + Object.keys(messages).join(', '))));
+	},
+	'switch': function(arg, by, room, con) {
+		if (!(toId(room) === 'gamecorner' && config.serverid === 'showdown') ||
+			!this.canUse('switch', room, by)) return false;
+		this.say(con, room, 'Taking over the world. Starting with Game Corner. Room deregistered.');
+		this.say(con, room, '/k ' + (toId(arg) || by) + ', O3O YOU HAVE TOUCHED THE SWITCH');
 	},
 	wifi: function(arg, by, room, con) {
 		// links to relevant sites for the Wi-Fi room 
