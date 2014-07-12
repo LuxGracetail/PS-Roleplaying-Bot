@@ -372,7 +372,10 @@ exports.commands = {
 	tournament: 'tour',
 	tour: function(arg, by, room, con) {
 		if (room.charAt(0) === ',' || !toId(arg)) return false;
-		if (!this.hasRank(this.ranks[room] || ' ', '#~')) return this.say(con, room, config.nick + " requires # or higher to use the tournament system.");
+		if (!this.hasRank(this.ranks[room] || ' ', '#~')) {
+			if (!this.hasRank(by, '+%@&#~')) return false;
+			return this.say(con, room, config.nick + " requires # or higher to use the tournament system.");
+		}
 		arg = arg.split(',');
 		if (!this.settings.tourwhitelist) this.settings.tourwhitelist = {};
 		if (!this.settings.tourwhitelist[room]) this.settings.tourwhitelist[room] = {};
