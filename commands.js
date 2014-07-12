@@ -525,7 +525,7 @@ exports.commands = {
 			text += '/pm ' + by + ', ';
 		}
 		var messages = {
-			plug: '/wall The Studio\'s plug.dj can be found here: http://plug.dj/the-studio-3/'
+			plug: '/announce The Studio\'s plug.dj can be found here: http://plug.dj/the-studio-3/'
 		};
 		this.say(con, room, text + (messages[toId(arg)] || ('Welcome to The Studio, a music sharing room on PS!. If you have any questions, feel free to PM a room staff member. Available commands for .studio: ' + Object.keys(messages).join(', '))));
 	},
