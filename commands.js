@@ -103,6 +103,7 @@ exports.commands = {
 			autoban: 1,
 			happy: 1,
 			guia: 1,
+			studio: 1,
 			banword: 1
 		};
 		var modOpts = {
