@@ -529,7 +529,7 @@ exports.commands = {
 		this.say(con, room, text + (messages[toId(arg)] || ('Welcome to The Studio, a music sharing room on PS!. If you have any questions, feel free to PM a room staff member. Available commands for .studio: ' + Object.keys(messages).join(', '))));
 	},
 	wifi: function(arg, by, room, con) {
-		// links to the 
+		// links to relevant sites for the Wi-Fi room 
 		if (!(toId(room) === 'wifi' && config.serverid === 'showdown')) return false;
 		var text = '';
 		if (!this.canUse('wifi', room, by)) {
@@ -549,6 +549,7 @@ exports.commands = {
 			banappeals: 'Ban appeals: http://pstradingroom.weebly.com/ban-appeals.html',
 			lists: 'Major and minor list compilation: http://tinyurl.com/WifiSheets',
 			trainers: 'List of EV trainers: http://tinyurl.com/WifiEVtrainingCrew',
+			youtube: 'Wi-Fi room\'s official YouTube channel: http://tinyurl.com/wifiyoutube',
 			league: 'Wi-Fi Room Pokemon League: http://tinyurl.com/wifiroomleague'
 		};
 		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html');
