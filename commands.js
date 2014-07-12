@@ -516,6 +516,17 @@ exports.commands = {
 		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
 		this.say(con, room, text);
 	},
+	studio: function(arg, by, room, con) {
+		if (!(toId(room) === 'thestudio' && config.serverid === 'showdown')) return false;
+		var text = '';
+		if (!this.canUse('studio', room, by)) {
+			text += '/pm ' + by + ', ';
+		}
+		var messages = {
+			plug: '/wall The Studio\'s plug.dj can be found here: http://plug.dj/the-studio-3/'
+		};
+		this.say(con, room, text + (messages[toId(arg)] || ('Welcome to The Studio, a music sharing room on PS!. If you have any questions, feel free to PM a room staff member. Available commands for .studio: ' + Object.keys(messages).join(', '))));
+	},
 	wifi: function(arg, by, room, con) {
 		// links to the 
 		if (!(toId(room) === 'wifi' && config.serverid === 'showdown')) return false;
