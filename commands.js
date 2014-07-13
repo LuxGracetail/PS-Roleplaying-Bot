@@ -90,20 +90,10 @@ exports.commands = {
 		if (!this.hasRank(by, '%@&#~') || room.charAt(0) === ',') return false;
 
 		var settable = {
-			say: 1,
 			joke: 1,
-			choose: 1,
-			usagestats: 1,
-			buzz: 1,
 			helix: 1,
-			survivor: 1,
-			games: 1,
-			wifi: 1,
-			monotype: 1,
 			autoban: 1,
 			regexautoban: 1,
-			happy: 1,
-			guia: 1,
 			banword: 1,
 			setrp: 1
 		};
@@ -224,6 +214,7 @@ exports.commands = {
 				continue;
 			}
 			this.say(con, room, '/roomban ' + tarUser + ', Blacklisted user');
+			this.say(con,room, '/modnote ' + tarUser + ' was added to the blacklist by ' + by + '.');
 			added.push(tarUser);
 		}
 
@@ -391,42 +382,6 @@ exports.commands = {
 	 * Add custom commands here.
 	 */
 
-	tournament: 'tour',
-	tour: function(arg, by, room, con) {
-		if (room.charAt(0) === ',' || !toId(arg)) return false;
-		if (!this.hasRank(this.ranks[room] || ' ', '#~')) return this.say(con, room, config.nick + " requires # or higher to use the tournament system.");
-		arg = arg.split(',');
-		if (!this.settings.tourwhitelist) this.settings.tourwhitelist = {};
-		if (!this.settings.tourwhitelist[room]) this.settings.tourwhitelist[room] = {};
-		if (toId(arg[0]) === 'whitelist') {
-			if (!this.hasRank(by, '&#~')) return false;
-			var action = toId(arg[1] || '');
-			if (!action || action === 'view') {
-				var nickList = Object.keys(this.settings.tourwhitelist[room]);
-				if (!nickList.length) return this.say(con, room, "/pm " + by + ", No users are whitelisted in " + room + ".");
-				return this.uploadToHastebin(con, room, by, "The following users are allowed to control tournaments in " + room + ":\n\n" + nickList.join("\n"));
-			}
-			var target = toId(arg[2] || '');
-			if (!action || !(action in {'add': 1, 'remove': 1}) || !target) return this.say(con, room, "Incorrect syntax: .tour whitelist, [view/add/remove](, [user])");
-			if (action === 'add') {
-				this.settings.tourwhitelist[room][target] = 1;
-				this.say(con, room, "User " + arg[2] + " is now whitelisted and can control tournaments.");
-			} else {
-				if (target in this.settings.tourwhitelist[room]) delete this.settings.tourwhitelist[room][target];
-				this.say(con, room, "User " + arg[2] + " is no longer whitelisted.");
-			}
-			this.writeSettings();
-		} else {
-			if (!(this.hasRank(by, (toId(arg[0].split(' ')[0]) in {'dq': 1, 'disqualify': 1} ? '%@' : '') + '&#~') || toId(by) in this.settings.tourwhitelist[room])
-				|| toId(arg[0]) in {'join': 1, 'in': 1, 'j': 1}) return false;
-			this.say(con, room, "/tour " + arg.join(','));
-		}
-	},
-	tell: 'say',
-	say: function(arg, by, room, con) {
-		if (!this.canUse('say', room, by)) return false;
-		this.say(con, room, stripCommands(arg) + ' (' + by + ' said this)');
-	},
 	joke: function(arg, by, room, con) {
 		if (!this.canUse('joke', room, by) || room.charAt(0) === ',') return false;
 		var self = this;
@@ -440,7 +395,7 @@ exports.commands = {
 			res.on('data', function(chunk) {
 				try {
 					var data = JSON.parse(chunk);
-					self.say(con, room, data.value.joke);
+					self.say(con, room, data.value.joke.replace(/&quot;/g, "\""));
 				} catch (e) {
 					self.say(con, room, 'Sorry, couldn\'t fetch a random joke... :(');
 				}
@@ -448,27 +403,19 @@ exports.commands = {
 		});
 		req.end();
 	},
-	usage: 'usagestats',
-	usagestats: function(arg, by, room, con) {
-		if (this.canUse('usagestats', room, by) || room.charAt(0) === ',') {
-			var text = '';
-		} else {
-			var text = '/pm ' + by + ', ';
-		}
-		text += 'http://sim.smogon.com:8080/Stats/2014-05/';
-		this.say(con, room, text);
-	},
 	seen: function(arg, by, room, con) { // this command is still a bit buggy
 		var text = (room.charAt(0) === ',' ? '' : '/pm ' + by + ', ');
-		if (!toId(arg) || toId(arg).length > 18) return this.say(con, room, text + 'Invalid username.');
-		if (toId(arg) === toId(by)) {
+		arg = toId(arg);
+		if (!arg || arg.length > 18) return this.say(con, room, text + 'Invalid username.');
+		if (arg === toId(by)) {
 			text += 'Have you looked in the mirror lately?';
-		} else if (toId(arg) === toId(config.nick)) {
+		} else if (arg === toId(config.nick)) {
 			text += 'You might be either blind or illiterate. Might want to get that checked out.';
-		} else if (!this.chatData[toId(arg)] || !this.chatData[toId(arg)].lastSeen) {
-			text += 'The user ' + arg.trim() + ' has never been seen.';
+		} else if (!this.chatData[arg] || !this.chatData[arg].seenAt) {
+			text += 'The user ' + arg + ' has never been seen.';
 		} else {
-			text += arg.trim() + ' was last seen ' + this.getTimeAgo(this.chatData[toId(arg)].seenAt) + ' ago, ' + this.chatData[toId(arg)].lastSeen;
+			text += arg + ' was last seen ' + this.getTimeAgo(this.chatData[arg].seenAt) + ' ago' + (
+				this.chatData[arg].lastSeen ? ', ' + this.chatData[arg].lastSeen : '.');
 		}
 		this.say(con, room, text);
 	},
@@ -509,7 +456,7 @@ exports.commands = {
 	// Roleplaying commands
 	setrp: function(arg, by, room, con) {
 		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
-		if (!(room in this.RP)) return this.say(con, room, 'Are you seriously trying to start an RP here?');
+		if (!(room in this.RP)) return this.say(con, room, 'I seriously hope you\'re not trying to do this.');
 		if (!arg) return this.say(con, room, 'Please enter an RP.');
 
 		this.RP[room].plot = arg;
@@ -519,7 +466,6 @@ exports.commands = {
 	rpstart: 'start',
 	start: function(arg, by, room, con) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].setAt) return false;
-
 		if (!this.RP[room].plot) {
 			if (!arg) return this.say(con, room, 'Please set an RP before using .start, or specify an RP with .start to start one immediately.');
 			this.RP[room].plot = arg;
@@ -565,9 +511,41 @@ exports.commands = {
 	rpend: 'endrp',
 	endrp: function(arg, by, room, con) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (config.serverid === 'showdown' && this.RP[room].setAt) {
+			nextVoid = this.splitDoc(this.RP[room].plot);
+			if (this.RP.void[room].length === 2) this.RP.void[room].splice(0, 1);
+			this.RP.void[room].push(nextVoid);
+		}
 
 		this.RP[room] = {};
 		this.say(con, room, '/wall The RP has ended.');
+	},
+	void: function(arg, by, room, con) {
+		if (config.serverid !== 'showdown' || !(room in this.RP) || room.charAt(0) === ',') return false;
+		if (this.hasRank(by, '+%@#~')) {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+
+		var voided = this.RP.void[room];
+		switch (voided.length) {
+			case 2:
+				text += voided[0] + ' and ' + voided[1] + ' are void.';
+				break;
+			case 1:
+				text += voided[0] + ' is void. The second-last RP in this room is unknown.';
+				break;
+			case 0:
+				text += 'The last 2 RPs in this room are unknown.';
+				break;
+			default:
+				return this.say(con, room, 'Something went wrong with how void RPs are stored.');
+		}
+		var concurrent = (room === 'roleplaying') ? this.splitDoc(this.RP['amphyrp'].plot) : this.splitDoc(this.RP['roleplaying'].plot);
+		if (concurrent) text += ' The current RP in ' + ((room === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent + '.';
+
+		this.say(con, room, text);
 	},
 	rp: function(arg, by, room, con) {
 		if (!(room in this.RP) || room.charAt(0) === ',') return false;
@@ -606,171 +584,52 @@ exports.commands = {
 			setTimeout(function() { delete self.RP[room].hostCalled; }, 60 * 1000);
 		}
 		if (!this.RP[room].host) return this.say(con, room, text + 'There is no host.');
-
 		this.say(con, room, text + 'The host is ' + this.RP[room].host + '.');
 	},
 	voice: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown' || !('amphyrp' in this.RP) || room.charAt(0) !== ',') return false;
-		if (!this.RP['amphyrp'].plot) return this.say(con, room, '.voice can only be used after an RP has been set. PM a room mod (@ and up) for voice.');
 
-		var d = Date.create();
-		d.setHours(d.getHours() - 4); // scheduling is done in UTC -4:00
-		var day = d.getDay();
-		if (day === 3) return this.say(con, room,  'Wednesday is a free day, so voice can\'t be given out.');
-		if (day === 6) return this.say(con, room, 'Saturday is a free day, so voice can\'t be given out.');
-
+		var freeDay = this.isFreeDay();
+		if (!freeDay && !this.RP['amphyrp'].plot) return this.say(con, room, '.voice can only be used after an RP has been set. Wait until the RP has been set before asking for voice.');
+		if (freeDay) return this.say(con, room, freeDay + ' is a free day, so voice can\'t be given out.');
 		this.say(con, 'amphyrp', '/roomvoice ' + by);
 	},
 	ampclear: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown' || room !== 'amphyrp' || !this.hasRank(by, '@#~')) return false;
-		if (this.RP['amphyrp'] && this.RP['amphyrp'].plot) return this.say(con, room, 'Please wait until the RP is over before clearing the voice list.');
+		if (!this.isFreeDay() && this.RP['amphyrp'] && this.RP['amphyrp'].plot) return this.say(con, room, 'Please wait until the RP is over before clearing the voice list.');
 		if (this.amphyVoices.length === 0) return this.say(con, room, 'No roomvoices have been added yet.');
 
 		// Roomdevoices list of people roomvoiced since either the last time the bot was restarted or the last time .ampclear was user. /roomauth can't be parsed by the bot, so this has to be done instead
 		var self = this;
-		for (var i = 0; i < this.amphyVoices.length; i++) {
+		var len = this.amphyVoices.length;
+		for (var i = 0; i < len; i++) {
 			setTimeout(function(nick) {
 				self.say(con, room, '/deroomvoice ' + nick);
-			}, 1000*i, self.amphyVoices[i]);
+			}, 1500*i, self.amphyVoices[i]);
 		}
-		if (this.amphyVoices.length === 1) {
+		if (len === 1) {
 			this.say (con, room, 'Deroomvoicing finished.');
 		} else {
-			this.say(con, room, 'Deroomvoicing will be finished in ' + (this.amphyVoices.length - 1) + ' second' + ((this.amphyVoices.length === 2) ? '.' : 's.'));
+			this.say(con, room, 'Deroomvoicing will be finished in ' + ((len - 1) * 1.5) + ' seconds.');
 		}
 		this.amphyVoices = [];
 	},
 	plug: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown') return false;
-		if ((!this.hasRank(by, ' ') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
+		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
 			var text = '';
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-
 		this.say(con, room, text + 'Come join our plug.dj! http://plug.dj/a8f892a9/');
 	},
-
-	/**
-	 * Room specific commands
-	 *
-	 * These commands are used in specific rooms on the Smogon server.
-	 */
-	guia: function(arg, by, room, con) {
-		// this command is a guide for the Spanish room
-		if (!(toId(room) === 'espaol' && config.serverid === 'showdown')) return false;
-		var text = '';
-		if (!this.canUse('guia', room, by)) {
-			text += '/pm ' + by + ', ';
-		}
-		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
-		this.say(con, room, text);
-	},
-	wifi: function(arg, by, room, con) {
-		// links to the
-		if (!(toId(room) === 'wifi' && config.serverid === 'showdown')) return false;
-		var text = '';
-		if (!this.canUse('wifi', room, by)) {
-			text += '/pm ' + by + ', ';
-		}
-		var messages = {
-			intro: 'Here is an introduction to Wi-Fi: http://tinyurl.com/welcome2wifi',
-			rules: 'The rules for the Wi-Fi room can be found here: http://pstradingroom.weebly.com/rules.html',
-			faq: 'Wi-Fi room FAQs: http://pstradingroom.weebly.com/faqs.html',
-			faqs: 'Wi-Fi room FAQs: http://pstradingroom.weebly.com/faqs.html',
-			scammers: 'List of known scammers: http://tinyurl.com/psscammers',
-			cloners: 'List of approved cloners: http://goo.gl/WO8Mf4',
-			tips: 'Scamming prevention tips: http://pstradingroom.weebly.com/scamming-prevention-tips.html',
-			breeders: 'List of breeders: http://tinyurl.com/WiFIBReedingBrigade',
-			signup: 'Breeders Sign Up: http://tinyurl.com/GetBreeding',
-			bans: 'Ban appeals: http://pstradingroom.weebly.com/ban-appeals.html',
-			banappeals: 'Ban appeals: http://pstradingroom.weebly.com/ban-appeals.html',
-			lists: 'Major and minor list compilation: http://tinyurl.com/WifiSheets'
-		};
-		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html');
-		this.say(con, room, text);
-	},
-	mono: 'monotype',
-	monotype: function(arg, by, room, con) {
-		// links and info for the monotype room
-		if (!(toId(room) === 'monotype' && config.serverid === 'showdown')) return false;
-		var text = '';
-		if (!this.canUse('monotype', room, by)) {
-			text += '/pm ' + by + ', ';
-		}
-		var messages = {
-			forums: 'The monotype room\'s forums can be found here: http://psmonotypeforum.createaforum.com/index.php',
-			plug: 'The monotype room\'s plug can be found here: http://plug.dj/monotype-3-am-club/',
-			rules: 'The monotype room\'s rules can be found here: http://psmonotype.wix.com/psmono#!rules/cnnz',
-			site: 'The monotype room\'s site can be found here: http://www.psmonotype.wix.com/psmono',
-			league: 'Information on the Monotype League can be found here: http://themonotypeleague.weebly.com/'
-		};
-		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General information can be found here: http://www.psmonotype.wix.com/psmono') : 'Welcome to the monotype room! Please visit our site to find more information. The site can be found here: http://www.psmonotype.wix.com/psmono');
-		this.say(con, room, text);
-	},
-	survivor: function(arg, by, room, con) {
-		// contains links and info for survivor in the Survivor room
-		if (!(toId(room) === 'survivor' && config.serverid === 'showdown')) return false;
-		var text = '';
-		if (!this.canUse('survivor', room, by)) {
-			text += '/pm ' + by + ', ';
-		}
-		var gameTypes = {
-			hg: "http://survivor-ps.weebly.com/hunger-games.html",
-			hungergames: "http://survivor-ps.weebly.com/hunger-games.html",
-			classic: "http://survivor-ps.weebly.com/classic.html"
-		};
-		arg = toId(arg);
-		if (arg) {
-			if (!(arg in gameTypes)) return this.say(con, room, "Invalid game type. The game types can be found here: http://survivor-ps.weebly.com/themes.html");
-			text += "The rules for this game type can be found here: " + gameTypes[arg];
+	site: function(arg, by, room, con) {
+		if (config.serverid !== 'showdown') return false;
+		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
+			var text = '';
 		} else {
-			text += "The list of game types can be found here: http://survivor-ps.weebly.com/themes.html";
+			var text = '/pm ' + by + ', ';
 		}
-		this.say(con, room, text);
-	},
-	games: function(arg, by, room, con) {
-		// lists the games for the games room
-		if (!(toId(room) === 'gamecorner' && config.serverid === 'showdown')) return false;
-		var text = '';
-		if (!this.canUse('games', room, by)) {
-			text += '/pm ' + by + ', ';
-		}
-		this.say(con, room, text + 'Game List: 1. Would You Rather, 2. NickGames, 3. Scattegories, 4. Commonyms, 5. Questionnaires, 6. Funarios, 7. Anagrams, 8. Spot the Reference, 9. Pokemath, 10. Liar\'s Dice');
-		this.say(con, room, text + '11. Pun Game, 12. Dice Cup, 13. Who\'s That Pokemon?, 14. Pokemon V Pokemon (BST GAME), 15. Letter Getter, 16. Missing Link, 17. Parameters! More information can be found here: http://psgamecorner.weebly.com/games.html');
-	},
-	happy: function(arg, by, room, con) {
-		// info for The Happy Place
-		if (!(toId(room) === 'thehappyplace' && config.serverid === 'showdown')) return false;
-		var text = '';
-		if (!this.canUse('happy', room, by)) text += '/pm ' + by + ', ';
-		this.say(con, room, text + "The Happy Place, at its core, is a friendly environment for anyone just looking for a place to hang out and relax. We also specialize in taking time to give advice on life problems for users. Need a place to feel at home and unwind? Look no further!");
-	},
-
-
-	/**
-	 * Jeopardy commands
-	 *
-	 * The following commands are used for Jeopardy in the Academics room
-	 * on the Smogon server.
-	 */
-
-
-	b: 'buzz',
-	buzz: function(arg, by, room, con) {
-		if (this.buzzed || !this.canUse('buzz', room, by) || room.charAt(0) === ',') return false;
-		this.say(con, room, '**' + by.substr(1) + ' has buzzed in!**');
-		this.buzzed = by;
-		var self = this;
-		this.buzzer = setTimeout(function(con, room, buzzMessage) {
-			self.say(con, room, buzzMessage);
-			self.buzzed = '';
-		}, 7000, con, room, by + ', your time to answer is up!');
-	},
-	reset: function(arg, by, room, con) {
-		if (!this.buzzed || !this.hasRank(by, '%@&#~') || room.charAt(0) === ',') return false;
-		clearTimeout(this.buzzer);
-		this.buzzed = '';
-		this.say(con, room, 'The buzzer has been reset.');
-	},
+		this.say(con, room, text + 'Roleplaying\'s Website: http://bit.ly/1xdK24X' + ((room === 'amphyrp') ? ' AmphyRP Info: http://bit.ly/1l2NiKS' : ''));
+	}
 };
