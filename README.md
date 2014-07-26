@@ -34,6 +34,22 @@ Some information will be shown, and will automatically join the room(s) you spec
 
   [2]: http://nodejs.org/
   [3]: https://github.com/Zarel/Pokemon-Showdown
+  
+Working with Heroku
+-------------------
+
+By default, this fork of Pokémon Showdown Bot creates a websocket server in order for it to be able to run on Heroku. **If you are not running Pokémon Showdown Bot through Heroku,** delete these lines from main.js, as they have been causing problems for some people:
+
+    var WebSocketServer = require('websocket').server;
+
+  	var port = process.env.PORT || 5000;
+    var why = http.createServer(function() {
+        console.log('Thanks Diatom');
+    });
+    why.listen(port);
+    var wss = new WebSocketServer({httpServer: why})
+
+When making your procfile, **do not** name the process type ``web``, as web processes idle very quickly after starting.
 
 Development
 -----------
@@ -44,6 +60,7 @@ However, please refrain from adding more example commands.
 Credits:
  - TalkTakesTime (Development)
  - Quinella (Development)
+ - Morfent (Development)
 
 License
 -------
