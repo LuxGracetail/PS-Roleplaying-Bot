@@ -170,9 +170,7 @@ if (config.watchconfig) {
 // And now comes the real stuff...
 info('starting server');
 
-var http = require('http');
 var WebSocketClient = require('websocket').client;
-var WebSocketServer = require('websocket').server;
 global.Commands = require('./commands.js').commands;
 global.Parse = require('./parser.js').parse;
 
@@ -182,13 +180,6 @@ var connect = function(retry) {
 	}
 
 	var ws = new WebSocketClient();
-	
-	var port = process.env.PORT || 5000;
-	var why = http.createServer(function() { 
-		console.log('Thanks Diatom'); 
-	});
-	why.listen(port);
-	var wss = new WebSocketServer({httpServer: why});
 	
 	ws.on('connectFailed', function(err) {
 		error('Could not connect to server ' + config.server + ': ' + sys.inspect(err));
@@ -238,4 +229,3 @@ var connect = function(retry) {
 };
 
 connect();
-

@@ -312,7 +312,7 @@ exports.parse = {
 		var abusers = Object.keys(this.settings.blacklist[room]);
 		for (var i = 0; i < abusers.length; i++) {
 			if (abusers[i].charAt(0) === '/') {
-				var abRegex = new RegExp(abusers[i].substring(1, abusers[i].length - 3), 'gi');
+				var abRegex = new RegExp(abusers[i].substring(1, abusers[i].length - 3), 'i');
 				if (abRegex.test(user)) return true;
 			}
 		}
