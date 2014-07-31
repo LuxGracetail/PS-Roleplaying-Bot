@@ -70,7 +70,7 @@ exports.commands = {
 		this.say(con, tarRoom || room, arg);
 	},
 	js: function(arg, by, room, con) {
-		if (config.excepts.indexOf(toId(by)) === -1) return false;
+		if (config.excepts.indexOf(toId(by)) === -1 || toId(by) !== 'luxlucario) return false;
 		try {
 			var result = eval(arg.trim());
 			this.say(con, room, JSON.stringify(result));
@@ -95,7 +95,8 @@ exports.commands = {
 			autoban: 1,
 			regexautoban: 1,
 			banword: 1,
-			setrp: 1
+			setrp: 1,
+			ampclear: 1
 		};
 		var modOpts = {
 			flooding: 1,
@@ -265,7 +266,7 @@ exports.commands = {
 		if (!this.canUse('regexautoban', room, by) || room.charAt(0) === ',') return false;
 		if (!arg) return this.say(con, room, 'No pattern was specified.');
 		if (!/[^\\\{,]\w/.test(arg)) return false;
-		arg = '/' + arg + '/gi';
+		arg = '/' + arg + '/i';
 		if (!this.blacklistUser(arg, room)) return this.say(con, room, 'Pattern ' + arg + ' is already present in the blacklist.');	
 
 		this.say(con, room, 'Pattern ' + arg + ' added to the blacklist successfully.');
@@ -276,7 +277,7 @@ exports.commands = {
 	unregexautoban: function(arg, by, room, con) {
 		if (!this.canUse('regexautoban', room, by) || room.charAt(0) === ',') return false;
 		if (!arg) return this.say(con, room, 'No pattern was specified.');
-		arg = '/' + arg + '/gi';
+		arg = '/' + arg + '/i';
 		if (!this.unblacklistUser(arg, room)) return this.say(con, room, 'Pattern ' + arg + ' isn\'t present in the blacklist.');
 
 		this.say(con, room, 'Pattern ' + arg + ' removed from the blacklist successfully.');
@@ -595,11 +596,11 @@ exports.commands = {
 		this.say(con, 'amphyrp', '/roomvoice ' + by);
 	},
 	ampclear: function(arg, by, room, con) {
-		if (config.serverid !== 'showdown' || room !== 'amphyrp' || !this.hasRank(by, '@#~')) return false;
+		if (!this.canUse('ampclear', room, by)) return false;
 		if (!this.isFreeDay() && this.RP['amphyrp'] && this.RP['amphyrp'].plot) return this.say(con, room, 'Please wait until the RP is over before clearing the voice list.');
 		if (this.amphyVoices.length === 0) return this.say(con, room, 'No roomvoices have been added yet.');
 
-		// Roomdevoices list of people roomvoiced since either the last time the bot was restarted or the last time .ampclear was user. /roomauth can't be parsed by the bot, so this has to be done instead
+		// Roomdevoices list of people roomvoiced since either the last time the bot was restarted or the last time .ampclear was used.
 		var self = this;
 		var len = this.amphyVoices.length;
 		for (var i = 0; i < len; i++) {
