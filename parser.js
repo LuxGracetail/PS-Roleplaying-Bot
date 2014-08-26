@@ -206,9 +206,9 @@ exports.parse = {
 				ok('joined ' + spl[2]);
 				this.room = '';
 				break;
-			case 'c':
-				var by = spl[2];
-				spl.splice(0, 3);
+			case 'c:':
+				var by = spl[3];
+				spl.splice(0, 4);
 				this.processChatData(by, this.room || 'lobby', connection, spl.join('|'));
 				if (this.room && this.isBlacklisted(toId(by), this.room)) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
@@ -519,7 +519,6 @@ exports.parse = {
 			if (writing) {
 				writePending = true;
 				return;
-
 			}
 			writing = true;
 			var data = JSON.stringify(this.settings);
