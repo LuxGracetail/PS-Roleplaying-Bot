@@ -128,11 +128,11 @@ exports.parse = {
 						send(connection, '|/trn ' + config.nick + ',0,' + data);
 					}.bind(this));
 				}.bind(this));
-				
+
 				req.on('error', function(err) {
 					error('login error: ' + sys.inspect(err));
 				});
-				
+
 				if (data) {
 					req.write(data);
 				}
@@ -197,6 +197,14 @@ exports.parse = {
 			case 'c':
 				var by = spl[2];
 				spl.splice(0, 3);
+				this.processChatData(by, this.room || 'lobby', connection, spl.join('|'));
+				if (this.room && this.isBlacklisted(toId(by), this.room)) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
+				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
+				this.room = '';
+				break;
+			case 'c:':
+				var by = spl[3];
+				spl.splice(0, 4);
 				this.processChatData(by, this.room || 'lobby', connection, spl.join('|'));
 				if (this.room && this.isBlacklisted(toId(by), this.room)) this.say(connection, this.room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl.join('|'), by, this.room || 'lobby', connection);
