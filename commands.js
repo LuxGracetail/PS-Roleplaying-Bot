@@ -474,7 +474,8 @@ exports.commands = {
 		var now = new Date();
 		this.RP[room].setAt = now;
 		this.say(con, room, '/wall The RP has started.');
-		if (config.serverid === 'showdown' && /freeroam/i.test(this.RP[room].setAt)) {
+		if (config.serverid === 'showdown' && /freeroam/i.test(this.RP[room].plot)) {
+			var self = this;
 			this.RP[room].endFR = setTimeout(function () {
 				var nextVoid = self.splitDoc(self.RP[room].plot);
 				if (self.RP.void[room].length === 2) self.RP.void[room].shift();
@@ -496,9 +497,10 @@ exports.commands = {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt || !this.RP[room].pause) return false;
 
 		var paused = new Date(this.RP[room].pause);
+		var setAt = new Date(this.RP[room].setAt);
 		var diff = new Date();
 		diff.setTime(diff.getTime() - paused.getTime());
-		this.RP[room].setAt.setTime(this.RP[room].setAt.getTime() + diff.getTime());
+		this.RP[room].setAt.setTime(setAt.getTime() + diff.getTime());
 
 		delete this.RP[room].pause;
 		this.say(con, room, '/wall RP continue');
@@ -526,7 +528,7 @@ exports.commands = {
 			this.RP.void[room].push(nextVoid);
 		}
 
-		if (endFR in this.RP[room]) clearTimeout(this.RP[room].endFR);
+		if ('endFR' in this.RP[room]) clearTimeout(this.RP[room].endFR);
 		this.RP[room] = {};
 		this.say(con, room, '/wall The RP has ended.');
 	},
@@ -607,22 +609,25 @@ exports.commands = {
 		} else {
 			this.say(con, room, '/modchat false');
 		}
-		if (this.amphyVoices.length === 0) return this.say(con, room, 'No roomvoices have been added yet.');
-
-		// Roomdevoices list of people roomvoiced since either the last time the bot was restarted or the last time .ampclear was user.
+		this.say(con, room, '/roomauth');
 		var self = this;
-		var len = this.amphyVoices.length;
-		for (var i = 0; i < len; i++) {
-			setTimeout(function(nick) {
-				self.say(con, room, '/deroomvoice ' + nick);
-			}, 1500*i, self.amphyVoices[i]);
-		}
-		if (len === 1) {
-			this.say (con, room, 'Deroomvoicing finished.');
-		} else {
-			this.say(con, room, 'Deroomvoicing will be finished in ' + ((len - 1) * 1.5) + ' seconds.');
-		}
-		this.amphyVoices = [];
+		setTimeout(function() {
+			if (self.amphyVoices.length === 0) return this.say(con, room, 'No roomvoices have been added yet.');
+
+			var that = self;
+			var len = self.amphyVoices.length;
+			for (var i = 0; i < len; i++) {
+				setTimeout(function(nick) {
+					that.say(con, room, '/deroomvoice ' + nick);
+				}, 1500*i, that.amphyVoices[i]);
+			}
+			if (len === 1) {
+				self.say(con, room, 'Deroomvoicing finished.');
+			} else {
+				self.say(con, room, 'Deroomvoicing will be finished in ' + ((len - 1) * 1.5) + ' seconds.');
+			}
+			self.amphyVoices = [];
+		}, 1000);
 	},
 	plug: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown') return false;

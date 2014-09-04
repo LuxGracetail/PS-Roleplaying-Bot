@@ -232,9 +232,6 @@ exports.parse = {
 			case 'N':
 				var by = spl[2];
 				this.updateSeen(spl[3], spl[1], by);
-				if (typeof this.amphyVoices !== 'undefined') {
-					if (toId(by) === spl[3] && by.charAt(0) === '+' && this.amphyVoices.indexOf(spl[3]) === -1) this.amphyVoices.push(spl[3]);
-				}
 				if (toId(by) !== toId(config.nick) || ' +%@&#~'.indexOf(by.charAt(0)) === -1) return;
 				this.ranks[toId(this.room === '' ? 'lobby' : this.room)] = by.charAt(0);
 				this.room = '';
@@ -251,6 +248,10 @@ exports.parse = {
 				var by = spl[2];
 				this.updateSeen(by, spl[1], (this.room === '' ? 'lobby' : this.room));
 				this.room = '';
+				break;
+			case 'popup':
+				if (spl[2] === 'Room Owners (#):') this.amphyVoices = spl[spl.length - 1].split(', ');
+				console.log(this.amphyVoices);
 				break;
 		}
 	},
@@ -365,7 +366,7 @@ exports.parse = {
 		user = toId(user);
 		if (!user || room.charAt(0) === ',') return;
 		room = toId(room);
-		msg = msg.trim().replace(/ +/g, " "); // removes extra spaces so it doesn't trigger stretching
+		msg = msg.trim().replace(/ +/g, " ").replace(/[\u0000\u200B-\u200F]/g, ""); // removes extra spaces so it doesn't trigger stretching, and zero width and null characters so stretch and banned words *do* get
 		this.updateSeen(user, 'c', room);
 		var time = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
@@ -499,8 +500,8 @@ exports.parse = {
 		return times.join(', ');
 	},
 	isFreeDay: function() {
-		var d = Date.create();
-		d.setHours(d.getHours() - 4); // scheduling is done in UTC -4:00
+		var d = new Date();
+		d.setHours(d.getUTCHours() - 4); // scheduling is done in UTC -4:00
 		var day = d.getDay();
 		if (day === 3) return 'Wednesday';
 		if (day === 6) return 'Saturday';
