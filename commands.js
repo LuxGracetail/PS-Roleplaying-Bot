@@ -207,7 +207,7 @@ exports.commands = {
 	ab: 'autoban',
 	autoban: function(arg, by, room, con) {
 		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
-		if (!this.hasRank(this.ranks[toId(room)] || ' ', '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
 		arg = arg.split(',');
 		var added = [];
@@ -243,7 +243,7 @@ exports.commands = {
 	unab: 'unautoban',
 	unautoban: function(arg, by, room, con) {
 		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
-		if (!this.hasRank(this.ranks[toId(room)] || ' ', '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
 		arg = arg.split(',');
 		var removed = [];
@@ -510,7 +510,7 @@ exports.commands = {
 	 */
 	guia: function(arg, by, room, con) {
 		// this command is a guide for the Spanish room
-		if (!(toId(room) === 'espaol' && config.serverid === 'showdown')) return false;
+		if (!(room === 'espaol' && config.serverid === 'showdown')) return false;
 		var text = '';
 		if (!this.canUse('guia', room, by)) {
 			text += '/pm ' + by + ', ';
@@ -519,7 +519,7 @@ exports.commands = {
 		this.say(con, room, text);
 	},
 	studio: function(arg, by, room, con) {
-		if (!(toId(room) === 'thestudio' && config.serverid === 'showdown')) return false;
+		if (!(room === 'thestudio' && config.serverid === 'showdown')) return false;
 		var text = '';
 		if (!this.canUse('studio', room, by)) {
 			text += '/pm ' + by + ', ';
@@ -530,14 +530,14 @@ exports.commands = {
 		this.say(con, room, text + (messages[toId(arg)] || ('Welcome to The Studio, a music sharing room on PS!. If you have any questions, feel free to PM a room staff member. Available commands for .studio: ' + Object.keys(messages).join(', '))));
 	},
 	'switch': function(arg, by, room, con) {
-		if (!(toId(room) === 'gamecorner' && config.serverid === 'showdown') ||
+		if (!(room === 'gamecorner' && config.serverid === 'showdown') ||
 			!this.canUse('switch', room, by)) return false;
 		this.say(con, room, 'Taking over the world. Starting with Game Corner. Room deregistered.');
 		this.say(con, room, '/k ' + (toId(arg) || by) + ', O3O YOU HAVE TOUCHED THE SWITCH');
 	},
 	wifi: function(arg, by, room, con) {
 		// links to relevant sites for the Wi-Fi room 
-		if (!(toId(room) === 'wifi' && config.serverid === 'showdown')) return false;
+		if (!(room === 'wifi' && config.serverid === 'showdown')) return false;
 		var text = '';
 		if (!this.canUse('wifi', room, by)) {
 			text += '/pm ' + by + ', ';
@@ -565,7 +565,7 @@ exports.commands = {
 	mono: 'monotype',
 	monotype: function(arg, by, room, con) {
 		// links and info for the monotype room
-		if (!(toId(room) === 'monotype' && config.serverid === 'showdown')) return false;
+		if (!(room === 'monotype' && config.serverid === 'showdown')) return false;
 		var text = '';
 		if (!this.canUse('monotype', room, by)) {
 			text += '/pm ' + by + ', ';
@@ -582,7 +582,7 @@ exports.commands = {
 	},
 	survivor: function(arg, by, room, con) {
 		// contains links and info for survivor in the Survivor room
-		if (!(toId(room) === 'survivor' && config.serverid === 'showdown')) return false;
+		if (!(room === 'survivor' && config.serverid === 'showdown')) return false;
 		var text = '';
 		if (!this.canUse('survivor', room, by)) {
 			text += '/pm ' + by + ', ';
@@ -603,7 +603,7 @@ exports.commands = {
 	},
 	games: function(arg, by, room, con) {
 		// lists the games for the games room
-		if (!(toId(room) === 'gamecorner' && config.serverid === 'showdown')) return false;
+		if (!(room === 'gamecorner' && config.serverid === 'showdown')) return false;
 		var text = '';
 		if (!this.canUse('games', room, by)) {
 			text += '/pm ' + by + ', ';
@@ -613,7 +613,7 @@ exports.commands = {
 	},
 	happy: function(arg, by, room, con) {
 		// info for The Happy Place
-		if (!(toId(room) === 'thehappyplace' && config.serverid === 'showdown')) return false;
+		if (!(room === 'thehappyplace' && config.serverid === 'showdown')) return false;
 		var text = "";
 		if (!this.canUse('happy', room, by)) text += "/pm " + by + ", ";
 		arg = toId(arg);

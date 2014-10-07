@@ -341,7 +341,6 @@ exports.parse = {
 		}
 		user = toId(user);
 		if (!user || room.charAt(0) === ',') return;
-		room = toId(room);
 		msg = msg.trim().replace(/ +/g, " "); // removes extra spaces so it doesn't trigger stretching
 		this.updateSeen(user, 'c', room);
 		var time = Date.now();
