@@ -91,7 +91,7 @@ exports.commands = {
 
 		var settable = {
 			joke: 1,
-			helix: 1,
+			'8ball': 1,
 			autoban: 1,
 			regexautoban: 1,
 			banword: 1,
@@ -197,6 +197,7 @@ exports.commands = {
 	ab: 'autoban',
 	autoban: function(arg, by, room, con) {
 		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[room] || ' ', '@#&~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
 		arg = arg.split(',');
 		var added = [];
@@ -232,6 +233,7 @@ exports.commands = {
 	unab: 'unautoban',
 	unautoban: function(arg, by, room, con) {
 		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[room] || ' ', '@#&~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
 		arg = arg.split(',');
 		var removed = [];
@@ -263,6 +265,7 @@ exports.commands = {
 	regexab: 'regexautoban',
 	regexautoban: function(arg, by, room, con) {
 		if (!this.canUse('regexautoban', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[room] || ' ', '@#&~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 		if (!arg) return this.say(con, room, 'No pattern was specified.');
 		if (!/[^\\\{,]\w/.test(arg)) return false;
 		arg = '/' + arg + '/i';
@@ -275,6 +278,7 @@ exports.commands = {
 	unregexab: 'unregexautoban',
 	unregexautoban: function(arg, by, room, con) {
 		if (!this.canUse('regexautoban', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[room] || ' ', '@#&~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 		if (!arg) return this.say(con, room, 'No pattern was specified.');
 		arg = '/' + arg + '/i';
 		if (!this.unblacklistUser(arg, room)) return this.say(con, room, 'Pattern ' + arg + ' isn\'t present in the blacklist.');
@@ -419,8 +423,8 @@ exports.commands = {
 		}
 		this.say(con, room, text);
 	},
-	helix: function(arg, by, room, con) {
-		if (this.canUse('helix', room, by) || room.charAt(0) === ',') {
+	'8ball': function(arg, by, room, con) {
+		if (this.canUse('8ball', room, by) || room.charAt(0) === ',') {
 			var text = '';
 		} else {
 			var text = '/pm ' + by + ', ';
@@ -456,7 +460,7 @@ exports.commands = {
 	// Roleplaying commands
 	setrp: function(arg, by, room, con) {
 		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
-		if (!(room in this.RP)) return this.say(con, room, 'I seriously hope you\'re not trying to do this.');
+		if (!(room in this.RP) && room !== 'art') return this.say(con, room, 'I seriously hope you\'re not trying to do this.');
 		if (!arg) return this.say(con, room, 'Please enter an RP.');
 
 		this.RP[room].plot = arg;
@@ -473,24 +477,22 @@ exports.commands = {
 
 		var now = new Date();
 		this.RP[room].setAt = now;
-		this.say(con, room, '/wall The RP has started.');
-		if (config.serverid === 'showdown' && /freeroam/i.test(this.RP[room].plot)) {
-			var self = this;
-			this.RP[room].endFR = setTimeout(function () {
-				var nextVoid = self.splitDoc(self.RP[room].plot);
-				if (self.RP.void[room].length === 2) self.RP.void[room].shift();
-				self.RP.void[room].push(nextVoid);
-				self.RP[room] = {};
-				self.say(con, room, '/wall The RP has ended.');
-			}, 2 * 60 * 60 * 1000);
+		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+			this.say(con, room, '/wall The RP has started.');
+		} else {
+			this.say(con, room, '**The RP has started.**');
 		}
 	},
 	pauserp: 'rppause',
 	rppause: function(arg, by, room, con) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt || this.RP[room].pause) return false;
-		
+
 		this.RP[room].pause = new Date();
-		this.say(con, room,'/wall RP pause');
+		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+			this.say(con, room, '/wall RP pause');
+		} else {
+			this.say(con, room, '**RP pause**');
+		}
 	},
 	continuerp: 'rpcontinue',
 	rpcontinue: function(arg, by, room, con) {
@@ -503,7 +505,11 @@ exports.commands = {
 		this.RP[room].setAt.setTime(setAt.getTime() + diff.getTime());
 
 		delete this.RP[room].pause;
-		this.say(con, room, '/wall RP continue');
+		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+			this.say(con, room, '/wall RP continue');
+		} else {
+			this.say(con, room, '**RP continue**');
+		}
 	},
 	sethost: function(arg, by, room, con) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
@@ -528,9 +534,12 @@ exports.commands = {
 			this.RP.void[room].push(nextVoid);
 		}
 
-		if ('endFR' in this.RP[room]) clearTimeout(this.RP[room].endFR);
 		this.RP[room] = {};
-		this.say(con, room, '/wall The RP has ended.');
+		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+			this.say(con, room, '/wall The RP has ended.');
+		} else {
+			this.say(con, room, '**The RP has ended.**');
+		}
 	},
 	void: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot || !this.hasRank(by, '+%@#~') || room.charAt(0) === ',') return false;
@@ -556,7 +565,8 @@ exports.commands = {
 		this.say(con, room, text);
 	},
 	rp: function(arg, by, room, con) {
-		if (!(room in this.RP) || room.charAt(0) === ',') return false;
+		if (room.charAt(0) === ',') return false;
+		if (!(room in this.RP) && room !== 'art') return this.say(con, room, 'I seriously hope you\'re not trying to do this.');
 		if (this.RP[room].called) {
 			var text = '/pm ' + by + ', ';
 		} else {
@@ -610,16 +620,14 @@ exports.commands = {
 			this.say(con, room, '/modchat false');
 		}
 		this.say(con, room, '/roomauth');
-		var self = this;
-		setTimeout(function() {
-			if (self.amphyVoices.length === 0) return this.say(con, room, 'No roomvoices have been added yet.');
+		setTimeout(function(self) {
+			if (self.amphyVoices.length === 0) return self.say(con, room, 'No roomvoices have been added yet.');
 
-			var that = self;
 			var len = self.amphyVoices.length;
 			for (var i = 0; i < len; i++) {
-				setTimeout(function(nick) {
-					that.say(con, room, '/deroomvoice ' + nick);
-				}, 1500*i, that.amphyVoices[i]);
+				setTimeout(function(self, nick) {
+					self.say(con, room, '/deroomvoice ' + nick);
+				}, 1500*i, self, self.amphyVoices[i]);
 			}
 			if (len === 1) {
 				self.say(con, room, 'Deroomvoicing finished.');
@@ -627,7 +635,7 @@ exports.commands = {
 				self.say(con, room, 'Deroomvoicing will be finished in ' + ((len - 1) * 1.5) + ' seconds.');
 			}
 			self.amphyVoices = [];
-		}, 1000);
+		}, 1000, this);
 	},
 	plug: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown') return false;
@@ -645,6 +653,11 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(con, room, text + 'Roleplaying\'s Website: http://bit.ly/1xdK24X' + ((room === 'amphyrp') ? ' AmphyRP Info: http://bit.ly/1l2NiKS' : ''));
+		this.say(con, room, text + 'Roleplaying\'s Website: http://bit.ly/1xdK24X');
+	},
+	legends: 'legend',
+	legend: function(arg, by, room, con) {
+		if (config.serverid !== 'showdown' || !(room in this.RP) || !this.hasRank(by, '%@#&~')) return false;
+		this.say(con, room, '/w ' + by + ', Legend Permission List: http://bit.ly/1lKutAw');
 	}
 };
