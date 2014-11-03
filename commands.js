@@ -508,14 +508,24 @@ exports.commands = {
 	 *
 	 * These commands are used in specific rooms on the Smogon server.
 	 */
-	guia: function(arg, by, room, con) {
-		// this command is a guide for the Spanish room
+	espaol: 'esp',
+	ayuda: 'esp',
+	esp: function(arg, by, room, con) {
+		// links to relevant sites for the Wi-Fi room 
 		if (!(room === 'espaol' && config.serverid === 'showdown')) return false;
 		var text = '';
 		if (!this.canUse('guia', room, by)) {
 			text += '/pm ' + by + ', ';
 		}
-		text += 'Si sos nuevo en el sitio, revisa nuestra **Guía Introductoria** (http://goo.gl/Db1wPf) compilada por ``1 + Tan²x = Sec²x``!';
+		var messages = {
+			reglas: 'Recuerda seguir las reglas de nuestra sala en todo momento: http://ps-salaespanol.weebly.com/reglas.html',
+			faq: 'Preguntas frecuentes sobre el funcionamiento del chat: http://ps-salaespanol.weebly.com/faq.html',
+			faqs: 'Preguntas frecuentes sobre el funcionamiento del chat: http://ps-salaespanol.weebly.com/faq.html',
+			foro: '¡Visita nuestro foro para participar en multitud de actividades! http://ps-salaespanol.proboards.com/',
+			guia: 'Desde este índice (http://ps-salaespanol.proboards.com/thread/575/ndice-de-gu) podrás acceder a toda la información importante de la sala. By: Lost Seso',
+			liga: '¿Tienes alguna duda sobre la Liga? ¡Revisa el **índice de la Liga** aquí!: (http://goo.gl/CxH2gi) By: xJoelituh'
+		};
+		text += (toId(arg) ? (messages[toId(arg)] || '¡Bienvenidos a la comunidad de habla hispana! Si eres nuevo o tienes dudas revisa nuestro índice de guías: http://ps-salaespanol.proboards.com/thread/575/ndice-de-gu') : '¡Bienvenidos a la comunidad de habla hispana! Si eres nuevo o tienes dudas revisa nuestro índice de guías: http://ps-salaespanol.proboards.com/thread/575/ndice-de-gu');
 		this.say(con, room, text);
 	},
 	studio: function(arg, by, room, con) {
