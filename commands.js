@@ -644,7 +644,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(con, room, text + 'Come join our plug.dj! http://plug.dj/a8f892a9/');
+		this.say(con, room, text + 'Come join our plug.dj! https://plug.dj/official-rp-room-plug-dj-2/');
 	},
 	site: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown') return false;
