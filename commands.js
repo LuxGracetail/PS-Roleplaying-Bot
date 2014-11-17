@@ -459,8 +459,7 @@ exports.commands = {
 
 	// Roleplaying commands
 	setrp: function(arg, by, room, con) {
-		if (!this.canUse('setrp', room, by) || room.charAt(0) === ',') return false;
-		if (!(room in this.RP) && room !== 'art') return this.say(con, room, 'I seriously hope you\'re not trying to do this.');
+		if (!this.canUse('setrp', room, by) || !(room in this.RP)) return false;
 		if (!arg) return this.say(con, room, 'Please enter an RP.');
 
 		this.RP[room].plot = arg;
@@ -542,7 +541,7 @@ exports.commands = {
 		}
 	},
 	void: function(arg, by, room, con) {
-		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot || !this.hasRank(by, '+%@#~') || room.charAt(0) === ',') return false;
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '+%@#~') || !(room in this.RP) || this.RP[room].plot) return false;
 
 		var text = '';
 		var voided = this.RP.void[room];
@@ -565,8 +564,7 @@ exports.commands = {
 		this.say(con, room, text);
 	},
 	rp: function(arg, by, room, con) {
-		if (room.charAt(0) === ',') return false;
-		if (!(room in this.RP) && room !== 'art') return this.say(con, room, 'I seriously hope you\'re not trying to do this.');
+		if (!(room in this.RP)) return false;
 		if (this.RP[room].called) {
 			var text = '/pm ' + by + ', ';
 		} else {
@@ -592,7 +590,7 @@ exports.commands = {
 		this.say(con, room, text + 'The RP is ' + this.RP[room].plot + ', in progress for ' + progress + '.');
 	},
 	host: function(arg, by, room, con) {
-		if (!(room in this.RP) || room.charAt(0) === ',') return false;
+		if (!(room in this.RP)) return false;
 		if (this.RP[room].hostCalled) {
 			var text = '/pm ' + by + ', ';
 		} else {
@@ -657,7 +655,7 @@ exports.commands = {
 	},
 	legends: 'legend',
 	legend: function(arg, by, room, con) {
-		if (config.serverid !== 'showdown' || !(room in this.RP) || !this.hasRank(by, '%@#&~')) return false;
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) return false;
 		this.say(con, room, '/w ' + by + ', Legend Permission List: http://bit.ly/1lKutAw');
 	}
 };
