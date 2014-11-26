@@ -334,7 +334,7 @@ exports.parse = {
 	},
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
-		if (user === toId(config.nick)) {
+		if (toId(user.substr(1)) === toId(config.nick)) {
 			this.ranks[room] = user.charAt(0);
 			return;
 		}
