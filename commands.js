@@ -561,7 +561,7 @@ exports.commands = {
 		var concurrent = (room === 'roleplaying') ? this.splitDoc(this.RP['amphyrp'].plot) : this.splitDoc(this.RP['roleplaying'].plot);
 		if (concurrent) text += ' The current RP in ' + ((room === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent + '.';
 
-		this.say(con, room, text);
+		this.say(con, room, '**' + text + '**');
 	},
 	rp: function(arg, by, room, con) {
 		if (!(room in this.RP)) return false;
