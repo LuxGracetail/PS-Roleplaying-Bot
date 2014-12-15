@@ -569,8 +569,43 @@ exports.commands = {
 			youtube: 'Wi-Fi room\'s official YouTube channel: http://tinyurl.com/wifiyoutube',
 			league: 'Wi-Fi Room Pokemon League: http://tinyurl.com/wifiroomleague'
 		};
-		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html');
-		this.say(con, room, text);
+		
+		var that = this;
+		if((toId(arg) === 'onlinecloners' || toId(arg) === 'ocloners')){
+			this.say(con, room, text + 'Fetching the cloners list...');
+			http.get('http://spreadsheets.google.com/feeds/cells/1llqm0Tp_HdTwBA-W3WjYV3EkHSIrYmkG8VPS8l50i8s/od6/public/values?alt=json', function(res){
+				var data = '';
+				res.on('data', function(part) {
+					data += part;
+				});
+				res.on('end',function(){
+					var json = JSON.parse(data);
+					var map = [];
+					var entry = json.feed.entry;
+	
+					var rows = 0,header = 0;
+					for(var i = 0; i < entry.length ; ++i){
+						var cell = entry[i].gs$cell;
+						var row = parseInt(cell.row);
+						if(!(row in map)) map[row] = {};
+						map[row][parseInt(cell.col)] = cell.$t;
+						if(cell.$t === 'Showdown Name')header = row;
+						rows = rows < row ? row : rows;
+					}
+					that.say(con, room, text + 'Online cloners:');
+					for(var i = header + 1; i < rows + 1; i++){
+						if(that.chatData[toId(map[i][1])]){
+							var text2 = '**Name:** ' + map[i][1] + ' | **FC:** ' + map[i][2] + ' | **IGN:** ' + map[i][3];
+							that.say(con, room, text + text2);
+						}
+					}
+				});
+			});
+			
+		}else {
+			text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html');
+			this.say(con, room, text);
+		}
 	},
 	mono: 'monotype',
 	monotype: function(arg, by, room, con) {
