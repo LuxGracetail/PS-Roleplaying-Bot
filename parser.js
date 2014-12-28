@@ -535,5 +535,32 @@ exports.parse = {
 			}
 			uncache = newuncache;
 		} while (uncache.length > 0);
+	},
+	getDocMeta: function(id, callback) {
+		https.get('https://www.googleapis.com/drive/v2/files/' + id + '?key=' + config.googleapikey, function (res) {
+			var data = '';
+			res.on('data', function (part) {
+				data += part;
+			});
+			res.on('end', function (end) {
+				var json = JSON.parse(data);
+				if (json) {
+					callback(null, json);
+				} else {
+					callback('Invalid response', data);
+				}
+			});
+		});
+	},
+	getDocCsv: function(meta, callback) {
+		https.get('https://docs.google.com/spreadsheet/pub?key=' + meta.id + '&output=csv', function (res) {
+			var data = '';
+			res.on('data', function (part) {
+				data += part;
+			});
+			res.on('end', function (end) {
+				callback(data);
+			});
+		});
 	}
 };

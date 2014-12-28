@@ -1,4 +1,4 @@
-﻿// The WEBSOCKET server and port the bot should connect to.
+// The WEBSOCKET server and port the bot should connect to.
 // Most of the time this isn't the same as the URL, check the `Request URL` of
 // the websocket.
 // If you really don't know how to do this... Run `node getserver.js URL`.
@@ -86,3 +86,5 @@ exports.punishvals = {
 	5: 'ban'
 };
 
+//This key is used to deliver requests from Google Spreadsheets. Used by the wifi room.
+exports.googleapikey = '';
