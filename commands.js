@@ -450,7 +450,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'http://sim.smogon.com:8080/Stats/2014-09/';
+		text += 'http://www.smogon.com/stats/2014-11/';
 		this.say(con, room, text);
 	},
 	seen: function(arg, by, room, con) { // this command is still a bit buggy
