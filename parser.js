@@ -512,13 +512,6 @@ exports.parse = {
 		if (!times.length) times.push('0 seconds');
 		return times.join(', ');
 	},
-	isFreeDay: function() {
-		var d = new Date();
-		var day = d.getDay();
-		if (day === 3) return 'Wednesday';
-		if (day === 6) return 'Saturday';
-		return false;
-	},
 	splitDoc: function(voided) {
 		if (!/https?:\/\//.test(voided)) return voided;
 		voided = voided.replace(/doc.*(?=http)/i, '');
