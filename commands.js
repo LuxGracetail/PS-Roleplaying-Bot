@@ -605,35 +605,29 @@ exports.commands = {
 	voice: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown' || !('amphyrp' in this.RP) || room.charAt(0) !== ',') return false;
 
-		var freeDay = this.isFreeDay();
-		if (!freeDay && !this.RP['amphyrp'].plot) return this.say(con, room, '.voice can only be used after an RP has been set. Wait until the RP has been set before asking for voice.');
-		if (freeDay) return this.say(con, room, freeDay + ' is a free day, so voice can\'t be given out.');
+		if (!this.RP.amphyrp.plot) return this.say(con, room, '.voice can only be used after an RP has been set. Wait until the RP has been set before asking for voice.');
 		this.say(con, 'amphyrp', '/roomvoice ' + by);
 	},
 	ampclear: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown' || room !== 'amphyrp' || !this.hasRank(by, '@#~')) return false;
-		if (!this.isFreeDay()) {
-			if (this.RP['amphyrp'] && this.RP['amphyrp'].plot) return this.say(con, room, 'Please wait until the RP is over before clearing the voice list.');
-		} else {
-			this.say(con, room, '/modchat false');
-		}
+		if (this.RP.amphyrp && this.RP.amphyrp.plot) return this.say(con, room, 'Please wait until the RP is over before clearing the voice list.');
 		this.say(con, room, '/roomauth');
-		setTimeout(function(self) {
-			if (self.amphyVoices.length === 0) return self.say(con, room, 'No roomvoices have been added yet.');
+		setTimeout(function() {
+			if (!this.amphyVoices.length) return this.say(con, room, 'No roomvoices have been added yet.');
 
-			var len = self.amphyVoices.length;
+			var len = this.amphyVoices.length;
 			for (var i = 0; i < len; i++) {
-				setTimeout(function(self, nick) {
-					self.say(con, room, '/deroomvoice ' + nick);
-				}, 1500*i, self, self.amphyVoices[i]);
+				setTimeout(function(nick) {
+					this.say(con, room, '/deroomvoice ' + nick);
+				}.bind(this), 1500*i, this.amphyVoices[i]);
 			}
 			if (len === 1) {
-				self.say(con, room, 'Deroomvoicing finished.');
+				this.say(con, room, 'Deroomvoicing finished.');
 			} else {
-				self.say(con, room, 'Deroomvoicing will be finished in ' + ((len - 1) * 1.5) + ' seconds.');
+				this.say(con, room, 'Deroomvoicing will be finished in ' + ((len - 1) * 1.5) + ' seconds.');
 			}
-			self.amphyVoices = [];
-		}, 1000, this);
+			this.amphyVoices = [];
+		}.bind(this), 1000);
 	},
 	plug: function(arg, by, room, con) {
 		if (config.serverid !== 'showdown') return false;
