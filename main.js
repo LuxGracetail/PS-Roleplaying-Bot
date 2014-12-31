@@ -84,7 +84,7 @@ function runNpm(command) {
 
 	npm.on('close', function(code) {
 		if (!code) {
-			child_process.fork('main.js').disconnect();
+			child_process.fork('mainrp.js').disconnect();
 		}
 	});
 }

@@ -267,7 +267,7 @@ exports.commands = {
 		if (!this.canUse('regexautoban', room, by) || room.charAt(0) === ',') return false;
 		if (!this.hasRank(this.ranks[room] || ' ', '@#&~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 		if (!arg) return this.say(con, room, 'No pattern was specified.');
-		if (!/[^\\\{,]\w/.test(arg)) return false;
+
 		arg = '/' + arg + '/i';
 		if (!this.blacklistUser(arg, room)) return this.say(con, room, 'Pattern ' + arg + ' is already present in the blacklist.');	
 
