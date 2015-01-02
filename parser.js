@@ -468,7 +468,7 @@ exports.parse = {
 		if (time >= 60) {
 			time = ~~((time - seconds) / 60);
 			var minutes = time % 60;
-			if (minutes) times.unshift(minutes === 1 ? ' minute' : ' minutes');
+			if (minutes) times.unshift(minutes + (minutes === 1 ? ' minute' : ' minutes'));
 			if (time >= 60) {
 				time = ~~((time - minutes) / 60);
 				hours = time % 24;
