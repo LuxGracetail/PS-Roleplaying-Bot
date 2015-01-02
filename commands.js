@@ -96,7 +96,6 @@ exports.commands = {
 			regexautoban: 1,
 			banword: 1,
 			setrp: 1
-			banword: 1
 		};
 		var modOpts = {
 			flooding: 1,
@@ -532,14 +531,6 @@ exports.commands = {
 			nextVoid = this.splitDoc(this.RP[room].plot);
 			if (this.RP.void[room].length === 2) this.RP.void[room].shift();
 			this.RP.void[room].push(nextVoid);
-=======
-	survivor: function(arg, by, room, con) {
-		// contains links and info for survivor in the Survivor room
-		if (!(room === 'survivor' && config.serverid === 'showdown')) return false;
-		var text = '';
-		if (!this.canUse('survivor', room, by)) {
-			text += '/pm ' + by + ', ';
->>>>>>> f89318e1523a63170046cb647e7869688da1aada
 		}
 
 		this.RP[room] = {};

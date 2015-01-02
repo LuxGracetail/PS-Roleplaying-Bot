@@ -378,7 +378,7 @@ exports.parse = {
 			}
 			// moderation for caps (over x% of the letters in a line of y characters are capital)
 			var capsMatch = msg.replace(/[^A-Za-z]/g, '').match(/[A-Z]/g);
-			if ((useDefault || modSetting.caps) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= ~~(toId(msg).length * MIN_CAPS_PROPORTION))) {
+			if ((useDefault || modSettings.caps) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= ~~(toId(msg).length * MIN_CAPS_PROPORTION))) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: caps';
@@ -482,7 +482,7 @@ exports.parse = {
 		if (time >= 60) {
 			time = ~~((time - seconds) / 60);
 			var minutes = time % 60;
-			if (minutes) times.unshift(minutes === 1 ? ' minute' : ' minutes');
+			if (minutes) times.unshift(minutes + (minutes === 1 ? ' minute' : ' minutes'));
 			if (time >= 60) {
 				time = ~~((time - minutes) / 60);
 				hours = time % 24;
