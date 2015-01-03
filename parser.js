@@ -442,15 +442,18 @@ exports.parse = {
 		var msg = '';
 		switch (type) {
 		case 'j':
+		case 'J':
 			msg += 'joining ';
 			break;
 		case 'l':
+		case 'L':
 			msg += 'leaving ';
 			break;
 		case 'c':
+		case 'c:':
 			msg += 'chatting in ';
 			break;
-		case 'n':
+		case 'N':
 			msg += 'changing nick to ';
 			if (detail.charAt(0) !== ' ') detail = detail.substr(1);
 			break;
