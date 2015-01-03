@@ -55,7 +55,11 @@ exports.parse = {
 
 		var spl = message.split('\n');
 		if (spl[0].charAt(0) === '>') room = spl.shift().substr(1);
-		if (spl[0].substr(1, 4) === 'init') spl.shift();
+		if (spl[0].substr(1, 4) === 'init') {
+			room = toId(spl[1].substr(7));
+			ok('joined ' + room);
+			return;
+		}
 
 		for (var i = 0, len = spl.length; i < len; i++) {
 			this.message(spl[i], connection, room);
@@ -173,18 +177,15 @@ exports.parse = {
 
 				this.chatDataTimer = setInterval(this.cleanChatData.bind(this), 30 * 60 * 1000);
 				break;
-			case 'title':
-				ok('joined ' + spl[2]);
-				break;
 			case 'c':
 				var by = spl[2];
-				this.processChatData(toId(by), room, connection, spl[4]);
+				this.processChatData(by, room, connection, spl[4]);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl[3], by, room, connection);
 				break;
 			case 'c:':
 				var by = spl[3];
-				this.processChatData(toId(by), room, connection, spl[4]);
+				this.processChatData(by, room, connection, spl[4]);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl[4], by, room, connection);
 				break;
@@ -305,7 +306,7 @@ exports.parse = {
 	},
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
-		if (user === toId(config.nick)) {
+		if (toId(user) === toId(config.nick)) {
 			this.ranks[room] = user.charAt(0);
 			return;
 		}
@@ -313,7 +314,6 @@ exports.parse = {
 		if (!user || room.charAt(0) === ',') return;
 
 		msg = msg.trim().replace(/[ \u0000\u200B-\u200F]+/g, " "); // removes extra spaces and null characters so messages that should trigger stretching do so
-		user = toId(user);
 		this.updateSeen(user, 'c', room);
 		var time = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
