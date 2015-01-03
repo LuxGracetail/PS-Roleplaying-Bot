@@ -192,13 +192,13 @@ exports.parse = {
 				break;
 			case 'c':
 				var by = spl[2];
-				this.processChatData(toId(by), room, connection, spl[4]);
+				this.processChatData(by, room, connection, spl[4]);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl[3], by, room, connection);
 				break;
 			case 'c:':
 				var by = spl[3];
-				this.processChatData(toId(by), room, connection, spl[4]);
+				this.processChatData(by, room, connection, spl[4]);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl[4], by, room, connection);
 				break;
@@ -220,6 +220,9 @@ exports.parse = {
 				break;
 			case 'l': case 'L':
 				this.updateSeen(toId(spl[2]), spl[1], room);
+				break;
+			case 'popup':
+				if (spl[2] === 'Room Owners (#):') this.amphyVoices = spl[spl.length - 1].split(', ');
 				break;
 		}
 	},
@@ -319,7 +322,7 @@ exports.parse = {
 	},
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
-		if (user === toId(config.nick)) {
+		if (toId(user) === toId(config.nick)) {
 			this.ranks[room] = user.charAt(0);
 			return;
 		}
