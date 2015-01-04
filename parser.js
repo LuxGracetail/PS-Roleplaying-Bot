@@ -48,17 +48,13 @@ exports.parse = {
 		if (!message) return;
 
 		var room = 'lobby';
-		if (message.indexOf('\n') < 0) {
-			if (message.substr(1, 10) === 'tournament') return;
-			return this.message(message, connection, room);
-		}
+		if (message.indexOf('\n') < 0) return this.message(message, connection, room);
 
 		var spl = message.split('\n');
-		if (spl[0].charAt(0) === '>') room = spl.shift().substr(1);
-		if (spl[0].substr(1, 4) === 'init') {
-			room = toId(spl[1].substr(7));
-			ok('joined ' + room);
-			return;
+		if (spl[0].charAt(0) === '>') {
+			if (spl[1].substr(1, 4) === 'init') return ok('joined ' + spl[2].substr(7));
+			if (spl[1].substr(1, 10) === 'tournament') return;
+			room = spl.shift().substr(1);
 		}
 
 		for (var i = 0, len = spl.length; i < len; i++) {
@@ -179,13 +175,13 @@ exports.parse = {
 				break;
 			case 'c':
 				var by = spl[2];
-				this.processChatData(by, room, connection, spl[4]);
+				this.processChatData(toId(by), room, connection, spl[4]);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl[3], by, room, connection);
 				break;
 			case 'c:':
 				var by = spl[3];
-				this.processChatData(by, room, connection, spl[4]);
+				this.processChatData(toId(by), room, connection, spl[4]);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl[4], by, room, connection);
 				break;
@@ -306,24 +302,26 @@ exports.parse = {
 	},
 	processChatData: function(user, room, connection, msg) {
 		// NOTE: this is still in early stages
-		if (toId(user) === toId(config.nick)) {
-			this.ranks[room] = user.charAt(0);
-			return;
-		}
-		user = toId(user);
 		if (!user || room.charAt(0) === ',') return;
 
-		msg = msg.trim().replace(/[ \u0000\u200B-\u200F]+/g, " "); // removes extra spaces and null characters so messages that should trigger stretching do so
+		msg = msg.trim().replace(/[ \u0000\u200B-\u200F]+/g, ' '); // removes extra spaces and null characters so messages that should trigger stretching do so
 		this.updateSeen(user, 'c', room);
-		var time = Date.now();
+		var now = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
 			zeroTol: 0,
 			lastSeen: '',
-			seenAt: time
+			seenAt: now
 		};
 		var userData = this.chatData[user];
-		if (!this.chatData[user][room]) this.chatData[user][room] = {times:[], points:0, lastAction:0};
+
+		if (!this.chatData[user][room]) this.chatData[user][room] = {
+			times: [],
+			points: 0,
+			lastAction: 0
+		};
 		var roomData = userData[room];
+
+		roomData.times.push(now);
 
 		// this deals with punishing rulebreakers, but note that the bot can't think, so it might make mistakes
 		if (config.allowmute && this.hasRank(this.ranks[room] || ' ', '%@&#~') && config.whitelist.indexOf(user) === -1) {
@@ -332,18 +330,10 @@ exports.parse = {
 			var muteMessage = '';
 			var modSettings = useDefault ? null : this.settings.modding[room];
 
-			// moderation for spamming "snen" multiple times on a line (a la the snen spammer)
-			var snenMatch = msg.match(/snen/gi);
-			if ((useDefault || modSettings.snen) && snenMatch && snenMatch.length > 6) {
-				if (pointVal < 4) {
-					muteMessage = ', Automated response: possible "snen" spammer';
-					pointVal = (room === 'lobby') ? 5 : 4;
-				}
-			}
 			// moderation for banned words
-			if (useDefault || modSettings.bannedWords && pointVal < 2) {
-				var banphraseSettings = this.settings.bannedphrases;
-				var bannedPhrases = !!banphraseSettings ? (Object.keys(banphraseSettings[room] || {})).concat(Object.keys(banphraseSettings.global || {})) : [];
+			if ((useDefault || !this.settings.banword[room]) && pointVal < 2) {
+				var bannedPhraseSettings = this.settings.bannedphrases;
+				var bannedPhrases = !!bannedPhraseSettings ? (Object.keys(bannedPhraseSettings[room] || {})).concat(Object.keys(bannedPhraseSettings.global || {})) : [];
 				for (var i = 0; i < bannedPhrases.length; i++) {
 					if (msg.toLowerCase().indexOf(bannedPhrases[i]) > -1) {
 						pointVal = 2;
@@ -354,9 +344,10 @@ exports.parse = {
 			}
 			// moderation for flooding (more than x lines in y seconds)
 			var times = roomData.times;
-			var isFlooding = (times.length >= FLOOD_MESSAGE_NUM && (time - times[times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
-				&& (time - times[times.length - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
-			if ((useDefault || modSettings.flooding) && isFlooding) {
+			var timesLen = times.length;
+			var isFlooding = (timesLen >= FLOOD_MESSAGE_NUM && (now - times[timesLen - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
+				&& (now - times[timesLen - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
+			if ((useDefault || !modSettings.flooding) && isFlooding) {
 				if (pointVal < 2) {
 					pointVal = 2;
 					muteMessage = ', Automated response: flooding';
@@ -364,22 +355,22 @@ exports.parse = {
 			}
 			// moderation for caps (over x% of the letters in a line of y characters are capital)
 			var capsMatch = msg.replace(/[^A-Za-z]/g, '').match(/[A-Z]/g);
-			if ((useDefault || modSettings.caps) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= ~~(toId(msg).length * MIN_CAPS_PROPORTION))) {
+			if ((useDefault || !modSettings.caps) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= ~~(toId(msg).length * MIN_CAPS_PROPORTION))) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: caps';
 				}
 			}
 			// moderation for stretching (over x consecutive characters in the message are the same)
-			var stretchMatch = msg.match(/(.)\1{7,}/gi) || msg.match(/(..+)\1{4,}/gi); // matches the same character (or group of characters) 8 (or 5) or more times in a row
-			if ((useDefault || modSettings.stretching !== 0) && stretchMatch) {
+			var stretchMatch = /(.)\1{7,}/gi.test(msg) || /(..+)\1{4,}/gi.test(msg); // matches the same character (or group of characters) 8 (or 5) or more times in a row
+			if ((useDefault || !modSettings.stretching) && stretchMatch) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: stretching';
 				}
 			}
 
-			if (pointVal > 0 && !(time - roomData.lastAction < ACTION_COOLDOWN)) {
+			if (pointVal > 0 && now - roomData.lastAction >= ACTION_COOLDOWN) {
 				var cmd = 'mute';
 				// defaults to the next punishment in config.punishVals instead of repeating the same action (so a second warn-worthy
 				// offence would result in a mute instead of a warn, and the third an hourmute, etc)
@@ -393,12 +384,12 @@ exports.parse = {
 				if (config.privaterooms.indexOf(room) > -1 && cmd === 'warn') cmd = 'mute'; // can't warn in private rooms
 				// if the bot has % and not @, it will default to hourmuting as its highest level of punishment instead of roombanning
 				if (roomData.points >= 4 && !this.hasRank(this.ranks[room] || ' ', '@&#~')) cmd = 'hourmute';
-				if (roomData.zeroTol > 4) { // if zero tolerance users break a rule they get an instant roomban or hourmute
+				if (userData.zeroTol > 4) { // if zero tolerance users break a rule they get an instant roomban or hourmute
 					muteMessage = ', Automated response: zero tolerance user';
 					cmd = this.hasRank(this.ranks[room] || ' ', '@&#~') ? 'roomban' : 'hourmute';
 				}
 				if (roomData.points > 1) userData.zeroTol++; // getting muted or higher increases your zero tolerance level (warns do not)
-				roomData.lastAction = time;
+				roomData.lastAction = now;
 				this.say(connection, room, '/' + cmd + ' ' + user + muteMessage);
 			}
 		}
@@ -431,11 +422,11 @@ exports.parse = {
 
 	updateSeen: function(user, type, detail) {
 		if (type !== 'n' && config.rooms.indexOf(detail) === -1 || config.privaterooms.indexOf(toId(detail)) > -1) return;
-		var time = Date.now();
+		var now = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
 			zeroTol: 0,
 			lastSeen: '',
-			seenAt: time
+			seenAt: now
 		};
 		if (!detail) return;
 		var userData = this.chatData[user];
@@ -460,7 +451,7 @@ exports.parse = {
 		}
 		msg += detail.trim() + '.';
 		userData.lastSeen = msg;
-		userData.seenAt = time;
+		userData.seenAt = now;
 	},
 	getTimeAgo: function(time) {
 		time = ~~((Date.now() - time) / 1000);
