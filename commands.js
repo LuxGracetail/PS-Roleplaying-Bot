@@ -442,7 +442,7 @@ exports.commands = {
 			var text = '/pm ' + by + ', ';
 		}
 
-		var rand = Math.floor(20 * Math.random()) + 1;
+		var rand = ~~(20 * Math.random()) + 1;
 
 		switch (rand) {
 	 		case 1: text += "Signs point to yes."; break;
@@ -478,9 +478,9 @@ exports.commands = {
 	ayuda: 'esp',
 	esp: function(arg, by, room, con) {
 		// links to relevant sites for the Wi-Fi room 
-		if (!(room === 'espaol' && config.serverid === 'showdown')) return false;
+		if ((room !== 'espaol' && room.charAt(0) !== ',') || config.serverid !== 'showdown') return false;
 		var text = '';
-		if (!this.canUse('guia', room, by)) {
+		if (room.charAt(0) === ',' || !this.canUse('guia', room, by)) {
 			text += '/pm ' + by + ', ';
 		}
 		var messages = {
@@ -495,9 +495,9 @@ exports.commands = {
 		this.say(con, room, text);
 	},
 	studio: function(arg, by, room, con) {
-		if (!(room === 'thestudio' && config.serverid === 'showdown')) return false;
+		if ((room !== 'thestudio' && room.charAt(0) !== ',') || config.serverid !== 'showdown') return false;
 		var text = '';
-		if (!this.canUse('studio', room, by)) {
+		if (room.charAt(0) === ',' || !this.canUse('studio', room, by)) {
 			text += '/pm ' + by + ', ';
 		}
 		var messages = {
@@ -506,16 +506,15 @@ exports.commands = {
 		this.say(con, room, text + (messages[toId(arg)] || ('Welcome to The Studio, a music sharing room on PS!. If you have any questions, feel free to PM a room staff member. Available commands for .studio: ' + Object.keys(messages).join(', '))));
 	},
 	'switch': function(arg, by, room, con) {
-		if (!(room === 'gamecorner' && config.serverid === 'showdown') ||
-			!this.canUse('switch', room, by)) return false;
+		if (room !== 'gamecorner' || config.serverid !== 'showdown' || !this.canUse('switch', room, by)) return false;
 		this.say(con, room, 'Taking over the world. Starting with Game Corner. Room deregistered.');
 		this.say(con, room, '/k ' + (toId(arg) || by) + ', O3O YOU HAVE TOUCHED THE SWITCH');
 	},
 	wifi: function(arg, by, room, con) {
 		// links to relevant sites for the Wi-Fi room 
-		if (!(room === 'wifi' && config.serverid === 'showdown')) return false;
+		if ((room !== 'wifi' && room.charAt(0) !== ',') || config.serverid !== 'showdown') return false;
 		var text = '';
-		if (!this.canUse('wifi', room, by)) {
+		if (room.charAt(0) === ',' || !this.canUse('wifi', room, by)) {
 			text += '/pm ' + by + ', ';
 		}
 		var messages = {
@@ -541,9 +540,9 @@ exports.commands = {
 	mono: 'monotype',
 	monotype: function(arg, by, room, con) {
 		// links and info for the monotype room
-		if (!(room === 'monotype' && config.serverid === 'showdown')) return false;
+		if ((room !== 'monotype' && room.charAt(0) !== ',') || config.serverid !== 'showdown') return false;
 		var text = '';
-		if (!this.canUse('monotype', room, by)) {
+		if (room.charAt(0) === ',' || !this.canUse('monotype', room, by)) {
 			text += '/pm ' + by + ', ';
 		}
 		var messages = {
@@ -558,9 +557,9 @@ exports.commands = {
 	},
 	survivor: function(arg, by, room, con) {
 		// contains links and info for survivor in the Survivor room
-		if (!(room === 'survivor' && config.serverid === 'showdown')) return false;
+		if ((room !== 'survivor' && room.charAt(0) !== ',') || config.serverid !== 'showdown') return false;
 		var text = '';
-		if (!this.canUse('survivor', room, by)) {
+		if (room.charAt(0) === ',' || !this.canUse('survivor', room, by)) {
 			text += '/pm ' + by + ', ';
 		}
 		var gameTypes = {
@@ -568,10 +567,9 @@ exports.commands = {
 			hungergames: "http://survivor-ps.weebly.com/hunger-games.html",
 			classic: "http://survivor-ps.weebly.com/classic.html"
 		};
-		arg = toId(arg);
 		if (arg) {
-			if (!(arg in gameTypes)) return this.say(con, room, "Invalid game type. The game types can be found here: http://survivor-ps.weebly.com/themes.html");
-			text += "The rules for this game type can be found here: " + gameTypes[arg];
+			if (!gameTypes[toId(arg)]) return this.say(con, room, "Invalid game type. The game types can be found here: http://survivor-ps.weebly.com/themes.html");
+			text += "The rules for this game type can be found here: " + gameTypes[toId(arg)];
 		} else {
 			text += "The list of game types can be found here: http://survivor-ps.weebly.com/themes.html";
 		}
@@ -579,9 +577,9 @@ exports.commands = {
 	},
 	games: function(arg, by, room, con) {
 		// lists the games for the games room
-		if (!(room === 'gamecorner' && config.serverid === 'showdown')) return false;
+		if ((room !== 'gamecorner' && room.charAt(0) !== ',') || config.serverid !== 'showdown') return false;
 		var text = '';
-		if (!this.canUse('games', room, by)) {
+		if (room.charAt(0) === ',' || !this.canUse('games', room, by)) {
 			text += '/pm ' + by + ', ';
 		}
 		this.say(con, room, text + 'Game List: 1. Would You Rather, 2. NickGames, 3. Scattegories, 4. Commonyms, 5. Questionnaires, 6. Funarios, 7. Anagrams, 8. Spot the Reference, 9. Pokemath, 10. Liar\'s Dice');
@@ -589,9 +587,9 @@ exports.commands = {
 	},
 	happy: function(arg, by, room, con) {
 		// info for The Happy Place
-		if (!(room === 'thehappyplace' && config.serverid === 'showdown')) return false;
+		if ((room !== 'thehappyplace' && room.charAt(0) !== ',') || config.serverid !== 'showdown') return false;
 		var text = "";
-		if (!this.canUse('happy', room, by)) text += "/pm " + by + ", ";
+		if (room.charAt(0) === ',' || !this.canUse('happy', room, by)) text += "/pm " + by + ", ";
 		arg = toId(arg);
 		if (arg === 'askstaff' || arg === 'ask' || arg === 'askannie') {
 			text += "http://thepshappyplace.weebly.com/ask-the-staff.html";
@@ -615,11 +613,10 @@ exports.commands = {
 		if (this.buzzed || !this.canUse('buzz', room, by) || room.charAt(0) === ',') return false;
 		this.say(con, room, '**' + by.substr(1) + ' has buzzed in!**');
 		this.buzzed = by;
-		var self = this;
 		this.buzzer = setTimeout(function(con, room, buzzMessage) {
-			self.say(con, room, buzzMessage);
-			self.buzzed = '';
-		}, 7000, con, room, by + ', your time to answer is up!');
+			this.say(con, room, buzzMessage);
+			this.buzzed = '';
+		}.bind(this), 7 * 1000, con, room, by + ', your time to answer is up!');
 	},
 	reset: function(arg, by, room, con) {
 		if (!this.buzzed || !this.hasRank(by, '%@&#~') || room.charAt(0) === ',') return false;
