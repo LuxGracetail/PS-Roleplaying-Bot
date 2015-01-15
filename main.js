@@ -54,7 +54,18 @@ global.toId = function(text) {
 };
 
 global.stripCommands = function(text) {
-	return ((text.trim().charAt(0) === '/') ? '/' : ((text.trim().charAt(0) === '!') ? ' ':'')) + text.trim();
+	text = text.trim();
+	switch (text.charAt(0)) {
+	case '/':
+		return '/' + text;
+	case '!':
+		return '!' + text;
+	case '>':
+		if (text.substr(0, 3) === '>> ' || text.substr(0, 4) === '>>> ') return ' ' + text;
+		/* fall through */
+	default:
+		return text;
+	}
 };
 
 global.send = function(connection, data) {
