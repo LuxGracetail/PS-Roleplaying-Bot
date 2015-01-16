@@ -31,6 +31,7 @@ exports.parse = {
 	'settings': settings,
 	chatData: {},
 	ranks: {},
+	msgQueue: [],
 
 	data: function(data, connection) {
 		if (data.substr(0, 1) === 'a') {
@@ -143,35 +144,17 @@ exports.parse = {
 				ok('logged in as ' + spl[2]);
 
 				// Now join the rooms
-				var cmds = ['|/idle'];
+				this.say(connection, '', '/idle');
 				for (var i = 0, len = config.rooms.length; i < len; i++) {
 					var room = toId(config.rooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
-					cmds.push('|/join ' + room);
+					this.say(connection, '', '/join ' + room);
 				}
 				for (var i = 0, len = config.privaterooms.length; i < len; i++) {
 					var room = toId(config.privaterooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
-					cmds.push('|/join ' + room);
+					this.say(connection, '', '/join ' + room);
 				}
-
-				if (cmds.length > 4) {
-					this.nextJoin = 0;
-					this.joinSpacer = setInterval(function(con, cmds) {
-						if (cmds.length > this.nextJoin + 3) {
-							send(con, cmds.slice(this.nextJoin, this.nextJoin + 3));
-							this.nextJoin += 3;
-						} else {
-							send(con, cmds.slice(this.nextJoin));
-							delete this.nextJoin;
-							clearInterval(this.joinSpacer);
-						}
-					}.bind(this), 4*1000, connection, cmds);
-				} else {
-					send(connection, cmds);
-				}
-
-				this.chatDataTimer = setInterval(this.cleanChatData.bind(this), 30 * 60 * 1000);
 				break;
 			case 'c':
 				var by = spl[2];
@@ -241,11 +224,16 @@ exports.parse = {
 	say: function(connection, room, text) {
 		if (room.charAt(0) !== ',') {
 			var str = (room !== 'lobby' ? room : '') + '|' + text;
-			send(connection, str);
 		} else {
 			room = room.substr(1);
 			var str = '|/pm ' + room + ', ' + text;
-			send(connection, str);
+		}
+		this.msgQueue.push(str);
+		if (this.msgQueue.length === 1) {
+			this.msgDequeue = setInterval(function (con) {
+				if (!this.msgQueue.length) return clearInterval(this.msgDequeue);
+				send(con, this.msgQueue.shift());
+			}.bind(this), 750, connection);
 		}
 	},
 	hasRank: function(user, rank) {
