@@ -35,6 +35,8 @@ Some information will be shown, and will automatically join the room(s) you spec
   [3]: https://github.com/Zarel/Pokemon-Showdown
   [4]: https://github.com/RivalNick/PS-Bot/wiki/How-To-set-up-Bot
 
+If any of your commands rely on information normally sent to the Pokémon Showdown Client (e.g. functions that execute based on PM that aren't directly related to normal commands), you will need to make changes to the message method in parser.js under the appropriate case.
+
 Development
 -----------
 
@@ -42,6 +44,7 @@ Everyone is more than welcome to contribute to the bot.
 However, please refrain from adding more example commands.
 
 Credits:
+ - Morfent (Development)
  - TalkTakesTime (Development)
  - Quinella (Development)
  - Rival Nick (Guide)
