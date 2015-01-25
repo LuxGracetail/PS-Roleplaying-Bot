@@ -258,7 +258,7 @@ exports.parse = {
 	},
 	blacklistUser: function(user, room) {
 		var blacklist = this.settings.blacklist;
-		if (!blacklist) this.settings.blacklist = {};
+		if (!blacklist) blacklist = this.settings.blacklist = {};
 		if (!blacklist[room]) blacklist[room] = {};
 
 		if (blacklist[room][user]) return false;
