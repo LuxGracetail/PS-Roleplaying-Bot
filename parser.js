@@ -114,7 +114,13 @@ exports.parse = {
 						}
 
 						if (data.substr(0, 16) === '<!DOCTYPE html>') {
-							error('Connection error 522
+							error('Connection error 522; trying agian in one minute');
+							setTimeout(function() {
+								this.message(message);
+							}.bind(this), 60 * 1000);
+							return;
+						}
+
 						try {
 							data = JSON.parse(data.substr(1));
 							if (data.actionsuccess) {
@@ -267,8 +273,7 @@ exports.parse = {
 		return (blacklist && blacklist[room] && blacklist[room][user]);
 	},
 	blacklistUser: function(user, room) {
-		var blacklist = this.settings.blacklist;
-		if (!blacklist) blacklist = this.settings.blacklist = {};
+		var blacklist = this.settings.blacklist || (this.settings.blacklist = {});
 		if (!blacklist[room]) blacklist[room] = {};
 
 		if (blacklist[room][user]) return false;
