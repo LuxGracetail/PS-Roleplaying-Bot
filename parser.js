@@ -113,6 +113,8 @@ exports.parse = {
 							return;
 						}
 
+						if (data.substr(0, 16) === '<!DOCTYPE html>') {
+							error('Connection error 522
 						try {
 							data = JSON.parse(data.substr(1));
 							if (data.actionsuccess) {
@@ -144,17 +146,23 @@ exports.parse = {
 				ok('logged in as ' + spl[2]);
 
 				// Now join the rooms
-				this.say(connection, '', '/idle');
+				this.msgQueue.push('|/idle');
 				for (var i = 0, len = config.rooms.length; i < len; i++) {
 					var room = toId(config.rooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
-					this.say(connection, '', '/join ' + room);
+					this.msgQueue.push('|/join ' + room);
 				}
 				for (var i = 0, len = config.privaterooms.length; i < len; i++) {
 					var room = toId(config.privaterooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
-					this.say(connection, '', '/join ' + room);
+					this.msgQueue.push('|/join ' + room);
 				}
+				this.msgDequeue = setInterval(function () {
+					var msg = this.msgQueue.shift();
+					if (msg) return send(connection, msg);
+					clearInterval(this.msgDequeue);
+					this.msgDequeue = null;
+				}.bind(this), 750);
 				break;
 			case 'c':
 				var by = spl[2];
@@ -229,11 +237,13 @@ exports.parse = {
 			var str = '|/pm ' + room + ', ' + text;
 		}
 		this.msgQueue.push(str);
-		if (this.msgQueue.length === 1) {
-			this.msgDequeue = setInterval(function (con) {
-				if (!this.msgQueue.length) return clearInterval(this.msgDequeue);
-				send(con, this.msgQueue.shift());
-			}.bind(this), 750, connection);
+		if (!this.msgDequeue) {
+			this.msgDequeue = setInterval(function () {
+				var msg = this.msgQueue.shift();
+				if (msg) return send(connection, msg);
+				clearInterval(this.msgDequeue);
+				this.msgDequeue = null;
+			}.bind(this), 750);
 		}
 	},
 	hasRank: function(user, rank) {
