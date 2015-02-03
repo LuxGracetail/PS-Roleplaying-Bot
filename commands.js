@@ -1,4 +1,4 @@
-﻿/**
+/**
  * This is the file where the bot commands are located
  *
  * @license MIT license
@@ -6,6 +6,10 @@
 
 var http = require('http');
 var sys = require('sys');
+
+//Google doesn't like http
+var https = require('https');
+var csv = require('csv-parse');
 
 exports.commands = {
 	/**
@@ -533,8 +537,143 @@ exports.commands = {
 			youtube: 'Wi-Fi room\'s official YouTube channel: http://tinyurl.com/wifiyoutube',
 			league: 'Wi-Fi Room Pokemon League: http://tinyurl.com/wifiroomleague'
 		};
-		text += (toId(arg) ? (messages[toId(arg)] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html');
-		this.say(con, room, text);
+		if (!this.wifiRoom) { 
+			this.wifiRoom = {
+				docRevs : ['',''],
+				scammers : {},
+				cloners : []
+			};
+		}
+		var args = arg.trim().split(',');
+		var that = this;
+		switch (toId(args[0])) {
+		case 'checkfc': 
+			if (!config.googleapikey) {
+				this.say(con, room, text + 'A Google API key has not been provided and is required for this command to work.');
+				return;
+			}
+			if (args.length < 2) {
+				this.say(con, room, text + 'Usage: .wifi checkfc, <fc>');
+				return;
+			}
+			that.getDocMeta('0AvygZBLXTtZZdFFfZ3hhVUplZm5MSGljTTJLQmJScEE', function (err, meta) {
+				if (err) {
+					console.log(err);
+					that.say(con, room, text + 'An error occured while processing your command. Please report this!');
+					return;
+				}
+				if (that.wifiRoom.docRevs[1] == meta.version) {
+					var value = that.wifiRoom.scammers[args[1].replace(/\D/g, '')];
+					if (value) {
+						text += "The FC " + args[1] + " **BELONGS TO A KNOWN SCAMMER**. Known names: " + value.substring(0, 61) + (value.length > 61 ? '...' : '.');
+					} else {
+						text += "This FC does **NOT** belong to a known scammer.";
+					}
+					that.say(con, room, text);
+					return;
+				}
+				that.say(con, room, text + 'Scammers List changed. Updating...');
+				that.wifiRoom.docRevs[1] = meta.version;
+				that.getDocCsv(meta, function (data) {
+					csv(data, function (err, data) {
+						if (err) {
+							console.log(err);
+							that.say(con, room, text + 'An error occured while processing your command. Please report this!');
+							return;
+						}
+						data.forEach(function (ent) {
+						var str = ent[1].replace(/\D/g, '');
+						if (str && str.length >= 12) {
+							for (var i = 0; i < str.length / 12; i++) {
+								that.wifiRoom.scammers[str.substr(12 * i, 12 * i + 12)] = ent[0];
+							}
+						}});
+						var value = that.wifiRoom.scammers[args[1].replace(/\D/g, '')];
+						if (value) {
+							text += "The FC " + args[1] + " **BELONGS TO A KNOWN SCAMMER**. Known names: " + value.substring(0, 61) + (value.length > 61 ? '...' : '.');
+						} else {
+							text += "This FC does **NOT** belong to a known scammer.";
+						}
+						that.say(con, room, text);
+					});
+				});
+			});
+			break;
+		
+		case 'ocloners':
+		case 'onlinecloners': 
+			//Let's pretend this doesn't exist yet
+			this.say(con, room, text + 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html');
+			break;
+			if (!config.googleapikey) {
+				this.say(con, room, text + 'A Google API key has not been provided and is required for this command to work.');
+				return;
+			}
+			that.getDocMeta('0Avz7HpTxAsjIdFFSQ3BhVGpCbHVVdTJ2VVlDVVV6TWc', function (err, meta) {
+				if (err) {
+					console.log(err);
+					that.say(con, room, text + 'An error occured while processing your command. Please report this!');
+					return;
+				}
+				text = '/pm ' + by + ', ';
+				if (that.wifiRoom.docRevs[0] == meta.version) {
+					var found = [];
+					for (var i in that.wifiRoom.cloners) {
+						if (that.chatData[toId(that.wifiRoom.cloners[i][0])]) {
+							found.push('Name: ' + that.wifiRoom.cloners[i][0] + ' | FC: ' + that.wifiRoom.cloners[i][1] + ' | IGN: ' + that.wifiRoom.cloners[i][2]);
+						}
+					}
+					if (!found.length) {
+						that.say(con, room, text + 'No cloners were found online.');
+						return;
+					}
+					var foundstr = found.join(' ');
+					if(foundstr.length > 266) {
+						that.uploadToHastebin(con, room, by, "The following cloners are online :\n\n" + found.join('\n'));
+						return;
+					}
+					that.say(con, room, by, "The following cloners are online :\n\n" + foundstr);
+					return;
+				}
+				that.say(con, room, text + 'Cloners List changed. Updating...');
+				that.wifiRoom.docRevs[0] = meta.version;
+				that.getDocCsv(meta, function (data) {
+					csv(data, function (err, data) {
+						if (err) {
+							console.log(err);
+							this.say(con, room, text + 'An error occured while processing your command. Please report this!');
+							return;
+						}
+						data.forEach(function (ent) {
+							var str = ent[1].replace(/\D/g, '');
+							if (str && str.length >= 12) {
+								that.wifiRoom.cloners.push([ent[0], ent[1], ent[2]]);
+							}
+						});
+						var found = [];
+						for (var i in that.wifiRoom.cloners) {
+							if (that.chatData[toId(that.wifiRoom.cloners[i][0])]) {
+								found.push('Name: ' + that.wifiRoom.cloners[i][0] + ' | FC: ' + that.wifiRoom.cloners[i][1] + ' | IGN: ' + that.wifiRoom.cloners[i][2]);
+							}
+						}
+						if (!found.length) {
+							that.say(con, room, text + 'No cloners were found online.');
+							return;
+						}
+						var foundstr = found.join(' ');
+						if(foundstr.length > 266) {
+							that.uploadToHastebin(con, room, by, "The following cloners are online :\n\n" + found.join('\n'));
+							return;
+						}
+						that.say(con, room, by, "The following cloners are online :\n\n" + foundstr);
+					});
+				});
+			});
+			break;
+				
+		default: 
+				this.say(con, room, text + (toId(args[0]) ? (messages[toId(args[0])] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html'));
+		}
 	},
 	mono: 'monotype',
 	monotype: function(arg, by, room, con) {
