@@ -539,7 +539,7 @@ exports.commands = {
 		};
 		if (!this.wifiRoom) { 
 			this.wifiRoom = {
-				docRevs : ['',''],
+				docRevs : ['', ''],
 				scammers : {},
 				cloners : []
 			};
@@ -582,12 +582,13 @@ exports.commands = {
 							return;
 						}
 						data.forEach(function (ent) {
-						var str = ent[1].replace(/\D/g, '');
-						if (str && str.length >= 12) {
-							for (var i = 0; i < str.length / 12; i++) {
-								that.wifiRoom.scammers[str.substr(12 * i, 12 * i + 12)] = ent[0];
+							var str = ent[1].replace(/\D/g, '');
+							if (str && str.length >= 12) {
+								for (var i = 0; i < str.length / 12; i++) {
+									that.wifiRoom.scammers[str.substr(12 * i, 12 * i + 12)] = ent[0];
+								}
 							}
-						}});
+						});
 						var value = that.wifiRoom.scammers[args[1].replace(/\D/g, '')];
 						if (value) {
 							text += "The FC " + args[1] + " **BELONGS TO A KNOWN SCAMMER**. Known names: " + value.substring(0, 61) + (value.length > 61 ? '...' : '.');
@@ -599,7 +600,7 @@ exports.commands = {
 				});
 			});
 			break;
-		
+		/*
 		case 'ocloners':
 		case 'onlinecloners': 
 			//Let's pretend this doesn't exist yet
@@ -661,7 +662,7 @@ exports.commands = {
 							return;
 						}
 						var foundstr = found.join(' ');
-						if(foundstr.length > 266) {
+						if (foundstr.length > 266) {
 							that.uploadToHastebin(con, room, by, "The following cloners are online :\n\n" + found.join('\n'));
 							return;
 						}
@@ -670,9 +671,10 @@ exports.commands = {
 				});
 			});
 			break;
-				
+		*/
+		
 		default: 
-				this.say(con, room, text + (toId(args[0]) ? (messages[toId(args[0])] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html'));
+			this.say(con, room, text + (toId(args[0]) ? (messages[toId(args[0])] || 'Unknown option. General links can be found here: http://pstradingroom.weebly.com/links.html') : 'Links can be found here: http://pstradingroom.weebly.com/links.html'));
 		}
 	},
 	mono: 'monotype',
