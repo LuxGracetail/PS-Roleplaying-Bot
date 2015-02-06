@@ -419,7 +419,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'http://www.smogon.com/stats/2014-12/';
+		text += 'http://www.smogon.com/stats/2015-01/';
 		this.say(con, room, text);
 	},
 	seen: function(arg, by, room, con) { // this command is still a bit buggy
