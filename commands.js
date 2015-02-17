@@ -101,7 +101,7 @@ exports.commands = {
 			choose: 1,
 			usagestats: 1,
 			buzz: 1,
-			helix: 1,
+			'8ball': 1,
 			survivor: 1,
 			games: 1,
 			wifi: 1,
@@ -441,7 +441,16 @@ exports.commands = {
 		this.say(con, room, text);
 	},
 	helix: function(arg, by, room, con) {
-		if (this.canUse('helix', room, by) || room.charAt(0) === ',') {
+		if (this.canUse('8ball', room, by) || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+
+		this.say(con, room, 'This command has been renamed to .8ball so it wouldn\'t have such a cancerous name anymore.');
+	},
+	'8ball': function(arg, by, room, con) {
+		if (this.canUse('8ball', room, by) || room.charAt(0) === ',') {
 			var text = '';
 		} else {
 			var text = '/pm ' + by + ', ';
