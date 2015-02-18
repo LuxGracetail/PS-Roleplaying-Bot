@@ -591,8 +591,9 @@ exports.commands = {
 						if (err) return self.say(con, room, text + 'An error occured while processing your command.');
 						for (var i = 0, len = data.length; i < len; i++) {
 							var str = data[i][1].replace(/\D/g, '');
-							if (str && str.length > 11) {
-								for (var j = 0, len = str.length; j < len; j += 12) {
+							var strLen = str.length;
+							if (str && strLen > 11) {
+								for (var j = 0; j < strLen; j += 12) {
 									self.wifiRoom.scammers[str.substr(j, 12)] = data[i][0];
 								}
 							}
