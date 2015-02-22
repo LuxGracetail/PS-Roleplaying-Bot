@@ -440,15 +440,6 @@ exports.commands = {
 		}
 		this.say(con, room, text);
 	},
-	helix: function(arg, by, room, con) {
-		if (this.canUse('8ball', room, by) || room.charAt(0) === ',') {
-			var text = '';
-		} else {
-			var text = '/pm ' + by + ', ';
-		}
-
-		this.say(con, room, 'This command has been renamed to .8ball so it wouldn\'t have such a cancerous name anymore.');
-	},
 	'8ball': function(arg, by, room, con) {
 		if (this.canUse('8ball', room, by) || room.charAt(0) === ',') {
 			var text = '';
