@@ -169,6 +169,7 @@ exports.parse = {
 					clearInterval(this.msgDequeue);
 					this.msgDequeue = null;
 				}.bind(this), 750);
+				setInterval(this.cleanChatData.bind(this), 30 * 60 * 1000);
 				break;
 			case 'c':
 				var by = spl[2];
