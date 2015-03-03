@@ -152,7 +152,7 @@ exports.parse = {
 				ok('logged in as ' + spl[2]);
 
 				// Now join the rooms
-				this.msgQueue.push('|/idle');
+				this.msgQueue.push('|/blockchallenges');
 				for (var i = 0, len = config.rooms.length; i < len; i++) {
 					var room = toId(config.rooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
