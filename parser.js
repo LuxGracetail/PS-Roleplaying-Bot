@@ -195,6 +195,7 @@ exports.parse = {
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
+				if (config.serverid === 'showdown' && room === 'lobby') this.say(connection, room, '/part');
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(toId(by), spl[1], room);
 				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
