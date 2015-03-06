@@ -276,6 +276,36 @@ exports.commands = {
 		if (notRemoved.length) text += (text.length ? 'No other ' : 'No ') + 'specified users were present in the blacklist.';
 		this.say(con, room, text);
 	},
+	rab: 'regexautoban',
+	regexautoban: function(arg, by, room, con) {
+		if (config.regexautobanwhitelist.indexOf(toId(by)) < 0 || !this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!arg) return this.say(con, room, 'You must specify a regular expression to (un)blacklist.');
+
+		try {
+			new RegExp(arg, 'i');
+		} catch (e) {
+			return this.say(con, room, e.message);
+		}
+
+		arg = '/' + arg + '/i';
+		if (!this.blacklistUser(arg, room)) return this.say(con, room, '/' + arg + ' is already present in the blacklist.');
+
+		this.writeSettings();
+		this.say(con, room, '/' + arg + ' was added to the blacklist successfully.');
+	},
+	unrab: 'unregexautoban',
+	unregexautoban: function(arg, by, room, con) {
+		if (config.regexautobanwhitelist.indexOf(toId(by)) < 0 || !this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!arg) return this.say(con, room, 'You must specify a regular expression to (un)blacklist.');
+
+		arg = '/' + arg + '/i';
+		if (!this.unblacklistUser(arg, room)) return this.say(con, room,'/' + arg + ' is not present in the blacklist.');
+
+		this.writeSettings();
+		this.say(con, room, '/' + arg + ' was removed from the blacklist successfully.');
+	},
 	viewbans: 'viewblacklist',
 	vab: 'viewblacklist',
 	viewautobans: 'viewblacklist',

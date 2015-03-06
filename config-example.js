@@ -64,6 +64,9 @@ exports.excepts = [];
 // Whitelisted users are those who the bot will not enforce moderation for.
 exports.whitelist = [];
 
+// Users in this list can use the regex autoban commands. Only add users who know how to write regular expressions and have your complete trust not to abuse the commands.
+exports.regexautobanwhitelist = [];
+
 // Add a link to the help for the bot here. When there is a link here, .help and .guide
 // will link to it.
 exports.botguide = '';

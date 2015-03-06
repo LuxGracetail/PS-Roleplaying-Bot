@@ -32,6 +32,7 @@ exports.parse = {
 	chatData: {},
 	ranks: {},
 	msgQueue: [],
+	blacklistRegexes: {},
 
 	data: function(data, connection) {
 		if (data.substr(0, 1) === 'a') {
@@ -163,6 +164,12 @@ exports.parse = {
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
 					this.msgQueue.push('|/join ' + room);
 				}
+				if (this.settings.blacklist) {
+					var blacklist = this.settings.blacklist;
+					for (var room in blacklist) {
+						this.updateBlacklistRegex(room);
+					}
+				}
 				this.msgDequeue = setInterval(function () {
 					var msg = this.msgQueue.shift();
 					if (msg) return send(connection, msg);
@@ -271,8 +278,8 @@ exports.parse = {
 		return canUse;
 	},
 	isBlacklisted: function(user, room) {
-		var blacklist = this.settings.blacklist;
-		return (blacklist && blacklist[room] && blacklist[room][user]);
+		var blacklistRegexes = this.blacklistRegexes;
+		return (blacklistRegexes && blacklistRegexes[room] && blacklistRegexes[room].test(user));
 	},
 	blacklistUser: function(user, room) {
 		var blacklist = this.settings.blacklist || (this.settings.blacklist = {});
@@ -280,12 +287,31 @@ exports.parse = {
 
 		if (blacklist[room][user]) return false;
 		blacklist[room][user] = 1;
+		this.updateBlacklistRegex(room);
 		return true;
 	},
 	unblacklistUser: function(user, room) {
-		if (!this.isBlacklisted(user, room)) return false;
-		delete this.settings.blacklist[room][user];
+		var blacklist = this.settings.blacklist;
+		if (!blacklist || !blacklist[room] || !blacklist[room][user]) return false;
+		delete blacklist[room][user];
+		this.updateBlacklistRegex(room);
 		return true;
+	},
+	updateBlacklistRegex: function(room) {
+		var blacklist = this.settings.blacklist[room];
+		if (Object.isEmpty(blacklist)) {
+			delete this.blacklistRegexes[room];
+			return false;
+		}
+		var buffer = [];
+		for (var entry in blacklist) {
+			if (/^\/[^\/]+\/i$/.test(entry)) {
+				buffer.push(entry.slice(1, -2));
+			} else {
+				buffer.push('^' + entry + '$');
+			}
+		}
+		this.blacklistRegexes[room] = new RegExp(buffer.join('|'), 'i');
 	},
 	uploadToHastebin: function(con, room, by, toUpload) {
 		var self = this;
