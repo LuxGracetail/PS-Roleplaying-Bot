@@ -180,20 +180,23 @@ exports.parse = {
 				break;
 			case 'c':
 				var by = spl[2];
-				this.processChatData(toId(by), room, connection, spl[4]);
+				spl = spl.slice(3).join('|');
+				this.processChatData(toId(by), room, connection, spl);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
-				this.chatMessage(spl[3], by, room, connection);
+				this.chatMessage(spl, by, room, connection);
 				break;
 			case 'c:':
 				var by = spl[3];
-				this.processChatData(toId(by), room, connection, spl[4]);
+				spl = spl.slice(4).join('|');
+				this.processChatData(toId(by), room, connection, spl);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
-				this.chatMessage(spl[4], by, room, connection);
+				this.chatMessage(spl, by, room, connection);
 				break;
 			case 'pm':
 				var by = spl[2];
+				spl = spl.slice(4).join('|');
 				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
-				this.chatMessage(spl[4], by, ',' + by, connection);
+				this.chatMessage(spl, by, ',' + by, connection);
 				break;
 			case 'N':
 				var by = spl[2];
