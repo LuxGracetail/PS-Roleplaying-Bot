@@ -313,9 +313,7 @@ exports.parse = {
 		}
 		this.blacklistRegexes[room] = new RegExp(buffer.join('|'), 'i');
 	},
-	uploadToHastebin: function(con, room, by, toUpload) {
-		var self = this;
-
+	uploadToHastebin: function(toUpload, callback) {
 		var reqOpts = {
 			hostname: "hastebin.com",
 			method: "POST",
@@ -324,7 +322,7 @@ exports.parse = {
 
 		var req = require('http').request(reqOpts, function(res) {
 			res.on('data', function(chunk) {
-				self.say(con, room, (room.charAt(0) === ',' ? "" : "/pm " + by + ", ") + "hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
+				if (callback && typeof callback === "function") callback("hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
 			});
 		});
 
