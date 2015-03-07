@@ -326,7 +326,9 @@ exports.commands = {
 			} else {
 				var nickList = Object.keys(this.settings.blacklist[room]);
 				if (!nickList.length) return this.say(con, room, '/pm ' + by + ', No users are blacklisted in this room.');
-				this.uploadToHastebin(con, room, by, 'The following users are banned in ' + room + ':\n\n' + nickList.join('\n'))
+				this.uploadToHastebin('The following users are banned in ' + room + ':\n\n' + nickList.join('\n'), function (link) {
+					this.say(con, room, "/pm " + by + ", Blacklist for room " + room + ": " + link);
+				}.bind(this));
 				return;
 			}
 		}
@@ -393,7 +395,9 @@ exports.commands = {
 			} else {
 				var banList = Object.keys(this.settings.bannedphrases[tarRoom]);
 				if (!banList.length) return this.say(con, room, "No phrases are banned in this room.");
-				this.uploadToHastebin(con, room, by, "The following phrases are banned " + (room.charAt(0) === ',' ? "globally" : "in " + room) + ":\n\n" + banList.join('\n'))
+				this.uploadToHastebin("The following phrases are banned " + (room.charAt(0) === ',' ? "globally" : "in " + room) + ":\n\n" + banList.join('\n'), function (link) {
+					this.say(con, room, (room.charAt(0) === ',' ? "" : "/pm " + by + ", ") + "Banned Phrases " + (room.charAt(0) === ',' ? "globally" : "in " + room) + ": " + link);
+				}.bind(this));
 				return;
 			}
 		}
@@ -651,7 +655,9 @@ exports.commands = {
 					}
 					var foundstr = found.join(' ');
 					if(foundstr.length > 266) {
-						self.uploadToHastebin(con, room, by, "The following cloners are online :\n\n" + found.join('\n'));
+						self.uploadToHastebin("The following cloners are online :\n\n" + found.join('\n'), function (link) {
+							self.say(con, room, (room.charAt(0) === ',' ? "" : "/pm " + by + ", ") + link);
+						});
 						return;
 					}
 					self.say(con, room, by, "The following cloners are online :\n\n" + foundstr);
@@ -684,7 +690,9 @@ exports.commands = {
 						}
 						var foundstr = found.join(' ');
 						if (foundstr.length > 266) {
-							self.uploadToHastebin(con, room, by, "The following cloners are online :\n\n" + found.join('\n'));
+							self.uploadToHastebin("The following cloners are online :\n\n" + found.join('\n'), function (link) {
+								self.say(con, room, (room.charAt(0) === ',' ? "" : "/pm " + by + ", ") + link);
+							});
 							return;
 						}
 						self.say(con, room, by, "The following cloners are online :\n\n" + foundstr);
