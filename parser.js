@@ -379,7 +379,7 @@ exports.parse = {
 			var timesLen = times.length;
 			var isFlooding = (timesLen >= FLOOD_MESSAGE_NUM && (now - times[timesLen - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
 				&& (now - times[timesLen - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
-			if ((useDefault || !modSettings.flooding) && isFlooding) {
+			if ((useDefault || !('flooding' in modSettings)) && isFlooding) {
 				if (pointVal < 2) {
 					pointVal = 2;
 					muteMessage = ', Automated response: flooding';
@@ -387,7 +387,7 @@ exports.parse = {
 			}
 			// moderation for caps (over x% of the letters in a line of y characters are capital)
 			var capsMatch = msg.replace(/[^A-Za-z]/g, '').match(/[A-Z]/g);
-			if ((useDefault || !modSettings.caps) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= ~~(toId(msg).length * MIN_CAPS_PROPORTION))) {
+			if ((useDefault || !('caps' in modSettings)) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= ~~(toId(msg).length * MIN_CAPS_PROPORTION))) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: caps';
@@ -395,7 +395,7 @@ exports.parse = {
 			}
 			// moderation for stretching (over x consecutive characters in the message are the same)
 			var stretchMatch = /(.)\1{7,}/gi.test(msg) || /(..+)\1{4,}/gi.test(msg); // matches the same character (or group of characters) 8 (or 5) or more times in a row
-			if ((useDefault || !modSettings.stretching) && stretchMatch) {
+			if ((useDefault || !('stretching' in modSettings)) && stretchMatch) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: stretching';
