@@ -32,6 +32,8 @@ exports.parse = {
 	chatData: {},
 	ranks: {},
 	RP: {},
+	msgQueue: [],
+	blacklistRegexes: {},
 
 	data: function(data, connection) {
 		if (data.substr(0, 1) === 'a') {
@@ -49,14 +51,14 @@ exports.parse = {
 		if (!message) return;
 
 		var room = 'lobby';
-		if (message.indexOf('\n') < 0) {
-			if (message.substr(1, 10) === 'tournament') return;
-			return this.message(message, connection, room);
-		}
+		if (message.indexOf('\n') < 0) return this.message(message, connection, room);
 
 		var spl = message.split('\n');
-		if (spl[0].charAt(0) === '>') room = spl.shift().substr(1);
-		if (spl[0].substr(1, 4) === 'init') spl.shift();
+		if (spl[0].charAt(0) === '>') {
+			if (spl[1].substr(1, 4) === 'init') return ok('joined ' + spl[2].substr(7));
+			if (spl[1].substr(1, 10) === 'tournament') return;
+			room = spl.shift().substr(1);
+		}
 
 		for (var i = 0, len = spl.length; i < len; i++) {
 			this.message(spl[i], connection, room);
@@ -110,6 +112,15 @@ exports.parse = {
 							setTimeout(function() {
 								this.message(message);
 							}.bind(this), 60 * 1000);
+=======
+							return;
+						}
+
+						if (data.substr(0, 16) === '<!DOCTYPE html>') {
+							error('Connection error 522; trying agian in one minute');
+							setTimeout(function() {
+								this.message(message);
+							}.bind(this), 60 * 1000);
 							return;
 						}
 
@@ -144,11 +155,11 @@ exports.parse = {
 				ok('logged in as ' + spl[2]);
 
 				// Now join the rooms
-				var cmds = ['|/idle'];
+				this.msgQueue.push('|/blockchallenges');
 				for (var i = 0, len = config.rooms.length; i < len; i++) {
 					var room = toId(config.rooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
-					cmds.push('|/join ' + room);
+					this.msgQueue.push('|/join ' + room);
 				}
 				for (var i = 0, len = config.privaterooms.length; i < len; i++) {
 					var room = toId(config.privaterooms[i]);
@@ -167,45 +178,41 @@ exports.parse = {
 						this.RP[toId(config.rprooms[i])] = {};
 					}
 				}
-				
-				var self = this;
-				if (cmds.length > 4) {
-					this.nextJoin = 0;
-					this.joinSpacer = setInterval(function(con, cmds) {
-						if (cmds.length > this.nextJoin + 3) {
-							send(con, cmds.slice(this.nextJoin, this.nextJoin + 3));
-							this.nextJoin += 3;
-						} else {
-							send(con, cmds.slice(this.nextJoin));
-							delete this.nextJoin;
-							clearInterval(this.joinSpacer);
-						}
-					}.bind(this), 4*1000, connection, cmds);
-				} else {
-					send(connection, cmds);
+					this.msgQueue.push('|/join ' + room);
 				}
-
-				this.chatDataTimer = setInterval(this.cleanChatData.bind(this), 30 * 60 * 1000);
-				break;
-			case 'title':
-				ok('joined ' + spl[2]);
+				if (this.settings.blacklist) {
+					var blacklist = this.settings.blacklist;
+					for (var room in blacklist) {
+						this.updateBlacklistRegex(room);
+					}
+				}
+				this.msgDequeue = setInterval(function () {
+					var msg = this.msgQueue.shift();
+					if (msg) return send(connection, msg);
+					clearInterval(this.msgDequeue);
+					this.msgDequeue = null;
+				}.bind(this), 750);
+				setInterval(this.cleanChatData.bind(this), 30 * 60 * 1000);
 				break;
 			case 'c':
 				var by = spl[2];
-				this.processChatData(by, room, connection, spl[4]);
+				spl = spl.slice(3).join('|');
+				this.processChatData(toId(by), room, connection, spl);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
-				this.chatMessage(spl[3], by, room, connection);
+				this.chatMessage(spl, by, room, connection);
 				break;
 			case 'c:':
 				var by = spl[3];
-				this.processChatData(by, room, connection, spl[4]);
+				spl = spl.slice(4).join('|');
+				this.processChatData(toId(by), room, connection, spl);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
-				this.chatMessage(spl[4], by, room, connection);
+				this.chatMessage(spl, by, room, connection);
 				break;
 			case 'pm':
 				var by = spl[2];
+				spl = spl.slice(4).join('|');
 				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
-				this.chatMessage(spl[4], by, ',' + by, connection);
+				this.chatMessage(spl, by, ',' + by, connection);
 				break;
 			case 'N':
 				var by = spl[2];
@@ -214,6 +221,7 @@ exports.parse = {
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
+				if (config.serverid === 'showdown' && room === 'lobby') this.say(connection, room, '/part');
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(toId(by), spl[1], room);
 				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
@@ -261,11 +269,18 @@ exports.parse = {
 	say: function(connection, room, text) {
 		if (room.charAt(0) !== ',') {
 			var str = (room !== 'lobby' ? room : '') + '|' + text;
-			send(connection, str);
 		} else {
 			room = room.substr(1);
 			var str = '|/pm ' + room + ', ' + text;
-			send(connection, str);
+		}
+		this.msgQueue.push(str);
+		if (!this.msgDequeue) {
+			this.msgDequeue = setInterval(function () {
+				var msg = this.msgQueue.shift();
+				if (msg) return send(connection, msg);
+				clearInterval(this.msgDequeue);
+				this.msgDequeue = null;
+			}.bind(this), 750);
 		}
 	},
 	hasRank: function(user, rank) {
@@ -285,26 +300,42 @@ exports.parse = {
 		return canUse;
 	},
 	isBlacklisted: function(user, room) {
-		var blacklist = this.settings.blacklist;
-		return (blacklist && blacklist[room] && blacklist[room][user]);
+		var blacklistRegexes = this.blacklistRegexes;
+		return (blacklistRegexes && blacklistRegexes[room] && blacklistRegexes[room].test(user));
 	},
 	blacklistUser: function(user, room) {
-		var blacklist = this.settings.blacklist;
-		if (!blacklist) this.settings.blacklist = {};
+		var blacklist = this.settings.blacklist || (this.settings.blacklist = {});
 		if (!blacklist[room]) blacklist[room] = {};
 
 		if (blacklist[room][user]) return false;
 		blacklist[room][user] = 1;
+		this.updateBlacklistRegex(room);
 		return true;
 	},
 	unblacklistUser: function(user, room) {
-		if (!this.isBlacklisted(user, room)) return false;
-		delete this.settings.blacklist[room][user];
+		var blacklist = this.settings.blacklist;
+		if (!blacklist || !blacklist[room] || !blacklist[room][user]) return false;
+		delete blacklist[room][user];
+		this.updateBlacklistRegex(room);
 		return true;
 	},
-	uploadToHastebin: function(con, room, by, toUpload) {
-		var self = this;
-
+	updateBlacklistRegex: function(room) {
+		var blacklist = this.settings.blacklist[room];
+		if (Object.isEmpty(blacklist)) {
+			delete this.blacklistRegexes[room];
+			return false;
+		}
+		var buffer = [];
+		for (var entry in blacklist) {
+			if (/^\/[^\/]+\/i$/.test(entry)) {
+				buffer.push(entry.slice(1, -2));
+			} else {
+				buffer.push('^' + entry + '$');
+			}
+		}
+		this.blacklistRegexes[room] = new RegExp(buffer.join('|'), 'i');
+	},
+	uploadToHastebin: function(toUpload, callback) {
 		var reqOpts = {
 			hostname: "hastebin.com",
 			method: "POST",
@@ -313,7 +344,7 @@ exports.parse = {
 
 		var req = require('http').request(reqOpts, function(res) {
 			res.on('data', function(chunk) {
-				self.say(con, room, (room.charAt(0) === ',' ? "" : "/pm " + by + ", ") + "hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
+				if (callback && typeof callback === "function") callback("hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
 			});
 		});
 
@@ -332,15 +363,22 @@ exports.parse = {
 		msg = msg.trim().replace(/[ \u0000\u200B-\u200F]+/g, " "); // removes extra spaces and null characters so messages that should trigger stretching do so
 		user = toId(user);
 		this.updateSeen(user, 'c', room);
-		var time = Date.now();
+		var now = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
 			zeroTol: 0,
 			lastSeen: '',
-			seenAt: time
+			seenAt: now
 		};
 		var userData = this.chatData[user];
-		if (!this.chatData[user][room]) this.chatData[user][room] = {times:[], points:0, lastAction:0};
+
+		if (!this.chatData[user][room]) this.chatData[user][room] = {
+			times: [],
+			points: 0,
+			lastAction: 0
+		};
 		var roomData = userData[room];
+
+		roomData.times.push(now);
 
 		// this deals with punishing rulebreakers, but note that the bot can't think, so it might make mistakes
 		if (config.allowmute && this.hasRank(this.ranks[room] || ' ', '%@&#~') && config.whitelist.indexOf(user) === -1) {
@@ -349,18 +387,10 @@ exports.parse = {
 			var muteMessage = '';
 			var modSettings = useDefault ? null : this.settings.modding[room];
 
-			// moderation for spamming "snen" multiple times on a line (a la the snen spammer)
-			var snenMatch = msg.match(/snen/gi);
-			if ((useDefault || modSettings.snen) && snenMatch && snenMatch.length > 6) {
-				if (pointVal < 4) {
-					muteMessage = ', Automated response: possible "snen" spammer';
-					pointVal = (room === 'lobby') ? 5 : 4;
-				}
-			}
 			// moderation for banned words
-			if (useDefault || modSettings.bannedWords && pointVal < 2) {
-				var banphraseSettings = this.settings.bannedphrases;
-				var bannedPhrases = !!banphraseSettings ? (Object.keys(banphraseSettings[room] || {})).concat(Object.keys(banphraseSettings.global || {})) : [];
+			if ((useDefault || !this.settings.banword[room]) && pointVal < 2) {
+				var bannedPhraseSettings = this.settings.bannedphrases;
+				var bannedPhrases = !!bannedPhraseSettings ? (Object.keys(bannedPhraseSettings[room] || {})).concat(Object.keys(bannedPhraseSettings.global || {})) : [];
 				for (var i = 0; i < bannedPhrases.length; i++) {
 					if (msg.toLowerCase().indexOf(bannedPhrases[i]) > -1) {
 						pointVal = 2;
@@ -371,9 +401,10 @@ exports.parse = {
 			}
 			// moderation for flooding (more than x lines in y seconds)
 			var times = roomData.times;
-			var isFlooding = (times.length >= FLOOD_MESSAGE_NUM && (time - times[times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
-				&& (time - times[times.length - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
-			if ((useDefault || modSettings.flooding) && isFlooding) {
+			var timesLen = times.length;
+			var isFlooding = (timesLen >= FLOOD_MESSAGE_NUM && (now - times[timesLen - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
+				&& (now - times[timesLen - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
+			if ((useDefault || !('flooding' in modSettings)) && isFlooding) {
 				if (pointVal < 2) {
 					pointVal = 2;
 					muteMessage = ', Automated response: flooding';
@@ -381,22 +412,22 @@ exports.parse = {
 			}
 			// moderation for caps (over x% of the letters in a line of y characters are capital)
 			var capsMatch = msg.replace(/[^A-Za-z]/g, '').match(/[A-Z]/g);
-			if ((useDefault || modSettings.caps) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= ~~(toId(msg).length * MIN_CAPS_PROPORTION))) {
+			if ((useDefault || !('caps' in modSettings)) && capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= ~~(toId(msg).length * MIN_CAPS_PROPORTION))) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: caps';
 				}
 			}
 			// moderation for stretching (over x consecutive characters in the message are the same)
-			var stretchMatch = msg.match(/(.)\1{7,}/gi) || msg.match(/(..+)\1{4,}/gi); // matches the same character (or group of characters) 8 (or 5) or more times in a row
-			if ((useDefault || modSettings.stretching !== 0) && stretchMatch) {
+			var stretchMatch = /(.)\1{7,}/gi.test(msg) || /(..+)\1{4,}/gi.test(msg); // matches the same character (or group of characters) 8 (or 5) or more times in a row
+			if ((useDefault || !('stretching' in modSettings)) && stretchMatch) {
 				if (pointVal < 1) {
 					pointVal = 1;
 					muteMessage = ', Automated response: stretching';
 				}
 			}
 
-			if (pointVal > 0 && !(time - roomData.lastAction < ACTION_COOLDOWN)) {
+			if (pointVal > 0 && now - roomData.lastAction >= ACTION_COOLDOWN) {
 				var cmd = 'mute';
 				// defaults to the next punishment in config.punishVals instead of repeating the same action (so a second warn-worthy
 				// offence would result in a mute instead of a warn, and the third an hourmute, etc)
@@ -410,12 +441,12 @@ exports.parse = {
 				if (config.privaterooms.indexOf(room) > -1 && cmd === 'warn') cmd = 'mute'; // can't warn in private rooms
 				// if the bot has % and not @, it will default to hourmuting as its highest level of punishment instead of roombanning
 				if (roomData.points >= 4 && !this.hasRank(this.ranks[room] || ' ', '@&#~')) cmd = 'hourmute';
-				if (roomData.zeroTol > 4) { // if zero tolerance users break a rule they get an instant roomban or hourmute
+				if (userData.zeroTol > 4) { // if zero tolerance users break a rule they get an instant roomban or hourmute
 					muteMessage = ', Automated response: zero tolerance user';
 					cmd = this.hasRank(this.ranks[room] || ' ', '@&#~') ? 'roomban' : 'hourmute';
 				}
 				if (roomData.points > 1) userData.zeroTol++; // getting muted or higher increases your zero tolerance level (warns do not)
-				roomData.lastAction = time;
+				roomData.lastAction = now;
 				this.say(connection, room, '/' + cmd + ' ' + user + muteMessage);
 			}
 		}
@@ -448,33 +479,36 @@ exports.parse = {
 
 	updateSeen: function(user, type, detail) {
 		if (type !== 'n' && config.rooms.indexOf(detail) === -1 || config.privaterooms.indexOf(toId(detail)) > -1) return;
-		var time = Date.now();
+		var now = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
 			zeroTol: 0,
 			lastSeen: '',
-			seenAt: time
+			seenAt: now
 		};
 		if (!detail) return;
 		var userData = this.chatData[user];
 		var msg = '';
 		switch (type) {
 		case 'j':
+		case 'J':
 			msg += 'joining ';
 			break;
 		case 'l':
+		case 'L':
 			msg += 'leaving ';
 			break;
 		case 'c':
+		case 'c:':
 			msg += 'chatting in ';
 			break;
-		case 'n':
+		case 'N':
 			msg += 'changing nick to ';
 			if (detail.charAt(0) !== ' ') detail = detail.substr(1);
 			break;
 		}
 		msg += detail.trim() + '.';
 		userData.lastSeen = msg;
-		userData.seenAt = time;
+		userData.seenAt = now;
 	},
 	getTimeAgo: function(time) {
 		time = ~~((Date.now() - time) / 1000);
@@ -552,5 +586,32 @@ exports.parse = {
 			}
 			uncache = newuncache;
 		} while (uncache.length > 0);
+	},
+	getDocMeta: function(id, callback) {
+		https.get('https://www.googleapis.com/drive/v2/files/' + id + '?key=' + config.googleapikey, function (res) {
+			var data = '';
+			res.on('data', function (part) {
+				data += part;
+			});
+			res.on('end', function (end) {
+				var json = JSON.parse(data);
+				if (json) {
+					callback(null, json);
+				} else {
+					callback('Invalid response', data);
+				}
+			});
+		});
+	},
+	getDocCsv: function(meta, callback) {
+		https.get('https://docs.google.com/spreadsheet/pub?key=' + meta.id + '&output=csv', function (res) {
+			var data = '';
+			res.on('data', function (part) {
+				data += part;
+			});
+			res.on('end', function (end) {
+				callback(data);
+			});
+		});
 	}
 };

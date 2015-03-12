@@ -14,6 +14,7 @@ exports.commands = {
 	 * These commands are here to provide information about the bot.
 	 */
 
+	credits: 'about',
 	about: function(arg, by, room, con) {
 		if (this.hasRank(by, '#~') || room.charAt(0) === ',') {
 			var text = '';
@@ -101,8 +102,7 @@ exports.commands = {
 			flooding: 1,
 			caps: 1,
 			stretching: 1,
-			bannedwords: 1,
-			snen: 1
+			bannedwords: 1
 		};
 
 		var opts = arg.split(',');
@@ -262,29 +262,34 @@ exports.commands = {
 		this.say(con, room, text);
 	},
 	rab: 'regexautoban',
-	regexab: 'regexautoban',
 	regexautoban: function(arg, by, room, con) {
-		if (!this.canUse('regexautoban', room, by) || room.charAt(0) === ',') return false;
-		if (!this.hasRank(this.ranks[room] || ' ', '@#&~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
-		if (!arg) return this.say(con, room, 'No pattern was specified.');
+		if (config.regexautobanwhitelist.indexOf(toId(by)) < 0 || !this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!arg) return this.say(con, room, 'You must specify a regular expression to (un)blacklist.');
+
+		try {
+			new RegExp(arg, 'i');
+		} catch (e) {
+			return this.say(con, room, e.message);
+		}
 
 		arg = '/' + arg + '/i';
-		if (!this.blacklistUser(arg, room)) return this.say(con, room, 'Pattern ' + arg + ' is already present in the blacklist.');	
+		if (!this.blacklistUser(arg, room)) return this.say(con, room, '/' + arg + ' is already present in the blacklist.');
 
-		this.say(con, room, 'Pattern ' + arg + ' added to the blacklist successfully.');
 		this.writeSettings();
+		this.say(con, room, '/' + arg + ' was added to the blacklist successfully.');
 	},
 	unrab: 'unregexautoban',
-	unregexab: 'unregexautoban',
 	unregexautoban: function(arg, by, room, con) {
-		if (!this.canUse('regexautoban', room, by) || room.charAt(0) === ',') return false;
-		if (!this.hasRank(this.ranks[room] || ' ', '@#&~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
-		if (!arg) return this.say(con, room, 'No pattern was specified.');
-		arg = '/' + arg + '/i';
-		if (!this.unblacklistUser(arg, room)) return this.say(con, room, 'Pattern ' + arg + ' isn\'t present in the blacklist.');
+		if (config.regexautobanwhitelist.indexOf(toId(by)) < 0 || !this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
+		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(con, room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!arg) return this.say(con, room, 'You must specify a regular expression to (un)blacklist.');
 
-		this.say(con, room, 'Pattern ' + arg + ' removed from the blacklist successfully.');
+		arg = '/' + arg + '/i';
+		if (!this.unblacklistUser(arg, room)) return this.say(con, room,'/' + arg + ' is not present in the blacklist.');
+
 		this.writeSettings();
+		this.say(con, room, '/' + arg + ' was removed from the blacklist successfully.');
 	},
 	viewbans: 'viewblacklist',
 	vab: 'viewblacklist',
@@ -306,7 +311,9 @@ exports.commands = {
 			} else {
 				var nickList = Object.keys(this.settings.blacklist[room]);
 				if (!nickList.length) return this.say(con, room, '/pm ' + by + ', No users are blacklisted in this room.');
-				this.uploadToHastebin(con, room, by, 'The following users are banned in ' + room + ':\n\n' + nickList.join('\n'))
+				this.uploadToHastebin('The following users are banned in ' + room + ':\n\n' + nickList.join('\n'), function (link) {
+					this.say(con, room, "/pm " + by + ", Blacklist for room " + room + ": " + link);
+				}.bind(this));
 				return;
 			}
 		}
@@ -373,7 +380,9 @@ exports.commands = {
 			} else {
 				var banList = Object.keys(this.settings.bannedphrases[tarRoom]);
 				if (!banList.length) return this.say(con, room, "No phrases are banned in this room.");
-				this.uploadToHastebin(con, room, by, "The following phrases are banned " + (room.charAt(0) === ',' ? "globally" : "in " + room) + ":\n\n" + banList.join('\n'))
+				this.uploadToHastebin("The following phrases are banned " + (room.charAt(0) === ',' ? "globally" : "in " + room) + ":\n\n" + banList.join('\n'), function (link) {
+					this.say(con, room, (room.charAt(0) === ',' ? "" : "/pm " + by + ", ") + "Banned Phrases " + (room.charAt(0) === ',' ? "globally" : "in " + room) + ": " + link);
+				}.bind(this));
 				return;
 			}
 		}
@@ -430,7 +439,7 @@ exports.commands = {
 			var text = '/pm ' + by + ', ';
 		}
 
-		var rand = Math.floor(20 * Math.random()) + 1;
+		var rand = ~~(20 * Math.random()) + 1;
 
 		switch (rand) {
 	 		case 1: text += "Signs point to yes."; break;
