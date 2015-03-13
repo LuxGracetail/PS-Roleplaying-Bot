@@ -112,7 +112,6 @@ exports.parse = {
 							setTimeout(function() {
 								this.message(message);
 							}.bind(this), 60 * 1000);
-=======
 							return;
 						}
 
@@ -164,7 +163,7 @@ exports.parse = {
 				for (var i = 0, len = config.privaterooms.length; i < len; i++) {
 					var room = toId(config.privaterooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
-					cmds.push('|/join ' + room);
+					this.msgQueue.push('|/join ' + room);
 				}
 				if (config.serverid === 'showdown') {
 					this.RP.void = {};
@@ -177,8 +176,6 @@ exports.parse = {
 					for (var i = 0; i < config.rprooms.length; i++) {
 						this.RP[toId(config.rprooms[i])] = {};
 					}
-				}
-					this.msgQueue.push('|/join ' + room);
 				}
 				if (this.settings.blacklist) {
 					var blacklist = this.settings.blacklist;

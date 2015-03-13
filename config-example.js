@@ -77,7 +77,7 @@ exports.regexautobanwhitelist = [];
 exports.botguide = '';
 
 // Add a link to the git repository for the bot here for .git to link to.
-exports.fork = 'http://github.com/TalkTakesTime/Pokemon-Showdown-Bot';
+exports.fork = 'http://github.com/Morfent/PS-Roleplaying-Bot';
 
 // This allows the bot to act as an automated moderator. If enabled, the bot will
 // mute users who send 6 lines or more in 6 or fewer seconds for 7 minutes. NOTE: THIS IS
