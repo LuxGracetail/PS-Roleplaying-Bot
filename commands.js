@@ -24,6 +24,11 @@ exports.commands = {
 		text += '**Roleplaying Bot**: fork of **Pokemon Showdown Bot** by Quinella and TalkTakesTime, with custom roleplaying commands by Morfent.';
 		this.say(con, room, text);
 	},
+	git: function(arg, by, room, con) {
+		var text = config.excepts.indexOf(toId(by)) < 0 ? '/pm ' + by + ', ' : '';
+		text += '**Pokemon Showdown Bot** source code: ' + config.fork;
+		this.say(con, room, text);
+	},
 	help: 'guide',
 	guide: function(arg, by, room, con) {
 		if (this.hasRank(by, '#~') || room.charAt(0) === ',') {
