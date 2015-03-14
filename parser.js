@@ -197,6 +197,7 @@ exports.parse = {
 				this.processChatData(toId(by), room, connection, spl);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl, by, room, connection);
+				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
 			case 'c:':
 				var by = spl[3];
@@ -204,6 +205,7 @@ exports.parse = {
 				this.processChatData(toId(by), room, connection, spl);
 				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
 				this.chatMessage(spl, by, room, connection);
+				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
 			case 'pm':
 				var by = spl[2];
