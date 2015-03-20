@@ -55,17 +55,9 @@ global.toId = function(text) {
 
 global.stripCommands = function(text) {
 	text = text.trim();
-	switch (text.charAt(0)) {
-	case '/':
-		return '/' + text;
-	case '!':
-		return '!' + text;
-	case '>':
-		if (text.substr(0, 3) === '>> ' || text.substr(0, 4) === '>>> ') return ' ' + text;
-		/* fall through */
-	default:
-		return text;
-	}
+	if (text.charAt(0) === '/') return '/' + text;
+	if (text.charAt(0) === '!' || /^>>>? /.test(text)) return ' ' + text;
+	return text;
 };
 
 function runNpm(command) {
