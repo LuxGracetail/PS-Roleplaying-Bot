@@ -54,7 +54,11 @@ exports.parse = {
 
 		var spl = message.split('\n');
 		if (spl[0].charAt(0) === '>') {
-			if (spl[1].substr(1, 4) === 'init') return ok('joined ' + spl[2].substr(7));
+			if (spl[1].substr(1, 4) === 'init') {
+				room = spl[0].substr(1);
+				this.ranks[room] = /(?:,|^)([\s+%@#&~])[a-zA-Z\d-]+$/.exec(spl[3])[1];
+				return ok('joined ' + room);
+			}
 			if (spl[1].substr(1, 10) === 'tournament') return;
 			room = spl.shift().substr(1);
 		}
@@ -184,7 +188,6 @@ exports.parse = {
 				if (this.isBlacklisted(toId(by), room)) this.say(room, '/roomban ' + by + ', Blacklisted user');
 				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
 				this.chatMessage(spl, by, room);
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
 			case 'c:':
 				var by = spl[3];
@@ -192,7 +195,6 @@ exports.parse = {
 				if (this.isBlacklisted(toId(by), room)) this.say(room, '/roomban ' + by + ', Blacklisted user');
 				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
 				this.chatMessage(spl, by, room);
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
 			case 'pm':
 				var by = spl[2];
@@ -203,14 +205,12 @@ exports.parse = {
 			case 'N':
 				var by = spl[2];
 				this.updateSeen(spl[3], spl[1], toId(by));
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
 				if (config.serverid === 'showdown' && room === 'lobby') this.say(room, '/part');
 				if (this.isBlacklisted(toId(by), room)) this.say(room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(toId(by), spl[1], room);
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
 			case 'l': case 'L':
 				this.updateSeen(toId(spl[2]), spl[1], room);
