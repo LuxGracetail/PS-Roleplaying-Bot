@@ -54,13 +54,17 @@ exports.parse = {
 
 		var spl = message.split('\n');
 		if (spl[0].charAt(0) === '>') {
-			if (spl[1].substr(1, 4) === 'init') {
-				room = spl[0].substr(1);
-				this.ranks[room] = /(?:,|^)([\s+%@#&~])[a-zA-Z\d-]+$/.exec(spl[3])[1];
-				return ok('joined ' + room);
-			}
 			if (spl[1].substr(1, 10) === 'tournament') return;
 			room = spl.shift().substr(1);
+			if (spl[0].substr(1, 4) === 'init') {
+				var users = spl[2].substr(7).split(',');
+				var nickId = toId(config.nick);
+				for (var i = users.length; i--;) {
+					if (toId(users[i]) === nickId) this.ranks[room] = users[i].trim().charAt(0);
+					break;
+				}
+				return ok('joined ' + room);
+			}
 		}
 
 		for (var i = 0, len = spl.length; i < len; i++) {
