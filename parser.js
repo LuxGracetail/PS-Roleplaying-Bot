@@ -181,16 +181,16 @@ exports.parse = {
 			case 'c':
 				var by = spl[2];
 				spl = spl.slice(3).join('|');
-				this.processChatData(toId(by), room, spl);
 				if (this.isBlacklisted(toId(by), room)) this.say(room, '/roomban ' + by + ', Blacklisted user');
+				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
 				this.chatMessage(spl, by, room);
 				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
 			case 'c:':
 				var by = spl[3];
 				spl = spl.slice(4).join('|');
-				this.processChatData(toId(by), room, spl);
 				if (this.isBlacklisted(toId(by), room)) this.say(room, '/roomban ' + by + ', Blacklisted user');
+				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
 				this.chatMessage(spl, by, room);
 				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
