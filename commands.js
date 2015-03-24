@@ -189,13 +189,13 @@ exports.commands = {
 			if (!opts[1] || !opts[1].trim()) {
 				var msg = '';
 				if (!this.settings[cmd] || (!this.settings[cmd][room] && this.settings[cmd][room] !== false)) {
-					msg = '.' + cmd + ' is available for users of rank ' + ((cmd === 'autoban' || cmd === 'banword') ? '#' : config.defaultrank) + ' and above.';
+					msg = '' + config.commandcharacter + '' + cmd + ' is available for users of rank ' + ((cmd === 'autoban' || cmd === 'banword') ? '#' : config.defaultrank) + ' and above.';
 				} else if (this.settings[cmd][room] in settingsLevels) {
-					msg = '.' + cmd + ' is available for users of rank ' + this.settings[cmd][room] + ' and above.';
+					msg = '' + config.commandcharacter + '' + cmd + ' is available for users of rank ' + this.settings[cmd][room] + ' and above.';
 				} else if (this.settings[cmd][room] === true) {
-					msg = '.' + cmd + ' is available for all users in this room.';
+					msg = '' + config.commandcharacter + '' + cmd + ' is available for all users in this room.';
 				} else if (this.settings[cmd][room] === false) {
-					msg = '' + config.commandcharacter+''+ cmd + ' is not available for use in this room.';
+					msg = '' + config.commandcharacter + '' + cmd + ' is not available for use in this room.';
 				}
 				this.say(room, msg);
 				return;
@@ -448,7 +448,7 @@ exports.commands = {
 			var choices = arg.split(',');
 		}
 		choices = choices.filter(function(i) {return (toId(i) !== '')});
-		if (choices.length < 2) return this.say(room, (room.charAt(0) === ',' ? '': '/pm ' + by + ', ') + '.choose: You must give at least 2 valid choices.');
+		if (choices.length < 2) return this.say(room, (room.charAt(0) === ',' ? '': '/pm ' + by + ', ') + config.commandcharacter + 'choose: You must give at least 2 valid choices.');
 
 		var choice = choices[Math.floor(Math.random()*choices.length)];
 		this.say(room, ((this.canUse('choose', room, by) || room.charAt(0) === ',') ? '':'/pm ' + by + ', ') + stripCommands(choice));
