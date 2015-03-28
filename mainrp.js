@@ -55,28 +55,9 @@ global.toId = function(text) {
 
 global.stripCommands = function(text) {
 	text = text.trim();
-	switch (text.charAt(0)) {
-	case '/':
-		return '/' + text;
-	case '!':
-		return '!' + text;
-	case '>':
-		if (text.substr(0, 3) === '>> ' || text.substr(0, 4) === '>>> ') return ' ' + text;
-		/* fall through */
-	default:
-		return text;
-	}
-};
-
-global.send = function(connection, data) {
-	if (connection.connected) {
-		if (!(data instanceof Array)) {
-			data = [data.toString()];
-		}
-		data = JSON.stringify(data);
-		dsend(data);
-		connection.send(data);
-	}
+	if (text.charAt(0) === '/') return '/' + text;
+	if (text.charAt(0) === '!' || /^>>>? /.test(text)) return ' ' + text;
+	return text;
 };
 
 function runNpm(command) {
@@ -172,6 +153,15 @@ var WebSocketClient = require('websocket').client;
 global.Commands = require('./commands.js').commands;
 global.Parse = require('./parser.js').parse;
 
+var connection = null;
+global.send = function(data) {
+	if (!connection.connected) return false;
+	if (!Array.isArray(data)) data = [data.toString()];
+	data = JSON.stringify(data);
+	dsend(data);
+	connection.send(data);
+};
+
 var connect = function(retry) {
 	if (retry) {
 		info('retrying...');
@@ -188,14 +178,15 @@ var connect = function(retry) {
 		}, 60000);
 	});
 
-	ws.on('connect', function(connection) {
+	ws.on('connect', function(con) {
+		connection = con;
 		ok('connected to server ' + config.server);
 
-		connection.on('error', function(err) {
+		con.on('error', function(err) {
 			error('connection error: ' + sys.inspect(err));
 		});
 
-		connection.on('close', function() {
+		con.on('close', function() {
 			// Is this always error or can this be intended...?
 			error('connection closed: ' + sys.inspect(arguments));
 			info('retrying in one minute');
@@ -205,10 +196,10 @@ var connect = function(retry) {
 			}, 60000);
 		});
 
-		connection.on('message', function(message) {
+		con.on('message', function(message) {
 			if (message.type === 'utf8') {
 				recv(sys.inspect(message.utf8Data));
-				Parse.data(message.utf8Data, connection);
+				Parse.data(message.utf8Data);
 			}
 		});
 	});

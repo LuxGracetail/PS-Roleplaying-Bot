@@ -19,11 +19,11 @@ const FLOOD_MESSAGE_TIME = 6*1000;
 const MIN_CAPS_LENGTH = 18;
 const MIN_CAPS_PROPORTION = 0.8;
 
-settings = {};
+var settings;
 try {
 	settings = JSON.parse(fs.readFileSync('settings.json'));
-	if (!Object.keys(settings).length && settings !== {}) settings = {};
 } catch (e) {} // file doesn't exist [yet]
+if (!Object.isObject(settings)) settings = {};
 
 exports.parse = {
 	actionUrl: url.parse('https://play.pokemonshowdown.com/~~' + config.serverid + '/action.php'),
@@ -35,36 +35,44 @@ exports.parse = {
 	msgQueue: [],
 	blacklistRegexes: {},
 
-	data: function(data, connection) {
+	data: function(data) {
 		if (data.substr(0, 1) === 'a') {
 			data = JSON.parse(data.substr(1));
 			if (data instanceof Array) {
 				for (var i = 0, len = data.length; i < len; i++) {
-					this.splitMessage(data[i], connection);
+					this.splitMessage(data[i]);
 				}
 			} else {
-				this.splitMessage(data, connection);
+				this.splitMessage(data);
 			}
 		}
 	},
-	splitMessage: function(message, connection) {
+	splitMessage: function(message) {
 		if (!message) return;
 
 		var room = 'lobby';
-		if (message.indexOf('\n') < 0) return this.message(message, connection, room);
+		if (message.indexOf('\n') < 0) return this.message(message, room);
 
 		var spl = message.split('\n');
 		if (spl[0].charAt(0) === '>') {
-			if (spl[1].substr(1, 4) === 'init') return ok('joined ' + spl[2].substr(7));
 			if (spl[1].substr(1, 10) === 'tournament') return;
 			room = spl.shift().substr(1);
+			if (spl[0].substr(1, 4) === 'init') {
+				var users = spl[2].substr(7).split(',');
+				var nickId = toId(config.nick);
+				for (var i = users.length; i--;) {
+					if (toId(users[i]) === nickId) this.ranks[room] = users[i].trim().charAt(0);
+					break;
+				}
+				return ok('joined ' + room);
+			}
 		}
 
 		for (var i = 0, len = spl.length; i < len; i++) {
-			this.message(spl[i], connection, room);
+			this.message(spl[i], room);
 		}
 	},
-	message: function(message, connection, room) {
+	message: function(message, room) {
 		var spl = message.split('|');
 		switch (spl[1]) {
 			case 'challstr':
@@ -132,7 +140,7 @@ exports.parse = {
 								process.exit(-1);
 							}
 						} catch (e) {}
-						send(connection, '|/trn ' + config.nick + ',0,' + data);
+						send('|/trn ' + config.nick + ',0,' + data);
 					}.bind(this));
 				}.bind(this));
 
@@ -185,7 +193,7 @@ exports.parse = {
 				}
 				this.msgDequeue = setInterval(function () {
 					var msg = this.msgQueue.shift();
-					if (msg) return send(connection, msg);
+					if (msg) return send(msg);
 					clearInterval(this.msgDequeue);
 					this.msgDequeue = null;
 				}.bind(this), 750);
@@ -193,37 +201,33 @@ exports.parse = {
 				break;
 			case 'c':
 				var by = spl[2];
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
+
 				spl = spl.slice(3).join('|');
-				this.processChatData(toId(by), room, connection, spl);
-				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
-				this.chatMessage(spl, by, room, connection);
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
+				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
+				this.chatMessage(spl, by, room);
 				break;
 			case 'c:':
 				var by = spl[3];
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
+
 				spl = spl.slice(4).join('|');
-				this.processChatData(toId(by), room, connection, spl);
-				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
-				this.chatMessage(spl, by, room, connection);
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
+				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
+				this.chatMessage(spl, by, room);
 				break;
 			case 'pm':
 				var by = spl[2];
-				spl = spl.slice(4).join('|');
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
-				this.chatMessage(spl, by, ',' + by, connection);
+				this.chatMessage(spl.slice(4).join('|'), by, ',' + by);
 				break;
 			case 'N':
 				var by = spl[2];
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(spl[3], spl[1], toId(by));
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
-				if (config.serverid === 'showdown' && room === 'lobby') this.say(connection, room, '/part');
-				if (this.isBlacklisted(toId(by), room)) this.say(connection, room, '/roomban ' + by + ', Blacklisted user');
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(toId(by), spl[1], room);
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
 				break;
 			case 'l': case 'L':
 				this.updateSeen(toId(spl[2]), spl[1], room);
@@ -233,12 +237,12 @@ exports.parse = {
 				break;
 		}
 	},
-	chatMessage: function(message, by, room, connection) {
+	chatMessage: function(message, by, room) {
 		var cmdrMessage = '["' + room + '|' + by + '|' + message + '"]';
 		message = message.trim();
 		// auto accept invitations to rooms
 		if (room.charAt(0) === ',' && message.substr(0,8) === '/invite ' && this.hasRank(by, '%@&~') && !(config.serverid === 'showdown' && toId(message.substr(8)) === 'lobby')) {
-			this.say(connection, '', '/join ' + message.substr(8));
+			this.say('', '/join ' + message.substr(8));
 		}
 		if (message.substr(0, config.commandcharacter.length) !== config.commandcharacter || toId(by) === toId(config.nick)) return;
 
@@ -259,13 +263,13 @@ exports.parse = {
 			}
 			if (typeof Commands[cmd] === "function") {
 				cmdr(cmdrMessage);
-				Commands[cmd].call(this, arg, by, room, connection);
+				Commands[cmd].call(this, arg, by, room);
 			} else {
 				error("invalid command type for " + cmd + ": " + (typeof Commands[cmd]));
 			}
 		}
 	},
-	say: function(connection, room, text) {
+	say: function(room, text) {
 		if (room.charAt(0) !== ',') {
 			var str = (room !== 'lobby' ? room : '') + '|' + text;
 		} else {
@@ -276,7 +280,7 @@ exports.parse = {
 		if (!this.msgDequeue) {
 			this.msgDequeue = setInterval(function () {
 				var msg = this.msgQueue.shift();
-				if (msg) return send(connection, msg);
+				if (msg) return send(msg);
 				clearInterval(this.msgDequeue);
 				this.msgDequeue = null;
 			}.bind(this), 750);
@@ -299,14 +303,17 @@ exports.parse = {
 		return canUse;
 	},
 	isBlacklisted: function(user, room) {
-		var blacklistRegexes = this.blacklistRegexes;
-		return (blacklistRegexes && blacklistRegexes[room] && blacklistRegexes[room].test(user));
+		var blacklistRegex = this.blacklistRegexes[room];
+		return blacklistRegex && blacklistRegex.test(user);
 	},
 	blacklistUser: function(user, room) {
 		var blacklist = this.settings.blacklist || (this.settings.blacklist = {});
-		if (!blacklist[room]) blacklist[room] = {};
+		if (blacklist[room]) {
+			if (blacklist[room][user]) return false;
+		} else {
+			blacklist[room] = {};
+		}
 
-		if (blacklist[room][user]) return false;
 		blacklist[room][user] = 1;
 		this.updateBlacklistRegex(room);
 		return true;
@@ -314,19 +321,21 @@ exports.parse = {
 	unblacklistUser: function(user, room) {
 		var blacklist = this.settings.blacklist;
 		if (!blacklist || !blacklist[room] || !blacklist[room][user]) return false;
+
 		delete blacklist[room][user];
-		this.updateBlacklistRegex(room);
+		if (Object.isEmpty(blacklist[room])) {
+			delete blacklist[room];
+			delete this.blacklistRegexes[room];
+		} else {
+			this.updateBlacklistRegex(room);
+		}
 		return true;
 	},
 	updateBlacklistRegex: function(room) {
 		var blacklist = this.settings.blacklist[room];
-		if (Object.isEmpty(blacklist)) {
-			delete this.blacklistRegexes[room];
-			return false;
-		}
 		var buffer = [];
 		for (var entry in blacklist) {
-			if (/^\/[^\/]+\/i$/.test(entry)) {
+			if (entry.charAt(0) === '/' && entry.substr(-2) === '/i') {
 				buffer.push(entry.slice(1, -2));
 			} else {
 				buffer.push('^' + entry + '$');
@@ -350,7 +359,7 @@ exports.parse = {
 		req.write(toUpload);
 		req.end();
 	},
-	processChatData: function(user, room, connection, msg) {
+	processChatData: function(user, room, msg) {
 		// NOTE: this is still in early stages
 		if (toId(user) === toId(config.nick)) {
 			this.ranks[room] = user.charAt(0);
@@ -446,7 +455,7 @@ exports.parse = {
 				}
 				if (roomData.points > 1) userData.zeroTol++; // getting muted or higher increases your zero tolerance level (warns do not)
 				roomData.lastAction = now;
-				this.say(connection, room, '/' + cmd + ' ' + user + muteMessage);
+				this.say(room, '/' + cmd + ' ' + user + muteMessage);
 			}
 		}
 	},
