@@ -559,9 +559,16 @@ exports.commands = {
 			nextVoid = this.splitDoc(this.RP[room].plot);
 			if (this.RP.void[room].length === 2) this.RP.void[room].shift();
 			this.RP.void[room].push(nextVoid);
+
+			if (toId(this.RP[room].plot) === 'freeroam') {
+				clearTimeout(this.freeroamTimeouts[room]);
+				delete this.freeroamTimeouts[room];
+			}
 		}
 
-		this.RP[room] = {};
+		for (var i in this.RP[room]) {
+			delete this.RP[room][i];
+		}
 		this.writeSettings();
 		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
 			this.say(room, '/wall The RP has ended.');
