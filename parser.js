@@ -174,15 +174,62 @@ exports.parse = {
 					this.msgQueue.push('|/join ' + room);
 				}
 				if (config.serverid === 'showdown') {
-					this.RP.void = {};
-					for (var i = 0; i < config.rprooms.length; i++) {
-						this.RP[toId(config.rprooms[i])] = {};
-						this.RP.void[toId(config.rprooms[i])] = [];
-					}
 					this.amphyVoices = [];
+					this.freeroamTimeouts = {};
+					if (this.settings && this.settings.RP) {
+						this.RP.void = {};
+
+						for (var i = config.rprooms.length; i--;) {
+							var roomid = toId(config.rprooms[i]);
+							var roleplay = this.settings.RP[roomid];
+							if (roleplay) {
+								if (roleplay.called) delete roleplay.called;
+								if (roleplay.hostCalled) delete roleplay.hostCalled;
+								this.RP[roomid] = roleplay;
+								this.RP.void[roomid] = this.settings.RP.void[roomid];
+							} else {
+								this.RP[roomid] = this.settings.RP[roomid] = {};
+								this.RP.void[roomid] = this.settings.RP.void[roomid] = [];
+							}
+
+							if (roleplay && roleplay.setAt && toId(roleplay.plot) === 'freeroam') {
+								var timeout = new Date(roleplay.setAt).getTime() - Date.now();
+								if (timeout < 0) {
+									this.splitMessage('>' + roomid + '\n|c|~Morfent|' + config.commandcharacter + 'endrp');
+									continue;
+								}
+								this.freeroamTimeouts[roomid] = setTimeout(function() {
+									this.splitMessage('>' + roomid + '\n|c|~Morfent|' + config.commandcharacter + 'endrp');
+									delete this.freeroamTimeouts[roomid];
+								}.bind(this), timeout);
+							}
+						}
+					} else {
+						this.RP = this.settings.RP = {void: {}};
+						for (var i = config.rprooms.length; i--;) {
+							var roomid = toId(config.rprooms[i]);
+							this.RP[roomid] = {};
+							this.RP.void[roomid] = [];
+						}
+					}
 				} else {
-					for (var i = 0; i < config.rprooms.length; i++) {
-						this.RP[toId(config.rprooms[i])] = {};
+					if (this.settings.RP) {
+						for (var i = config.rprooms.length; i--;) {
+							var roomid = toId(config.rprooms[i]);
+							var roleplay = this.settings.RP[roomid];
+							if (roleplay) {
+								if (roleplay.called) delete roleplay.called;
+								if (roleplay.hostCalled) delete roleplay.hostCalled;
+								this.RP[roomid] = roleplay;
+							} else {
+								this.RP[roomid] = this.settings.RP[roomid] = {};
+							}
+						}
+					} else {
+						this.settings.RP = this.RP = {};
+						for (var i = config.rprooms.length; i--;) {
+							this.RP[toId(config.rprooms[i])] = {};
+						}
 					}
 				}
 				if (this.settings.blacklist) {
@@ -594,32 +641,5 @@ exports.parse = {
 			}
 			uncache = newuncache;
 		} while (uncache.length > 0);
-	},
-	getDocMeta: function(id, callback) {
-		https.get('https://www.googleapis.com/drive/v2/files/' + id + '?key=' + config.googleapikey, function (res) {
-			var data = '';
-			res.on('data', function (part) {
-				data += part;
-			});
-			res.on('end', function (end) {
-				var json = JSON.parse(data);
-				if (json) {
-					callback(null, json);
-				} else {
-					callback('Invalid response', data);
-				}
-			});
-		});
-	},
-	getDocCsv: function(meta, callback) {
-		https.get('https://docs.google.com/spreadsheet/pub?key=' + meta.id + '&output=csv', function (res) {
-			var data = '';
-			res.on('data', function (part) {
-				data += part;
-			});
-			res.on('end', function (end) {
-				callback(data);
-			});
-		});
 	}
 };
