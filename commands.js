@@ -305,7 +305,7 @@ exports.commands = {
 		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 		if (!arg) return this.say(room, 'You must specify a regular expression to (un)blacklist.');
 
-		arg = '/' + arg + '/i';
+		arg = '/' + arg.replace(/\\\\/g, '\\') + '/i';
 		if (!this.unblacklistUser(arg, room)) return this.say(room,'/' + arg + ' is not present in the blacklist.');
 
 		this.writeSettings();

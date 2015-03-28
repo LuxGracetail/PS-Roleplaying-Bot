@@ -287,14 +287,17 @@ exports.parse = {
 		return canUse;
 	},
 	isBlacklisted: function(user, room) {
-		var blacklistRegexes = this.blacklistRegexes;
-		return (blacklistRegexes && blacklistRegexes[room] && blacklistRegexes[room].test(user));
+		var blacklistRegex = this.blacklistRegexes[room];
+		return blacklistRegex && blacklistRegex.test(user);
 	},
 	blacklistUser: function(user, room) {
 		var blacklist = this.settings.blacklist || (this.settings.blacklist = {});
-		if (!blacklist[room]) blacklist[room] = {};
+		if (blacklist[room]) {
+			if (blacklist[room][user]) return false;
+		} else {
+			blacklist[room] = {};
+		}
 
-		if (blacklist[room][user]) return false;
 		blacklist[room][user] = 1;
 		this.updateBlacklistRegex(room);
 		return true;
@@ -302,19 +305,21 @@ exports.parse = {
 	unblacklistUser: function(user, room) {
 		var blacklist = this.settings.blacklist;
 		if (!blacklist || !blacklist[room] || !blacklist[room][user]) return false;
+
 		delete blacklist[room][user];
-		this.updateBlacklistRegex(room);
+		if (Object.isEmpty(blacklist[room])) {
+			delete blacklist[room];
+			delete this.blacklistRegexes[room];
+		} else {
+			this.updateBlacklistRegex(room);
+		}
 		return true;
 	},
 	updateBlacklistRegex: function(room) {
 		var blacklist = this.settings.blacklist[room];
-		if (Object.isEmpty(blacklist)) {
-			delete this.blacklistRegexes[room];
-			return false;
-		}
 		var buffer = [];
 		for (var entry in blacklist) {
-			if (/^\/[^\/]+\/i$/.test(entry)) {
+			if (entry.charAt(0) === '/' && entry.substr(-2) === '/i') {
 				buffer.push(entry.slice(1, -2));
 			} else {
 				buffer.push('^' + entry + '$');
