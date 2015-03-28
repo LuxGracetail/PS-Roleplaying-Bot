@@ -188,32 +188,32 @@ exports.parse = {
 				break;
 			case 'c':
 				var by = spl[2];
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
+
 				spl = spl.slice(3).join('|');
-				if (this.isBlacklisted(toId(by), room)) this.say(room, '/roomban ' + by + ', Blacklisted user');
 				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
 				this.chatMessage(spl, by, room);
 				break;
 			case 'c:':
 				var by = spl[3];
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
+
 				spl = spl.slice(4).join('|');
-				if (this.isBlacklisted(toId(by), room)) this.say(room, '/roomban ' + by + ', Blacklisted user');
 				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
 				this.chatMessage(spl, by, room);
 				break;
 			case 'pm':
 				var by = spl[2];
-				spl = spl.slice(4).join('|');
-				if (toId(by) === toId(config.nick) && ' +%@&#~'.indexOf(by.charAt(0)) > -1) this.ranks[room] = by.charAt(0);
-				this.chatMessage(spl, by, ',' + by);
+				this.chatMessage(spl.slice(4).join('|'), by, ',' + by);
 				break;
 			case 'N':
 				var by = spl[2];
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(spl[3], spl[1], toId(by));
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
-				if (config.serverid === 'showdown' && room === 'lobby') this.say(room, '/part');
-				if (this.isBlacklisted(toId(by), room)) this.say(room, '/roomban ' + by + ', Blacklisted user');
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(toId(by), spl[1], room);
 				break;
 			case 'l': case 'L':
