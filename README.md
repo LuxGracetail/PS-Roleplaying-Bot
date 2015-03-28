@@ -27,7 +27,7 @@ To change the commands that the bot responds to, edit `commands.js`.
 
 Now, to start the bot, use:
 
-    node main.js
+    node mainrp.js
 
 Some information will be shown, and will automatically join the room(s) you specified if no error occurs.
 
