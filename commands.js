@@ -727,6 +727,7 @@ exports.commands = {
 			rules: 'The monotype room\'s rules can be found here: http://monotypeps.weebly.com/monotype-room.html',
 			site: 'The monotype room\'s site can be found here: http://monotypeps.weebly.com/',
 			stats: 'You can find the monotype usage stats here: http://monotypeps.weebly.com/stats.html'
+			banlist: 'The monotype banlist can be found here: http://monotypeps.weebly.com/monotype-metagame.html'
 		};
 		text += messages[toId(arg)] || 'Unknown option. If you are looking for something and unable to find it, please ask monotype room staff for help on where to locate what you are looking for. General information can be found here: http://monotypeps.weebly.com/';
 		this.say(room, text);
