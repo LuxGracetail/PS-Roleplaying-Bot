@@ -31,7 +31,6 @@ exports.parse = {
 	'settings': settings,
 	chatData: {},
 	ranks: {},
-	msgQueue: [],
 	blacklistRegexes: {},
 
 	data: function(data) {
@@ -161,16 +160,15 @@ exports.parse = {
 				ok('logged in as ' + spl[2]);
 
 				// Now join the rooms
-				this.msgQueue.push('|/blockchallenges');
 				for (var i = 0, len = config.rooms.length; i < len; i++) {
 					var room = toId(config.rooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
-					this.msgQueue.push('|/join ' + room);
+					send('|/join ' + room);
 				}
 				for (var i = 0, len = config.privaterooms.length; i < len; i++) {
 					var room = toId(config.privaterooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
-					this.msgQueue.push('|/join ' + room);
+					send('|/join ' + room);
 				}
 				if (this.settings.blacklist) {
 					var blacklist = this.settings.blacklist;
@@ -178,12 +176,6 @@ exports.parse = {
 						this.updateBlacklistRegex(room);
 					}
 				}
-				this.msgDequeue = setInterval(function () {
-					var msg = this.msgQueue.shift();
-					if (msg) return send(msg);
-					clearInterval(this.msgDequeue);
-					this.msgDequeue = null;
-				}.bind(this), 750);
 				setInterval(this.cleanChatData.bind(this), 30 * 60 * 1000);
 				break;
 			case 'c':
@@ -260,15 +252,7 @@ exports.parse = {
 			room = room.substr(1);
 			var str = '|/pm ' + room + ', ' + text;
 		}
-		this.msgQueue.push(str);
-		if (!this.msgDequeue) {
-			this.msgDequeue = setInterval(function () {
-				var msg = this.msgQueue.shift();
-				if (msg) return send(msg);
-				clearInterval(this.msgDequeue);
-				this.msgDequeue = null;
-			}.bind(this), 750);
-		}
+		send(str);
 	},
 	hasRank: function(user, rank) {
 		var hasRank = (rank.split('').indexOf(user.charAt(0)) !== -1) || (config.excepts.indexOf(toId(user)) !== -1);
