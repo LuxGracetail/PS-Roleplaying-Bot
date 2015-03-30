@@ -154,12 +154,40 @@ global.Commands = require('./commands.js').commands;
 global.Parse = require('./parser.js').parse;
 
 var connection = null;
+var queue = [];
+var dequeuing = false;
+var lastSentAt = 0;
+function dequeue() {
+	send(queue.shift());
+};
+
 global.send = function(data) {
 	if (!connection.connected) return false;
+	
+	var now = Date.now();
+	var diff = now - lastSentAt;
+	if (diff < 750) {
+		queue.push(data);
+		if (!dequeuing) {
+			dequeuing = true;
+			setTimeout(dequeue, 750 - diff);
+		}
+		return false;
+	}
+
 	if (!Array.isArray(data)) data = [data.toString()];
 	data = JSON.stringify(data);
 	dsend(data);
 	connection.send(data);
+
+	lastSentAt = now;
+	if (dequeuing) {
+		if (queue.length) {
+			setTimeout(dequeue, 750);
+		} else {
+			dequeuing = false;
+		}
+	}
 };
 
 var connect = function(retry) {
