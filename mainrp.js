@@ -155,23 +155,17 @@ global.Parse = require('./parser.js').parse;
 
 var connection = null;
 var queue = [];
-var dequeuing = false;
+var dequeueTimeout = null;
 var lastSentAt = 0;
-function dequeue() {
-	send(queue.shift());
-};
 
 global.send = function(data) {
 	if (!connection.connected) return false;
 	
 	var now = Date.now();
 	var diff = now - lastSentAt;
-	if (diff < 750) {
+	if (diff < 650) {
+		if (!dequeueTimeout) dequeueTimeout = setTimeout(dequeue, 650 - diff);
 		queue.push(data);
-		if (!dequeuing) {
-			dequeuing = true;
-			setTimeout(dequeue, 750 - diff);
-		}
 		return false;
 	}
 
@@ -181,14 +175,18 @@ global.send = function(data) {
 	connection.send(data);
 
 	lastSentAt = now;
-	if (dequeuing) {
+	if (dequeueTimeout) {
 		if (queue.length) {
-			setTimeout(dequeue, 750);
+			dequeueTimeout = setTimeout(dequeue, 650);
 		} else {
-			dequeuing = false;
+			dequeueTimeout = null;
 		}
 	}
 };
+
+function dequeue() {
+	send(queue.shift());
+}
 
 var connect = function(retry) {
 	if (retry) {
