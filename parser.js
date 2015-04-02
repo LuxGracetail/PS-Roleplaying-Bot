@@ -191,7 +191,7 @@ exports.parse = {
 							}
 
 							if (roleplay && roleplay.setAt && toId(roleplay.plot) === 'freeroam') {
-								var timeout = new Date(roleplay.setAt).getTime() - Date.now();
+								var timeout = Date.now() - new Date(roleplay.setAt).getTime();
 								if (timeout < 0) {
 									this.splitMessage('>' + roomid + '\n|c|~Morfent|' + config.commandcharacter + 'endrp');
 									continue;
