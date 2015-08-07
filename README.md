@@ -1,3 +1,5 @@
+## This repository is no longer being maintained as of 08/08/15. Fork at your own risk
+
 Pokemon-Showdown-Bot
 ====================
 
