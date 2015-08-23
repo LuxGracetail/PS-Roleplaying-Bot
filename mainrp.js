@@ -49,6 +49,16 @@ global.ok = function(text) {
 	console.log('ok'.green + '    ' + text);
 };
 
+global.toTitleCase = function (str) {
+	var strArr = str.split(' ');
+	var newArr = [];
+	for (var i = 0; i < strArr.length; i++) {
+		newArr.push(strArr[i].charAt(0).toUpperCase() + strArr[i].slice(1));
+	}
+	str = newArr.join(' ');
+	return str;
+};
+
 global.toId = function(text) {
 	return text.toLowerCase().replace(/[^a-z0-9]/g, '');
 };
@@ -104,7 +114,7 @@ console.log('| Welcome to Pokemon Showdown Bot! |'.yellow);
 console.log('------------------------------------'.yellow);
 console.log('');
 
-// Config and config.js watching...
+// config and config.js watching...
 global.fs = require('fs');
 if (!('existsSync' in fs)) {
 	fs.existsSync = require('path').existsSync;
@@ -244,3 +254,26 @@ var connect = function(retry) {
 };
 
 connect();
+
+//Bot able to speak in from from console.
+var stdin = process.openStdin();
+var currentRoom = '';
+if (config.rooms.length) {
+	currentRoom = config.rooms[0];
+} else if (config.privaterooms.length) {
+	currentRoom = config.privaterooms[0];
+}
+console.log("Now initiating direct control over chat input.");
+console.log("Type '" + config.commandcharacter + "' without the quotation marks, followed by the room name to ");
+console.log("speak to a certain room from that point onwards.");
+console.log("I am currently speaking to room " + toTitleCase(currentRoom));
+stdin.addListener("data", function (d) {
+	var om = d.toString().substring(0, d.length - 1);
+	if (om.substr(0, config.commandcharacter.length) === config.commandcharacter) {
+		currentRoom = toId(om.substr(config.commandcharacter.length));
+		return console.log("Understood. From this point forwards, I shall speak in room " + toTitleCase(currentRoom));
+	} else if (currentRoom === "") {
+		return console.log("Please select a room, first.");
+	}
+	Parse.say(currentRoom, om);
+});

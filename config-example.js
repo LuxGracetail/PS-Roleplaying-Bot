@@ -96,3 +96,15 @@ exports.punishvals = {
 	4: 'roomban',
 	5: 'ban'
 };
+
+//This allows the bot to log messages sent by main and send them to the console. Off by default.
+exports.logmain = false;
+
+//This allows the bot to log PMs sent to it in the console. Off by default.
+exports.logpms = false;
+
+//Read everything else in the chat, like ban messages and the start of tournaments.
+exports.readElse = false;
+
+//Here, you specify the avatar you want the bot to use. Nice and handy if you don't want it to constantly have the default avatar.
+exports.avatarNumber = [''];

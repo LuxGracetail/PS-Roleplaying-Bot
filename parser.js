@@ -171,6 +171,13 @@ exports.parse = {
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
 					send('|/join ' + room);
 				}
+				if (config.avatarNumber) send('|/avatar ' + config.avatarNumber);
+				if (this.settings.blacklist) {
+					var blacklist = this.settings.blacklist;
+					for (var roomid in blacklist) {
+						this.updateBlacklistRegex(roomid);
+					}
+				}
 				if (config.serverid === 'showdown') {
 					this.amphyVoices = [];
 					this.freeroamTimeouts = {};
@@ -262,21 +269,33 @@ exports.parse = {
 				var by = spl[2];
 				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(spl[3], spl[1], toId(by));
+				//Log Namechanges
+				if (config.logmain) console.log(spl[3].cyan + " has changed their nickname to " + by.cyan);
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
 				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(toId(by), spl[1], room);
+				//Log showjoins
+				if (config.logmain) console.log(by.cyan + " has " + "joined".green + " the room " + room);
 				break;
 			case 'l': case 'L':
 				this.updateSeen(toId(spl[2]), spl[1], room);
+				//Log showjoins
+				if (config.logmain) console.log(spl[2].cyan + " has " + "left".red + " the room " + room);
 				break;
-			case 'popup':
+/*			case 'popup':
 				if (spl[2] === 'Room Owners (#):') this.amphyVoices = spl[spl.length - 1].split(', ');
-				break;
+				break;*/
+			default:
+				if (config.readElse) {
+					var oS = spl.toString();
+					if (oS.substr(0, 9) === ",formats," || oS === ",queryresponse,rooms,null" || oS === "You are already blocking challenges!" || oS.substr(0, 4) === ",raw" || oS.substr(0, 18) === ",updatechallenges,") return false;
+					console.log(oS);
+			}
 		}
 	},
-	chatMessage: function(message, by, room) {
+/*	chatMessage: function(message, by, room) {
 		var cmdrMessage = '["' + room + '|' + by + '|' + message + '"]';
 		message = message.trim();
 		// auto accept invitations to rooms
@@ -296,6 +315,68 @@ exports.parse = {
 		}
 
 		if (Commands[cmd]) {
+			var failsafe = 0;
+			while (typeof Commands[cmd] !== "function" && failsafe++ < 10) {
+				cmd = Commands[cmd];
+			}
+			if (typeof Commands[cmd] === "function") {
+				cmdr(cmdrMessage);
+				Commands[cmd].call(this, arg, by, room);
+			} else {
+				error("invalid command type for " + cmd + ": " + (typeof Commands[cmd]));
+			}
+		}
+	},*/
+	chatMessage: function (message, by, room) {
+		if (toId(by) === toId(config.nick)) return;
+		var cmdrMessage = '["' + room + '|' + by + '|' + message + '"]';
+		message = message.trim();
+		if (room.charAt(0) === ',') {
+			// auto accept invitations to rooms
+			if (message.substr(0, 8) === '/invite ' && this.hasRank(by, '%@&~') && !(config.serverid === 'showdown' && toId(message.substr(8)) === 'lobby')) {
+				this.say('', '/join ' + message.substr(8));
+			}
+			if (config.logpms) console.log("Private Message from ".red + by.cyan + ": ".cyan + message);
+		} else if (config.logmain) {
+			var sender;
+			if (!this.hasRank(by, '+%@#~')) {
+				sender = by;
+			} else if (this.hasRank(by, '+')) {
+				sender = by.yellow;
+			} else if (this.hasRank(by, '%')) {
+				sender = by.cyan;
+			} else if (this.hasRank(by, '@')) {
+				sender = by.blue;
+			} else if (this.hasRank(by, '#')) {
+				sender = by.red;
+			} else if (this.hasRank(by, '~')) {
+				sender = by.green;
+			}
+			console.log(room.cyan + ': '.cyan + sender + ': '.cyan + message);
+		}
+		if (config.reply) {
+			var spl = toId(message);
+			for (var i = 0, len = config.replies.length; i < len; i++) {
+				if (spl === toId(config.replies[i][0])) {
+					this.say(room, config.replies[i][1]);
+					break;
+				}
+			}
+		}
+		if (message.substr(0, config.commandcharacter.length) !== config.commandcharacter) return;
+
+		message = message.substr(config.commandcharacter.length);
+		var index = message.indexOf(' ');
+		var arg = '';
+		var cmd;
+		if (index > -1) {
+			cmd = message.substr(0, index);
+			arg = message.substr(index + 1).trim();
+		} else {
+			cmd = message;
+		}
+
+		if (!!Commands[cmd]) {
 			var failsafe = 0;
 			while (typeof Commands[cmd] !== "function" && failsafe++ < 10) {
 				cmd = Commands[cmd];
@@ -573,9 +654,9 @@ exports.parse = {
 		return times.join(', ');
 	},
 	splitDoc: function(voided) {
-		if (!/https?:\/\//.test(voided)) return voided;
-		voided = voided.replace(/doc.*(?=http)/i, '');
-		var docIndex = voided.indexOf('http');
+		if (!/docs\./.test(voided)) return voided;
+		voided = voided.replace(/doc.*(?=docs\.)/i, '');
+		var docIndex = voided.indexOf('doc');
 		voided = voided.substr(0, docIndex).replace(/[^a-z0-9]*$/i, '');
 		return voided;
 	},

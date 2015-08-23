@@ -295,7 +295,7 @@ exports.commands = {
 		this.writeSettings();
 		this.say(room, '/' + arg + ' was removed from the blacklist successfully.');
 	},
-	viewbans: 'viewblacklist',
+viewbans: 'viewblacklist',
 	vab: 'viewblacklist',
 	viewautobans: 'viewblacklist',
 	viewblacklist: function(arg, by, room) {
@@ -518,6 +518,8 @@ exports.commands = {
 		}
 	},
 	'continue': 'rpcontinue',
+	'resume': 'rpcontinue',
+	'rpresume': 'rpcontinue',
 	continuerp: 'rpcontinue',
 	rpcontinue: function(arg, by, room) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt || !this.RP[room].pause) return false;
@@ -526,7 +528,8 @@ exports.commands = {
 		var setAt = new Date(this.RP[room].setAt);
 		var diff = new Date();
 		diff.setTime(diff.getTime() - paused.getTime());
-		this.RP[room].setAt.setTime(setAt.getTime() + diff.getTime());
+		setAt.setTime(setAt.getTime() + diff.getTime());
+		this.RP[room].setAt = setAt
 
 		delete this.RP[room].pause;
 		this.writeSettings();
@@ -543,6 +546,7 @@ exports.commands = {
 		this.RP[room].host = arg;
 		this.writeSettings();
 		this.say(room, 'The host was set to ' + arg + '.');
+	
 	},
 	rmhost: function(arg, by, room) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
@@ -577,7 +581,7 @@ exports.commands = {
 		}
 	},
 	void: function(arg, by, room) {
-		if (config.serverid !== 'showdown' || !this.hasRank(by, '+%@#~') || !(room in this.RP) || this.RP[room].plot) return false;
+		if (config.serverid !== 'showdown' || !this.canUse('setrp', room, by) /*|| !this.hasRank(by, '+%@#~')*/ || !(room in this.RP) || this.RP[room].plot) return false;
 
 		var text = '';
 		var voided = this.RP.void[room];
@@ -643,10 +647,14 @@ exports.commands = {
 	voice: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !('amphyrp' in this.RP) || room.charAt(0) !== ',') return false;
 
-		if (!this.RP.amphyrp.plot) return this.say(room, '.voice can only be used after an RP has been set. Wait until the RP has been set before asking for voice.');
-		this.say('amphyrp', '/roomvoice ' + by);
+		if (this.canUse('voice', room, by) || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+		return this.say(room, text + 'The command ".voice" has been deprecated, please PM a mod for voice.');
 	},
-	ampclear: function(arg, by, room) {
+/*	ampclear: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || room !== 'amphyrp' || !this.hasRank(by, '@#~')) return false;
 		if (this.RP.amphyrp && this.RP.amphyrp.plot) return this.say(room, 'Please wait until the RP is over before clearing the voice list.');
 		this.say(room, '/roomauth');
@@ -666,7 +674,7 @@ exports.commands = {
 			}
 			this.amphyVoices = [];
 		}.bind(this), 1000);
-	},
+	},*/
 	plug: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
 		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
@@ -683,11 +691,20 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Roleplaying\'s Website: http://bit.ly/1xdK24X');
+		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.wix.com/roleplay');
+	},
+	forum: function(arg, by, room) {
+		if (config.serverid !== 'showdown') return false;
+		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+		this.say(room, text + 'Roleplaying\'s Forum: http://psroleplaying.forumotion.com/');
 	},
 	legends: 'legend',
 	legend: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) return false;
-		this.say(room, '/w ' + by + ', Legend Permission List: http://bit.ly/1lKutAw');
+		this.say(room, '/w ' + by + ', Legend Permission List: https://docs.google.com/document/d/1oQjC7rZ1g9pVFWFRl3cMT1tjoerRBQDsHI5EqfxS7QM/edit');
 	}
 };
