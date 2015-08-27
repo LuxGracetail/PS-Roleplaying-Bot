@@ -22,6 +22,7 @@ exports.commands = {
 			var text = '/pm ' + by + ', ';
 		}
 		text += '**Roleplaying Bot**: fork of **Pokemon Showdown Bot** by Quinella and TalkTakesTime, with custom roleplaying commands by Morfent.';
+		this.say(room, text);
 	},
 	git: function(arg, by, room) {
 		var text = config.excepts.indexOf(toId(by)) < 0 ? '/pm ' + by + ', ' : '';
@@ -40,6 +41,16 @@ exports.commands = {
 		} else {
 			text += 'There is no guide for this bot. PM the owner with any questions.';
 		}
+		this.say(room, text);
+	},
+	usage: 'usagestats',
+	usagestats: function (arg, by, room) {
+		if (this.hasRank(by, '#~') || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+		text += 'http://www.smogon.com/stats/2015-08/';
 		this.say(room, text);
 	},
 
