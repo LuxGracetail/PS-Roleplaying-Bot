@@ -556,7 +556,7 @@ viewbans: 'viewblacklist',
 
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
 			if (this.RP[room].host){
-				if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
+			if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 					this.say(room, '/roomdevoice '+ this.RP[room].host);
 				}
 			}
@@ -583,7 +583,7 @@ viewbans: 'viewblacklist',
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].host) return this.say(room, 'There is no host to remove.');
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
-			if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
+			if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 				this.say(room, '/roomdevoice '+ this.RP[room].host);
 			}
 		}
@@ -595,7 +595,7 @@ viewbans: 'viewblacklist',
 	rmcohost: function(arg, by, room) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].cohost) return this.say(room, 'There are no cohosts to remove.');
-		
+
 		delete this.RP[room].cohost;
 		this.writeSettings();
 		this.say(room, 'The cohost(s) has/have been removed.');
@@ -616,7 +616,7 @@ viewbans: 'viewblacklist',
 		
 			if (config.serverid == 'showdown' && !(room == "amphyrp")){
 				if (this.RP[room].host){
-					if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
+					if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 						this.say(room, '/roomdevoice '+ this.RP[room].host);
 				}
 			}
