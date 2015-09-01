@@ -555,7 +555,7 @@ viewbans: 'viewblacklist',
 		if (!arg) return this.say(room, 'Please enter a host.');
 
 		if (this.RP[room].host){
-				if (!config.voicelist.indexOf(toId(this.RP[room].host)) >= 0) {
+				if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
 					this.say(room, '/roomdevoice '+ this.RP[room].host);
 				}
 		}
@@ -581,9 +581,7 @@ viewbans: 'viewblacklist',
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].host) return this.say(room, 'There is no host to remove.');
 		
-		var voicelist = config.voicelist
-		
-		if (!voicelist.indexOf(toId(this.RP[room].host)) >= 0) {
+		if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
 			this.say(room, '/roomdevoice '+ this.RP[room].host);
 		}
 
@@ -614,7 +612,7 @@ viewbans: 'viewblacklist',
 			}
 		}
 		if (this.RP[room].host){
-				if (!config.voicelist.indexOf(toId(this.RP[room].host)) >= 0) {
+				if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
 					this.say(room, '/roomdevoice '+ this.RP[room].host);
 				}
 		}
