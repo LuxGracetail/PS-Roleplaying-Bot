@@ -561,6 +561,7 @@ viewbans: 'viewblacklist',
 				}
 			}
 		}
+
 		
 		this.RP[room].host = arg;
 		this.writeSettings();
@@ -583,7 +584,7 @@ viewbans: 'viewblacklist',
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].host) return this.say(room, 'There is no host to remove.');
 		
-		if (!(room in this.RP == "roleplaying")) {
+		if (room in this.RP == "roleplaying") {
 			if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 				this.say(room, '/roomdevoice ' + toId(this.RP[room].host));
 			}
@@ -615,7 +616,7 @@ viewbans: 'viewblacklist',
 				delete this.freeroamTimeouts[room];
 			}
 		}
-		if (!(room in this.RP == "roleplaying")) {
+		if (room in this.RP == "roleplaying") {
 			if (this.RP[room].host){
 				if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
 					this.say(room, '/roomdevoice '+ this.RP[room].host);
@@ -695,7 +696,7 @@ viewbans: 'viewblacklist',
 			}.bind(this), 60 * 1000);
 		}
 		if (!this.RP[room].host) return this.say(room, text + 'There is no host.');
-		if (this.RP[room].host && this.RP[room].cohost) return this.say(room,text + 'the host is ' + this.RP[room].host + '. Cohost(s): ' + this.RP[room].cohosts + '.');
+		if (this.RP[room].host && this.RP[room].cohost) return this.say(room,text + 'the host is ' + this.RP[room].host + '. Cohost(s): ' + this.RP[room].cohost + '.');
 		this.say(room, text + 'The host is ' + this.RP[room].host + '.');
 	},
 	voice: function(arg, by, room) {
