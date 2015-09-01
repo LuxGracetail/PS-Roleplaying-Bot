@@ -159,7 +159,7 @@ exports.commands = {
 						return;
 					}
 				} else {
-					this.say(room, 'Something went wrong. PM TalkTakesTime here or on Smogon with the command you tried.');
+					this.say(room, 'Something went wrong. PM Lux (Lucario) here or on Smogon with the command you tried.');
 					return;
 				}
 				failsafe++;
@@ -554,18 +554,51 @@ viewbans: 'viewblacklist',
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!arg) return this.say(room, 'Please enter a host.');
 
+		if (this.RP[room].host){
+				if (!config.voicelist.indexOf(toId(this.RP[room].host)) >= 0) {
+					this.say(room, '/roomdevoice '+ this.RP[room].host);
+				}
+		}
+				
 		this.RP[room].host = arg;
 		this.writeSettings();
 		this.say(room, 'The host was set to ' + arg + '.');
-	
+
+		if (config.serverid == 'showdown' || ('roleplaying' in this.RP)){ 
+			this.say(room, '/roomvoice '+ arg)
+		}
 	},
+	
+	setcohost: function(arg, by, room) {
+		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (!arg) return this.say(room, 'Please enter a cohost.');
+				
+		this.RP[room].cohost = arg;
+		this.writeSettings();
+		this.say(room, 'The cohost(s) was/were set to ' + arg + '.');
+	},	
 	rmhost: function(arg, by, room) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].host) return this.say(room, 'There is no host to remove.');
+		
+		var voicelist = config.voicelist
+		
+		if (!voicelist.indexOf(toId(this.RP[room].host)) >= 0) {
+			this.say(room, '/roomdevoice '+ this.RP[room].host);
+		}
 
 		delete this.RP[room].host;
 		this.writeSettings();
 		this.say(room, 'The host has been removed.');
+	},
+	rmcohost: function(arg, by, room) {
+		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (!this.RP[room].cohost) return this.say(room, 'There are no cohosts to remove.');
+		
+		
+		delete this.RP[room].cohost;
+		this.writeSettings();
+		this.say(room, 'The cohost(s) has/have been removed.');
 	},
 	rpend: 'endrp',
 	endrp: function(arg, by, room) {
@@ -579,6 +612,11 @@ viewbans: 'viewblacklist',
 				clearTimeout(this.freeroamTimeouts[room]);
 				delete this.freeroamTimeouts[room];
 			}
+		}
+		if (this.RP[room].host){
+				if (!config.voicelist.indexOf(toId(this.RP[room].host)) >= 0) {
+					this.say(room, '/roomdevoice '+ this.RP[room].host);
+				}
 		}
 
 		for (var i in this.RP[room]) {
@@ -653,6 +691,7 @@ viewbans: 'viewblacklist',
 			}.bind(this), 60 * 1000);
 		}
 		if (!this.RP[room].host) return this.say(room, text + 'There is no host.');
+		if (this.RP[room].host && this.RP[room].cohost) return this.say(room,text + 'the host is ' this.RP[room].host '. Cohost(s): ' this.RP[room].cohosts '.');
 		this.say(room, text + 'The host is ' + this.RP[room].host + '.');
 	},
 	voice: function(arg, by, room) {
