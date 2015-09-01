@@ -554,7 +554,7 @@ viewbans: 'viewblacklist',
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!arg) return this.say(room, 'Please enter a host.');
 
-		if (!(room in this.RP == "roleplaying")) {
+		if (config.serverid == 'showdown' && !(room == "amphyrp")){
 			if (this.RP[room].host){
 				if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
 					this.say(room, '/roomdevoice '+ this.RP[room].host);
@@ -562,12 +562,11 @@ viewbans: 'viewblacklist',
 			}
 		}
 
-		
 		this.RP[room].host = arg;
 		this.writeSettings();
 		this.say(room, 'The host was set to ' + arg + '.');
 
-		if (config.serverid == 'showdown' || ('roleplaying' in this.RP)){ 
+		if (config.serverid == 'showdown' && !(room == "amphyrp")){ 
 			this.say(room, '/roomvoice '+ arg)
 		}
 	},
@@ -583,10 +582,9 @@ viewbans: 'viewblacklist',
 	rmhost: function(arg, by, room) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].host) return this.say(room, 'There is no host to remove.');
-		
-		if (room in this.RP == "roleplaying") {
-			if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
-				this.say(room, '/roomdevoice ' + toId(this.RP[room].host));
+		if (config.serverid == 'showdown' && !(room == "amphyrp")){
+			if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
+				this.say(room, '/roomdevoice '+ this.RP[room].host);
 			}
 		}
 
@@ -597,7 +595,6 @@ viewbans: 'viewblacklist',
 	rmcohost: function(arg, by, room) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].cohost) return this.say(room, 'There are no cohosts to remove.');
-		
 		
 		delete this.RP[room].cohost;
 		this.writeSettings();
@@ -616,10 +613,11 @@ viewbans: 'viewblacklist',
 				delete this.freeroamTimeouts[room];
 			}
 		}
-		if (room in this.RP == "roleplaying") {
-			if (this.RP[room].host){
-				if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
-					this.say(room, '/roomdevoice '+ this.RP[room].host);
+		
+			if (config.serverid == 'showdown' && !(room == "amphyrp")){
+				if (this.RP[room].host){
+					if (!config.voiceList.indexOf(toId(this.RP[room].host)) >= 0) {
+						this.say(room, '/roomdevoice '+ this.RP[room].host);
 				}
 			}
 		}
