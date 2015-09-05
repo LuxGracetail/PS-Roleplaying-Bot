@@ -564,11 +564,10 @@ viewbans: 'viewblacklist',
 
 		this.RP[room].host = arg;
 		this.writeSettings();
-		this.say(room, 'The host was set to ' + arg + '.');
-
-		if (config.serverid == 'showdown' && !(room == "amphyrp")){ 
+		if (!(room == "amphyrp")){ 
 			this.say(room, '/roomvoice '+ arg)
 		}
+		this.say(room, 'The host was set to ' + arg + '.');
 	},
 	
 	setcohost: function(arg, by, room) {
@@ -694,7 +693,7 @@ viewbans: 'viewblacklist',
 			}.bind(this), 60 * 1000);
 		}
 		if (!this.RP[room].host) return this.say(room, text + 'There is no host.');
-		if (this.RP[room].host && this.RP[room].cohost) return this.say(room,text + 'the host is ' + this.RP[room].host + '. Cohost(s): ' + this.RP[room].cohost + '.');
+		if (this.RP[room].host && this.RP[room].cohost) return this.say(room,text + 'the host is ' + this.RP[room].host + ', with ' + this.RP[room].cohost + ' as cohost(s).');
 		this.say(room, text + 'The host is ' + this.RP[room].host + '.');
 	},
 	voice: function(arg, by, room) {
