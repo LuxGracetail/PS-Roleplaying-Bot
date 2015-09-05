@@ -613,7 +613,7 @@ viewbans: 'viewblacklist',
 			}
 		}
 		
-			if (config.serverid == 'showdown' && !(room == "amphyrp")){
+			if (!(room == "amphyrp")){
 				if (this.RP[room].host){
 					if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 						this.say(room, '/roomdevoice '+ this.RP[room].host);
