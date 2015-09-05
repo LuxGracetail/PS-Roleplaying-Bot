@@ -505,6 +505,10 @@ viewbans: 'viewblacklist',
 				delete this.freeroamTimeouts[room];
 			}.bind(this), 2 * 60 * 60 * 1000);
 		}
+		
+		if (/conquest/i.test(this.RP[room].plot)) {
+			this.say(room, '/modchat off');
+		}
 
 		var now = new Date();
 		this.RP[room].setAt = now;
@@ -556,8 +560,13 @@ viewbans: 'viewblacklist',
 
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
 			if (this.RP[room].host){
-			if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
-					this.say(room, '/roomdevoice '+ this.RP[room].host);
+				if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
+						this.say(room, '/roomdevoice '+ this.RP[room].host);
+					}
+				if (!(this.RP[room].setAt)) {
+					if (/conquest/i.test(this.RP[room].plot)){
+						this.say(room, '/modchat +');
+					}
 				}
 			}
 		}
@@ -584,6 +593,11 @@ viewbans: 'viewblacklist',
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
 			if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 				this.say(room, '/roomdevoice '+ this.RP[room].host);
+				}
+			if (!(this.RP[room].setAt)){
+				if (/conquest/i.test(this.RP[room].plot)){
+					this.say(room, '/modchat off');
+				}
 			}
 		}
 
@@ -613,10 +627,15 @@ viewbans: 'viewblacklist',
 			}
 		}
 		
-			if (!(room == "amphyrp")){
-				if (this.RP[room].host){
-					if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
-						this.say(room, '/roomdevoice '+ this.RP[room].host);
+		if (!(room == "amphyrp")){
+			if (this.RP[room].host){
+				if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
+					this.say(room, '/roomdevoice '+ this.RP[room].host);
+					}
+				if (!(this.RP[room].setAt)){
+					if (/conquest/i.test(this.RP[room].plot)){
+						this.say(room, '/modchat off');
+					}
 				}
 			}
 		}
