@@ -751,10 +751,5 @@ viewbans: 'viewblacklist',
 			var text = '/pm ' + by + ', ';
 		}
 		this.say(room, text + 'Roleplaying\'s Forum: http://psroleplaying.forumotion.com/');
-	},
-	legends: 'legend',
-	legend: function(arg, by, room) {
-		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) return false;
-		this.say(room, '/w ' + by + ', Legend Permission List: https://docs.google.com/document/d/1oQjC7rZ1g9pVFWFRl3cMT1tjoerRBQDsHI5EqfxS7QM/edit');
 	}
 };
