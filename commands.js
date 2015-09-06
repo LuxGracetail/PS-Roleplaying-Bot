@@ -562,11 +562,11 @@ viewbans: 'viewblacklist',
 			if (this.RP[room].host){
 				if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 						this.say(room, '/roomdevoice '+ this.RP[room].host);
-					}
-				if (!(this.RP[room].setAt)) {
-					if (/conquest/i.test(this.RP[room].plot)){
-						this.say(room, '/modchat +');
-					}
+				}
+			}
+			if (!(this.RP[room].setAt)) {
+				if (/conquest/i.test(this.RP[room].plot)){
+					this.say(room, '/modchat +');
 				}
 			}
 		}
@@ -651,7 +651,7 @@ viewbans: 'viewblacklist',
 		}
 	},
 	void: function(arg, by, room) {
-		if (config.serverid !== 'showdown' || !this.canUse('setrp', room, by) /*|| !this.hasRank(by, '+%@#~')*/ || !(room in this.RP) || this.RP[room].plot) return false;
+		if (config.serverid !== 'showdown' || !this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].plot) return false;
 
 		var text = '';
 		var voided = this.RP.void[room];
@@ -725,27 +725,6 @@ viewbans: 'viewblacklist',
 		}
 		return this.say(room, text + 'The command ".voice" has been deprecated, please PM a mod for voice.');
 	},
-/*	ampclear: function(arg, by, room) {
-		if (config.serverid !== 'showdown' || room !== 'amphyrp' || !this.hasRank(by, '@#~')) return false;
-		if (this.RP.amphyrp && this.RP.amphyrp.plot) return this.say(room, 'Please wait until the RP is over before clearing the voice list.');
-		this.say(room, '/roomauth');
-		setTimeout(function() {
-			if (!this.amphyVoices.length) return this.say(room, 'No roomvoices have been added yet.');
-
-			var len = this.amphyVoices.length;
-			for (var i = 0; i < len; i++) {
-				setTimeout(function(nick) {
-					this.say(room, '/deroomvoice ' + nick);
-				}.bind(this), 1500*i, this.amphyVoices[i]);
-			}
-			if (len === 1) {
-				this.say(room, 'Deroomvoicing finished.');
-			} else {
-				this.say(room, 'Deroomvoicing will be finished in ' + ((len - 1) * 1.5) + ' seconds.');
-			}
-			this.amphyVoices = [];
-		}.bind(this), 1000);
-	},*/
 	plug: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
 		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
