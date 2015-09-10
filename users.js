@@ -18,28 +18,28 @@ var User = function (username, roomid) {
 };
 
 User.prototype.isExcepted = function () {
-	return Config.excepts.indexOf(this.id) !== -1;
+	return config.excepts.indexOf(this.id) !== -1;
 };
 
 User.prototype.isWhitelisted = function () {
-	return Config.whitelist.indexOf(this.id) !== -1;
+	return config.whitelist.indexOf(this.id) !== -1;
 };
 
 User.prototype.isRegexWhitelisted = function () {
-	return Config.regexautobanwhitelist.indexOf(this.id) !== -1;
+	return config.regexautobanwhitelist.indexOf(this.id) !== -1;
 };
 
 User.prototype.hasRank = function (roomid, tarGroup) {
 	if (this.isExcepted()) return true;
 	var group = this.rooms.get(roomid) || roomid; // PM messages use the roomid parameter as the user's group
-	return Config.groups[group] >= Config.groups[tarGroup];
+	return config.groups[group] >= config.groups[tarGroup];
 };
 
 User.prototype.canUse = function (cmd, roomid) {
 	if (this.isExcepted()) return true;
 	var settings = Parse.settings[cmd];
 	if (!settings || !settings[roomid]) {
-		return this.hasRank(roomid, (cmd === 'autoban' || cmd === 'blacklist') ? '#' : Config.defaultrank);
+		return this.hasRank(roomid, (cmd === 'autoban' || cmd === 'blacklist') ? '#' : config.defaultrank);
 	}
 
 	var setting = settings[roomid];
@@ -79,7 +79,7 @@ var addUser = Users.add = function (username, room) {
 	return user;
 };
 
-var botId = ' ' + toId(Config.nick);
+var botId = ' ' + toId(config.nick);
 Users.self = getUser(botId) || addUser(botId);
 
 module.exports = Users;

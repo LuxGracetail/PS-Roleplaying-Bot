@@ -51,7 +51,7 @@ global.debug = function (text) {
 };
 
 global.recv = function (text) {
-	if (Config.debuglevel > 0) return;
+	if (config.debuglevel > 0) return;
 	console.log('recv'.grey + '  ' + text);
 };
 

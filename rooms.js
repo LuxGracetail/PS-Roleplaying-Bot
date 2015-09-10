@@ -11,14 +11,14 @@ var Rooms = Object.create(null);
 var rooms = Rooms.rooms = new Map();
 
 Rooms.join = function () {
-	for (var i = 0; i < Config.rooms.length; i++) {
-		var room = toId(Config.rooms[i]);
-		if (room === 'lobby' && Config.serverid === 'showdown') continue;
+	for (var i = 0; i < config.rooms.length; i++) {
+		var room = toId(config.rooms[i]);
+		if (room === 'lobby' && config.serverid === 'showdown') continue;
 		send('|/join ' + room);
 	}
-	for (var i = 0; i < Config.privaterooms.length; i++) {
-		var room = toId(Config.privaterooms[i]);
-		if (room === 'lobby' && Config.serverid === 'showdown') continue;
+	for (var i = 0; i < config.privaterooms.length; i++) {
+		var room = toId(config.privaterooms[i]);
+		if (room === 'lobby' && config.serverid === 'showdown') continue;
 		send('|/join ' + room);
 	}
 };
