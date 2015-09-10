@@ -46,7 +46,7 @@ global.info = function (text) {
 };
 
 global.debug = function (text) {
-	if (Config.debuglevel > 2) return;
+	if (config.debuglevel > 2) return;
 	console.log('debug'.blue + ' ' + text);
 };
 
@@ -56,12 +56,12 @@ global.recv = function (text) {
 };
 
 global.cmdr = function (text) { // receiving commands
-	if (Config.debuglevel !== 1) return;
+	if (config.debuglevel !== 1) return;
 	console.log('cmdr'.grey + '  ' + text);
 };
 
 global.dsend = function (text) {
-	if (Config.debuglevel > 1) return;
+	if (config.debuglevel > 1) return;
 	console.log('send'.grey + '  ' + text);
 };
 
@@ -70,7 +70,7 @@ global.error = function (text) {
 };
 
 global.ok = function (text) {
-	if (Config.debuglevel > 4) return;
+	if (config.debuglevel > 4) return;
 	console.log('ok'.green + '    ' + text);
 };
 
@@ -90,7 +90,7 @@ global.stripCommands = function (text) {
 	return text;
 };
 
-// Config and config.js watching...
+// config and config.js watching...
 try {
 	global.config = require('./config.js');
 } catch (e) {
@@ -99,7 +99,7 @@ try {
 }
 
 var checkCommandCharacter = function () {
-	if (!/[^a-z0-9 ]/i.test(Config.commandcharacter)) {
+	if (!/[^a-z0-9 ]/i.test(config.commandcharacter)) {
 		error('invalid command character; should at least contain one non-alphanumeric character');
 		process.exit(-1);
 	}

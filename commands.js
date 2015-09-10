@@ -733,7 +733,7 @@ exports.commands = {
 			}
 		}
 		
-		if (room.id !== "amphyrp")){
+		if (room.id !== "amphyrp"){
 			if (this.RP[room].host){
 				if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 					this.say(room, '/roomdevoice '+ this.RP[room].host);
