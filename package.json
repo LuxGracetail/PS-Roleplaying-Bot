@@ -24,10 +24,10 @@
 	},
 	"engineStrict": true,
 	"scripts": {
-		"start": "node main.js",
+		"start": "node mainrp.js",
 		"test": "gulp"
 	},
-	"bin": "./main.js",
+	"bin": "./mainrp.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Quinella/Pokemon-Showdown-Bot.git"
