@@ -167,6 +167,10 @@ exports.parse = {
 					send('|/join ' + room);
 				}
 				for (var i = 0, len = config.privaterooms.length; i < len; i++) {
+					var groupchattest = config.privaterooms[i].split("-")
+						if (groupchattest[0] == "groupchat"){
+							send('|/join ' + config.privaterooms[i]);
+							}
 					var room = toId(config.privaterooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
 					send('|/join ' + room);
@@ -185,8 +189,13 @@ exports.parse = {
 						this.RP.void = {};
 
 						for (var i = config.rprooms.length; i--;) {
+							if (config.rprooms[i].split("-")[0] == "groupchat"){
+								var roleplay = this.settings.RP[config.rprooms[i]];
+							}
+						else {
 							var roomid = toId(config.rprooms[i]);
 							var roleplay = this.settings.RP[roomid];
+							}
 							if (roleplay) {
 								if (roleplay.called) delete roleplay.called;
 								if (roleplay.hostCalled) delete roleplay.hostCalled;
@@ -212,16 +221,26 @@ exports.parse = {
 					} else {
 						this.RP = this.settings.RP = {void: {}};
 						for (var i = config.rprooms.length; i--;) {
-							var roomid = toId(config.rprooms[i]);
-							this.RP[roomid] = {};
-							this.RP.void[roomid] = [];
+							if (config.rprooms[i].split("-")[0] == "groupchat"){
+								var roomid = config.rprooms[i];
+								this.RP[roomid] = {};
+								this.RP.void[roomid] = [];
+							} else {
+								var roomid = toId(config.rprooms[i]);
+								this.RP[roomid] = {};
+								this.RP.void[roomid] = [];
+							}
 						}
 					}
 				} else {
 					if (this.settings.RP) {
 						for (var i = config.rprooms.length; i--;) {
+							if (config.rprooms[i].split("-")[0] == "groupchat"){
+								var roleplay = this.settings.RP[config.rprooms[i]];
+							} else {
 							var roomid = toId(config.rprooms[i]);
 							var roleplay = this.settings.RP[roomid];
+							}
 							if (roleplay) {
 								if (roleplay.called) delete roleplay.called;
 								if (roleplay.hostCalled) delete roleplay.hostCalled;
