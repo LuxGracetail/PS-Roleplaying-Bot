@@ -309,7 +309,7 @@ exports.commands = {
 		this.writeSettings();
 		this.say(room, '/' + arg + ' was removed from the blacklist successfully.');
 	},
-viewbans: 'viewblacklist',
+	viewbans: 'viewblacklist',
 	vab: 'viewblacklist',
 	viewautobans: 'viewblacklist',
 	viewblacklist: function(arg, by, room) {
