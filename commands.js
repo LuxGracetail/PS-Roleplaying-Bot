@@ -111,7 +111,9 @@ exports.commands = {
 			autoban: 1,
 			regexautoban: 1,
 			banword: 1,
-			setrp: 1
+			setrp: 1,
+			vab: 1,
+			vbw: 1,
 		};
 		var modOpts = {
 			flooding: 1,
@@ -265,6 +267,7 @@ exports.commands = {
 				continue;
 			}
 			this.say(room, '/roomunban ' + tarUser);
+			this.say(room, '/modnote ' + tarUser + ' was removed from the blacklist by ' + by + '.');
 			removed.push(tarUser);
 		}
 
@@ -334,6 +337,7 @@ viewbans: 'viewblacklist',
 		}
 		this.say(room, '/pm ' + by + ', ' + text);
 	},
+	bw: 'banword',
 	banphrase: 'banword',
 	banword: function(arg, by, room) {
 		if (!this.canUse('banword', room, by)) return false;
@@ -353,6 +357,7 @@ viewbans: 'viewblacklist',
 		this.writeSettings();
 		this.say(room, "Phrase \"" + arg + "\" is now banned.");
 	},
+	ubw: 'unbanword',
 	unbanphrase: 'unbanword',
 	unbanword: function(arg, by, room) {
 		if (!this.canUse('banword', room, by)) return false;
@@ -482,6 +487,7 @@ viewbans: 'viewblacklist',
 	},
 
 	// Roleplaying commands
+	rpset: "setrp",
 	setrp: function(arg, by, room) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP)) return false;
 		if (!arg) return this.say(room, 'Please enter an RP.');
@@ -491,6 +497,7 @@ viewbans: 'viewblacklist',
 		if (this.RP[room].setAt) return this.say(room, 'The RP was set to ' + arg + '.');
 		this.say(room, 'The RP was set to ' + arg + '. Use .start to start the RP.');
 	},
+	startrp: 'start',
 	rpstart: 'start',
 	start: function(arg, by, room) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].setAt) return false;
@@ -505,8 +512,8 @@ viewbans: 'viewblacklist',
 				delete this.freeroamTimeouts[room];
 			}.bind(this), 2 * 60 * 60 * 1000);
 		}
-		
-		if (/conquest/i.test(this.RP[room].plot)) {
+
+		if (config.serverid == 'showdown' && !(room == "amphyrp")){
 			this.say(room, '/modchat off');
 		}
 
@@ -565,7 +572,7 @@ viewbans: 'viewblacklist',
 				}
 			}
 			if (!(this.RP[room].setAt)) {
-				if (/conquest/i.test(this.RP[room].plot)){
+				if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat +');
 				}
 			}
@@ -595,7 +602,7 @@ viewbans: 'viewblacklist',
 				this.say(room, '/roomdevoice '+ this.RP[room].host);
 				}
 			if (!(this.RP[room].setAt)){
-				if (/conquest/i.test(this.RP[room].plot)){
+				if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat off');
 				}
 			}
@@ -633,7 +640,7 @@ viewbans: 'viewblacklist',
 					this.say(room, '/roomdevoice '+ this.RP[room].host);
 					}
 				if (!(this.RP[room].setAt)){
-					if (/conquest/i.test(this.RP[room].plot)){
+					if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 						this.say(room, '/modchat off');
 					}
 				}
@@ -732,7 +739,7 @@ viewbans: 'viewblacklist',
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Come join our plug.dj! https://plug.dj/official-rp-room-plug-dj-2/');
+		this.say(room, text + 'Unfortunately plug has shut down, as such, in a week, this command will be removed completely.');
 	},
 	site: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
@@ -741,7 +748,7 @@ viewbans: 'viewblacklist',
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.wix.com/roleplay');
+		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/');
 	},
 	forum: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
