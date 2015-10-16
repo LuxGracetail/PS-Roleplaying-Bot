@@ -674,9 +674,7 @@ exports.parse = {
 	},
 	splitDoc: function(voided) {
 		if (!/docs\./.test(voided)) return voided;
-		voided = voided.replace(/doc.*(?=docs\.)/i, '');
-		var docIndex = voided.indexOf('doc');
-		voided = voided.substr(0, docIndex).replace(/[^a-z0-9]*$/i, '');
+		voided = voided.replace(/(doc.*)?(https?:\/\/)?docs\.*/i, '');
 		return voided;
 	},
 	writeSettings: (function() {
