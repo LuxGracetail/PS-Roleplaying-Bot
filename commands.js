@@ -50,7 +50,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'http://www.smogon.com/stats/2015-08/';
+		text += 'http://www.smogon.com/stats/2015-09/';
 		this.say(room, text);
 	},
 
@@ -732,15 +732,6 @@ exports.commands = {
 		}
 		return this.say(room, text + 'The command ".voice" has been deprecated, please PM a mod for voice.');
 	},
-	plug: function(arg, by, room) {
-		if (config.serverid !== 'showdown') return false;
-		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
-			var text = '';
-		} else {
-			var text = '/pm ' + by + ', ';
-		}
-		this.say(room, text + 'Unfortunately plug has shut down, as such, in a week, this command will be removed completely.');
-	},
 	site: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
 		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
@@ -748,7 +739,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/');
+		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
 	},
 	forum: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
