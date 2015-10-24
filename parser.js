@@ -306,6 +306,20 @@ exports.parse = {
 /*			case 'popup':
 				if (spl[2] === 'Room Owners (#):') this.amphyVoices = spl[spl.length - 1].split(', ');
 				break;*/
+			case "html":
+				test = spl[2].split(">")
+				if (((toId(test[0])) == "divclassinfobox") && ((toId(test[5])) == "pollendedspan") && ((toId(test[11]) == "continuestrong"))) {
+					var endPercent = Number(test[29].split('%')[0].split("&nbsp;")[1]);
+					if (endPercent > 54){
+						this.say(room, '**RP Ends with '+ endPercent + '% end.**');
+						this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'endrp');
+						delete this.RP[room].endpollCalled;
+					} else {
+						this.say(room, '**RP Continues with '+ (100-endPercent) + '% continue.**');
+						delete this.RP[room].endpollCalled;
+					}
+				}
+				break;
 			default:
 				if (config.readElse) {
 					var oS = spl.toString();
