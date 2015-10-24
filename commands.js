@@ -755,7 +755,7 @@ exports.commands = {
 		if (!this.RP[room].endpollCalled) {
 			var now = new Date();
 			this.say(room, '/poll create End Poll: ends at xx:' + (((now.getMinutes()+4) < 10) ? '0' + (((now.getMinutes()+4)%60).toString()) : (now.getMinutes()+4).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ", Continue, End");
-			this.say(room, '/poll timer 1')
+			this.say(room, '/poll timer 4')
 			this.say(room, '/modnote ' + by + ' created an end poll.');
 			this.RP[room].endpollCalled = true;
 		}
