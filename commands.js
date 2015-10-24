@@ -750,7 +750,7 @@ exports.commands = {
 		}
 		this.say(room, text + 'Roleplaying\'s Forum: http://psroleplaying.forumotion.com/');
 	},
-		endpoll: function(arg, by, room) {
+	endpoll: function(arg, by, room) {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false;
 		if (!this.RP[room].endpollCalled) {
 			var now = new Date();
