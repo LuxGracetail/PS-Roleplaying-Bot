@@ -328,38 +328,6 @@ exports.parse = {
 			}
 		}
 	},
-/*	chatMessage: function(message, by, room) {
-		var cmdrMessage = '["' + room + '|' + by + '|' + message + '"]';
-		message = message.trim();
-		// auto accept invitations to rooms
-		if (room.charAt(0) === ',' && message.substr(0,8) === '/invite ' && this.hasRank(by, '%@&~') && !(config.serverid === 'showdown' && toId(message.substr(8)) === 'lobby')) {
-			this.say('', '/join ' + message.substr(8));
-		}
-		if (message.substr(0, config.commandcharacter.length) !== config.commandcharacter || toId(by) === toId(config.nick)) return;
-
-		message = message.substr(config.commandcharacter.length);
-		var index = message.indexOf(' ');
-		var arg = '';
-		if (index > -1) {
-			var cmd = message.substr(0, index);
-			arg = message.substr(index + 1).trim();
-		} else {
-			var cmd = message;
-		}
-
-		if (Commands[cmd]) {
-			var failsafe = 0;
-			while (typeof Commands[cmd] !== "function" && failsafe++ < 10) {
-				cmd = Commands[cmd];
-			}
-			if (typeof Commands[cmd] === "function") {
-				cmdr(cmdrMessage);
-				Commands[cmd].call(this, arg, by, room);
-			} else {
-				error("invalid command type for " + cmd + ": " + (typeof Commands[cmd]));
-			}
-		}
-	},*/
 	chatMessage: function (message, by, room) {
 		if (toId(by) === toId(config.nick)) return;
 		var cmdrMessage = '["' + room + '|' + by + '|' + message + '"]';
