@@ -574,6 +574,8 @@ exports.commands = {
 			if (!(this.RP[room].setAt)) {
 				if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat +');
+					this.say(room, '/wall A reminder for newcomers that Modchat + is only up temporarily. After the RP is set up modchat will come down and everyone can talk again.');
+
 				}
 			}
 		}
@@ -754,8 +756,8 @@ exports.commands = {
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false;
 		if (!this.RP[room].endpollCalled) {
 			var now = new Date();
-			this.say(room, '/poll create End Poll: ends at xx:' + (((now.getMinutes()+4) < 10) ? '0' + (((now.getMinutes()+4)%60).toString()) : (now.getMinutes()+4).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ", Continue, End");
-			this.say(room, '/poll timer 4')
+			this.say(room, '/poll create End Poll: ends at xx:' + (((now.getMinutes()+3) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : (now.getMinutes()+3).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ", Continue, End");
+			this.say(room, '/poll timer 3')
 			this.say(room, '/modnote ' + by + ' created an end poll.');
 			this.RP[room].endpollCalled = true;
 		}
