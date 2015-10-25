@@ -753,13 +753,19 @@ exports.commands = {
 		this.say(room, text + 'Roleplaying\'s Forum: http://psroleplaying.forumotion.com/');
 	},
 	endpoll: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false;
+		if (!this.canUse('endpoll', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false;
 		if (!this.RP[room].endpollCalled) {
 			var now = new Date();
-			this.say(room, '/poll create End Poll: ends at xx:' + (((now.getMinutes()+3) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : (now.getMinutes()+3).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ", Continue, End");
+			this.say(room, '/poll create End Poll: ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ", Continue, End");
 			this.say(room, '/poll timer 3')
 			this.say(room, '/modnote ' + by + ' created an end poll.');
 			this.RP[room].endpollCalled = true;
+			setTimeout(function() {
+				this.say(room, '!poll display');
+			}.bind(this), 60 * 1000);
+			setTimeout(function() {
+				this.say(room, '!poll display');
+			}.bind(this), 2 * 60 * 1000);
 		}
 	}
 };

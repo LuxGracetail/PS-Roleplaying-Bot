@@ -1,6 +1,4 @@
-## This repository is no longer being maintained as of 08/08/15. Fork at your own risk
-
-Pokemon-Showdown-Bot
+Pokemon-Showdown-Roleplaying-Bot
 ====================
 
 A chat bot for [Pokémon Showdown][1]. This bot has a number of commands, some helpful and some less so, as well as the capability to mod. It only reacts to basic offences such as flooding/caps/stretching.
