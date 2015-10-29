@@ -551,7 +551,7 @@ exports.commands = {
 		var diff = new Date();
 		diff.setTime(diff.getTime() - paused.getTime());
 		setAt.setTime(setAt.getTime() + diff.getTime());
-		this.RP[room].setAt = setAt
+		this.RP[room].setAt = setAt;
 
 		delete this.RP[room].pause;
 		this.writeSettings();
@@ -583,7 +583,7 @@ exports.commands = {
 		this.RP[room].host = arg;
 		this.writeSettings();
 		if (!(room == "amphyrp")){ 
-			this.say(room, '/roomvoice '+ arg)
+			this.say(room, '/roomvoice '+ arg);
 		}
 		this.say(room, 'The host was set to ' + arg + '.');
 	},
@@ -757,7 +757,7 @@ exports.commands = {
 		if (!this.RP[room].endpollCalled) {
 			var now = new Date();
 			this.say(room, '/poll create End Poll: ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ", Continue, End");
-			this.say(room, '/poll timer 3')
+			this.say(room, '/poll timer 3');
 			this.say(room, '/modnote ' + by + ' created an end poll.');
 			this.RP[room].endpollCalled = true;
 			setTimeout(function() {
