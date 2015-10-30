@@ -7,6 +7,18 @@
 var http = require('http');
 var sys = require('sys');
 
+var pollON = {};
+var pollTimer = {};
+var pollNoms = [];
+var RPOpts = ['freeroam','goodvsevil','conquest','trainer','pokehigh','totaldramaisland','prom','cruise','murdermystery'];
+var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery'];
+
+function splitDoc(voided) {
+	if (!/docs\./.test(voided)) return voided;
+	voided = voided.replace(/(doc.*)?(https?:\/\/)?docs.*/i, '').replace(/[^a-z0-9]*$/i, '');
+	return voided;
+};
+
 exports.commands = {
 	/**
 	 * Help commands
@@ -25,7 +37,13 @@ exports.commands = {
 		this.say(room, text);
 	},
 	git: function(arg, by, room) {
-		var text = config.excepts.indexOf(toId(by)) < 0 ? '/pm ' + by + ', ' : '';
+		if (this.hasRank(by, '#~') || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
+		}
+		
+//		var text = config.excepts.indexOf(toId(by)) < 0 ? '/pm ' + by + ', ' : '';
 		text += '**Pokemon Showdown Bot** source code: ' + config.fork;
 		this.say(room, text);
 	},
@@ -114,6 +132,7 @@ exports.commands = {
 			setrp: 1,
 			vab: 1,
 			vbw: 1,
+			endpoll: 1,
 		};
 		var modOpts = {
 			flooding: 1,
@@ -489,9 +508,10 @@ exports.commands = {
 	// Roleplaying commands
 	rpset: "setrp",
 	setrp: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP)) return false;
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP)) return false;
 		if (!arg) return this.say(room, 'Please enter an RP.');
 
+		if(!this.RP[room]) this.RP[room] = {};
 		this.RP[room].plot = arg;
 		this.writeSettings();
 		if (this.RP[room].setAt) return this.say(room, 'The RP was set to ' + arg + '.');
@@ -500,7 +520,7 @@ exports.commands = {
 	startrp: 'start',
 	rpstart: 'start',
 	start: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].setAt) return false;
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].setAt) return false;
 		if (!this.RP[room].plot) {
 			if (!arg) return this.say(room, 'Please set an RP before using .start, or specify an RP with .start to start one immediately.');
 			this.RP[room].plot = arg;
@@ -529,7 +549,7 @@ exports.commands = {
 	'pause': 'rppause',
 	pauserp: 'rppause',
 	rppause: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt || this.RP[room].pause) return false;
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt || this.RP[room].pause) return false;
 
 		this.RP[room].pause = new Date();
 		this.writeSettings();
@@ -544,13 +564,13 @@ exports.commands = {
 	'rpresume': 'rpcontinue',
 	continuerp: 'rpcontinue',
 	rpcontinue: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt || !this.RP[room].pause) return false;
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt || !this.RP[room].pause) return false;
 
-		var paused = new Date(this.RP[room].pause);
-		var setAt = new Date(this.RP[room].setAt);
-		var diff = new Date();
-		diff.setTime(diff.getTime() - paused.getTime());
-		setAt.setTime(setAt.getTime() + diff.getTime());
+		var paused = new Date(this.RP[room].pause); //Time it was paused at.
+		var setAt = new Date(this.RP[room].setAt); //Time it was originally set at.
+		var diff = new Date(); //Now
+		diff.setTime(diff.getTime() - paused.getTime()); //Time elapsed since it was paused
+		setAt.setTime(setAt.getTime() + diff.getTime()); //Time it was originally set at + paused time elapsed.
 		this.RP[room].setAt = setAt;
 
 		delete this.RP[room].pause;
@@ -562,7 +582,7 @@ exports.commands = {
 		}
 	},
 	sethost: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!arg) return this.say(room, 'Please enter a host.');
 
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
@@ -575,7 +595,6 @@ exports.commands = {
 				if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat +');
 					this.say(room, '/wall A reminder for newcomers that Modchat + is only up temporarily. After the RP is set up modchat will come down and everyone can talk again.');
-
 				}
 			}
 		}
@@ -587,9 +606,8 @@ exports.commands = {
 		}
 		this.say(room, 'The host was set to ' + arg + '.');
 	},
-	
 	setcohost: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!arg) return this.say(room, 'Please enter a cohost.');
 				
 		this.RP[room].cohost = arg;
@@ -597,10 +615,10 @@ exports.commands = {
 		this.say(room, 'The cohost(s) was/were set to ' + arg + '.');
 	},	
 	rmhost: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].host) return this.say(room, 'There is no host to remove.');
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
-			if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
+			if (room == 'rustyrp' || !(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 				this.say(room, '/roomdevoice '+ this.RP[room].host);
 				}
 			if (!(this.RP[room].setAt)){
@@ -615,7 +633,7 @@ exports.commands = {
 		this.say(room, 'The host has been removed.');
 	},
 	rmcohost: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].cohost) return this.say(room, 'There are no cohosts to remove.');
 
 		delete this.RP[room].cohost;
@@ -624,9 +642,9 @@ exports.commands = {
 	},
 	rpend: 'endrp',
 	endrp: function(arg, by, room) {
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (config.serverid === 'showdown' && this.RP[room].setAt) {
-			nextVoid = this.splitDoc(this.RP[room].plot);
+			nextVoid = splitDoc(this.RP[room].plot);
 			if (this.RP.void[room].length === 2) this.RP.void[room].shift();
 			this.RP.void[room].push(nextVoid);
 
@@ -638,7 +656,7 @@ exports.commands = {
 		
 		if (!(room == "amphyrp")){
 			if (this.RP[room].host){
-				if (!(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
+				if (room == 'rustyrp' || !(config.voiceList.indexOf(toId(this.RP[room].host)) >= 0)) {
 					this.say(room, '/roomdevoice '+ this.RP[room].host);
 					}
 				if (!(this.RP[room].setAt)){
@@ -660,8 +678,7 @@ exports.commands = {
 		}
 	},
 	void: function(arg, by, room) {
-		if (config.serverid !== 'showdown' || !this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].plot) return false;
-
+		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot || room === 'rustyrp') return false;
 		var text = '';
 		var voided = this.RP.void[room];
 		switch (voided.length) {
@@ -669,18 +686,31 @@ exports.commands = {
 				text += voided[0] + ' and ' + voided[1] + ' are void.';
 				break;
 			case 1:
-				text += voided[0] + ' is void. The second-last RP in this room is unknown.';
+				text += voided[0] + ' is void. The second-last RP in this room is unknown';
 				break;
 			case 0:
 				text += 'The last 2 RPs in this room are unknown.';
 				break;
 			default:
-				return this.say(room, 'Something went wrong with how void RPs are stored.');
+				return this.say(room, 'Something went wrong with how void RPs are stored');
 		}
-		var concurrent = (room === 'roleplaying') ? this.splitDoc(this.RP['amphyrp'].plot) : this.splitDoc(this.RP['roleplaying'].plot);
-		if (concurrent) text += ' The current RP in ' + ((room === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent + '.';
+		var concurrent = (room === 'roleplaying') ? splitDoc(this.RP['amphyrp'].plot) : splitDoc(this.RP['roleplaying'].plot);
+		var currentRust = (this.RP['rustyrp']) ? this.RP['rustyrp'].plot : '';
+		if (concurrent) text += ' The RP in ' + ((room === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent;
+		if (currentRust) text+= ', and ' + currentRust + ' in RustyRP';
+		if(text.charAt(text.length) !== '.') text += '.';
 
-		this.say(room, '**' + text + '**');
+		if (!this.canUse('setrp', room, by) || this.RP[room].voidCalled) {
+			this.say(room, '/pm ' + by + ', ' + text + " (" + room + ")");
+		} else {
+			this.say(room, '**' + text + '**');
+			this.RP[room].voidCalled = true;
+			setTimeout(function() {
+				delete this.RP[room].voidCalled;
+			}.bind(this), 60 * 1000);
+		}
+
+
 	},
 	rp: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
@@ -743,6 +773,92 @@ exports.commands = {
 		}
 		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
 	},
+    rppoll: function(arg, by, room) {
+        //if (!this.canUse('setrp', room, by) || this.RP.room.setAt || !(room in this.RP)) return false;
+        if (!this.hasRank(by, '~')) return false;
+		if (pollON[room]) {
+			this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already.');
+			return false;
+		}
+		
+		pollON[room] = true;
+		
+		this.say(room, '/wall Nominate the RP(s) you want to be next! Use .nom [RP] to suggest an RP.\.');
+		pollTimer[room] = setTimeout(function() {
+		    if(pollNoms.length > 1) {
+		    	pollON[room] = true;
+		    	for(var y = 0; y < pollNoms.length; y++) {
+		    		if(RPOpts.indexOf(toId(pollNoms[y])) > -1) {
+		    			pollNoms[y] = rpcaps[RPOpts.indexOf(toId(pollNoms[y]))];
+		    		}
+		    		pollNoms[y].capitalize(true);
+		    	}
+		        if(pollNoms.length > 7) {
+		            pollNoms = pollNoms.slice(0, 7);
+                    this.say(room, '/poll create What RP will be next? Ends in 3 minutes., ' + pollNoms.join(', '));
+		        } else {
+		            this.say(room, '/poll create What RP will be next? Ends in 3 minutes., ' + pollNoms.join(', '));
+		        }
+                this.say(room, '/poll timer 3');
+			    setTimeout(function() {
+			    	this.say(room, '!poll display');
+			    }.bind(this), 60 * 1000);
+		    	setTimeout(function() {
+			    	this.say(room, '!poll display');
+		    	}.bind(this), 2 * 60 * 1000);
+		    	setTimeout(function() {
+		    		pollON[room] = false;
+		    	}.bind(this), 180000);
+		    } else {
+		        this.say(room, '/wall There were not enough nominations.');
+		        pollON[room] = false;
+		    }
+		}.bind(this), 180000);
+    },
+    nom: "nominate",
+    nominate: function(arg, by, room) {
+        if (!pollON[room]) {
+            this.say(room, '/msg ' + by + ', There is no RP poll in progress.');
+            return false;
+        }
+        if(toId(room) === toId(by)) room = 'roleplaying';
+        switch (toId(arg)) { // ['freeroam','goodvsevil','conquest','trainer','pokehigh','totaldramaisland','prom','cruise', 'murdermystery'];
+        	case 'fr':
+        		arg = 'Freeroam';
+        		break;
+        	case 'cq':
+        		arg = "Conquest";
+        		break;
+        	case 'mm':
+        		arg = 'Murder Mystery';
+        		break;
+        	case 'gve':
+        		arg = 'Good vs Evil';
+        		break;
+        	case 'uni':
+        		arg = 'PokeHigh';
+        		break;
+        	case 'ph':
+        		arg = 'PokeHigh';
+        		break;
+        	case 'tdi':
+        		arg = 'Total Drama Island';
+        		break;
+        	default:
+        		break;
+        }
+        if(RPOpts.indexOf(toId(arg)) == -1 && (config.voiceList.indexOf(toId(by)) == -1 || this.hasRank(by, '%@#&~'))) {
+            this.say(room, '/msg ' + by + ', Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
+            return false;
+        }
+        if(toId(pollNoms.toString()).indexOf(toId(arg)) > -1) {
+        	this.say(room, '/msg ' + by + ', That RP has already been suggested.');
+        	return false;
+        } else {
+    	    pollNoms.push(arg);
+    	    this.say(room, '/msg ' + by + ', Thank you for your suggestion! Please note that not all RPs may be added to poll.');
+        }
+    },
 	forum: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
 		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
@@ -767,5 +883,10 @@ exports.commands = {
 				this.say(room, '!poll display');
 			}.bind(this), 2 * 60 * 1000);
 		}
+	},
+	legends: 'legend',
+	legend: function(arg, by, room) {
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) return false;
+		this.say(room, '/w ' + by + ', Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
 	}
 };
