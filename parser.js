@@ -167,10 +167,6 @@ exports.parse = {
 					send('|/join ' + room);
 				}
 				for (var i = 0, len = config.privaterooms.length; i < len; i++) {
-					var groupchattest = config.privaterooms[i].split("-")
-						if (groupchattest[0] == "groupchat"){
-							send('|/join ' + config.privaterooms[i]);
-							}
 					var room = toId(config.privaterooms[i]);
 					if (room === 'lobby' && config.serverid === 'showdown') continue;
 					send('|/join ' + room);
@@ -185,17 +181,13 @@ exports.parse = {
 				if (config.serverid === 'showdown') {
 					this.amphyVoices = [];
 					this.freeroamTimeouts = {};
+					this.conquestTimeouts = {};
 					if (this.settings && this.settings.RP) {
 						this.RP.void = {};
 
 						for (var i = config.rprooms.length; i--;) {
-							if (config.rprooms[i].split("-")[0] == "groupchat"){
-								var roleplay = this.settings.RP[config.rprooms[i]];
-							}
-						else {
 							var roomid = toId(config.rprooms[i]);
 							var roleplay = this.settings.RP[roomid];
-							}
 							if (roleplay) {
 								if (roleplay.called) delete roleplay.called;
 								if (roleplay.hostCalled) delete roleplay.hostCalled;
@@ -221,26 +213,16 @@ exports.parse = {
 					} else {
 						this.RP = this.settings.RP = {void: {}};
 						for (var i = config.rprooms.length; i--;) {
-							if (config.rprooms[i].split("-")[0] == "groupchat"){
-								var roomid = config.rprooms[i];
-								this.RP[roomid] = {};
-								this.RP.void[roomid] = [];
-							} else {
-								var roomid = toId(config.rprooms[i]);
-								this.RP[roomid] = {};
-								this.RP.void[roomid] = [];
-							}
+							var roomid = toId(config.rprooms[i]);
+							this.RP[roomid] = {};
+							this.RP.void[roomid] = [];
 						}
 					}
 				} else {
 					if (this.settings.RP) {
 						for (var i = config.rprooms.length; i--;) {
-							if (config.rprooms[i].split("-")[0] == "groupchat"){
-								var roleplay = this.settings.RP[config.rprooms[i]];
-							} else {
 							var roomid = toId(config.rprooms[i]);
 							var roleplay = this.settings.RP[roomid];
-							}
 							if (roleplay) {
 								if (roleplay.called) delete roleplay.called;
 								if (roleplay.hostCalled) delete roleplay.hostCalled;
@@ -277,7 +259,7 @@ exports.parse = {
 				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 
 				spl = spl.slice(4).join('|');
-				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
+				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);  //Insert an else for this if, passing it through .seen.
 				this.chatMessage(spl, by, room);
 				break;
 			case 'pm':
@@ -287,7 +269,7 @@ exports.parse = {
 			case 'N':
 				var by = spl[2];
 				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
-				this.updateSeen(spl[3], spl[1], toId(by));
+				this.updateSeen(spl[3], spl[1], toId(by)); // (original name, 'N', new nickname)
 				//Log Namechanges
 				if (config.logmain) console.log(spl[3].cyan + " has changed their nickname to " + by.cyan);
 				break;
@@ -307,16 +289,76 @@ exports.parse = {
 				if (spl[2] === 'Room Owners (#):') this.amphyVoices = spl[spl.length - 1].split(', ');
 				break;*/
 			case "html":
-				test = spl[2].split(">")
-				if (((toId(test[0])) == "divclassinfobox") && ((toId(test[5])) == "pollendedspan") && ((toId(test[11]) == "continuestrong"))) {
-					var endPercent = Number(test[29].split('%')[0].split("&nbsp;")[1]);
-					if (endPercent > 54){
-						this.say(room, '**RP Ends with '+ endPercent + '% end.**');
-						this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'endrp');
-						delete this.RP[room].endpollCalled;
+				var cheerio = require('cheerio'),
+    				$ = cheerio.load(spl[2]);
+    			//console.log('First div: ' + $('div'));
+    			//console.log('Second div: ' + $('div div'));
+    			var third = $('div div strong');
+    			var opts = [];
+    			var perRaw = [];
+    			var per = [];
+    			var winpercent = -1;
+    			var winopt = '';
+    			var title = '';
+    			var istie = false;
+    			var tieopts = [];
+    			third.each(function(i, elem) {
+  					opts.push($(this).text());
+				});
+				console.log('Poll opts: ' + opts.join(', '));
+				var percentage = $('div div small');
+				percentage.each(function(y, elem) {
+					perRaw[y] = $(this).text();
+				});
+				$('div p strong').each(function(i, elem) {
+					title = $(this).text();
+				});
+				for(var i = 0; i < perRaw.length; i++) {
+					if(perRaw[i].indexOf('%') > -1) {
+						per.push(Number(toId(perRaw[i])));
+					}
+				}
+				for(var x = 0; x < per.length; x++) {
+					if(per[x] > winpercent) {
+						winpercent = per[x];
+						winopt = opts[x];
+						tieopts[0] = opts[x];
+					}
+				}
+				for(var z = 0; x < per.length; x++) {
+					if(per[z] == winpercent) {
+						var istie = true;
+						tieopts.push(per[z]);
+					}
+				}
+				if(toId(title).indexOf('endpoll') > -1) {
+					var endvote = per[opts.indexOf('End')] ? per[opts.indexOf('End')] : per[opts.indexOf('end')]
+					var contvote = per[opts.indexOf('Continue')] ? per[opts.indexOf('Continue')] : per[opts.indexOf('continue')]
+					if (!contvote && per[opts.indexOf('cont')]) contvote = per[opts.indexOf('cont')];
+					if(endvote > 54) {
+						Parse.say(room, '**RP Ends with '+ endvote + '% end.**');
+						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'endrp');
 					} else {
-						this.say(room, '**RP Continues with '+ (100-endPercent) + '% continue.**');
-						delete this.RP[room].endpollCalled;
+						Parse.say(room, '**RP Continues with '+ contvote + '% continue.**');
+					}
+				} else if (toId(title).indexOf('host') > -1){
+					if(istie == true && tieopts > 1) {
+						Parse.say(room, '/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
+						Parse.say(room, '/poll timer 3');
+					} else {
+						this.say(room, '**' + winopt + ' won with ' + winpercent + '%.**');
+						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'sethost ' + winopt);
+					}
+				} else if (toId(title).indexOf('nextrp') > -1) {
+					if(istie == true && tieopts > 1) {
+						Parse.say(room, '/poll create Tiebreaker RP Poll, ' + tieopts.join(', '));
+						Parse.say(room, '/poll timer 3');
+					} else {
+						Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
+						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
+						if(toId(winopt) == 'freeroam' || toId(winopt) == 'cruise' || toId(winopt) == 'prom') {
+							this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'start ' + winopt);
+						}
 					}
 				}
 				break;
@@ -624,7 +666,7 @@ exports.parse = {
 			break;
 		case 'N':
 			msg += 'changing nick to ';
-			if (detail.charAt(0) !== ' ') detail = detail.substr(1);
+			if (detail.charAt(0) !== ' ') detail = detail.substr(1); //  What's happening here?  If the first thing of the detail, which should be toIded...
 			break;
 		}
 		msg += detail.trim() + '.';
