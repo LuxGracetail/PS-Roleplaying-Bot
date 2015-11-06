@@ -251,7 +251,11 @@ exports.parse = {
 				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 
 				spl = spl.slice(3).join('|');
-				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);
+				if ('%@#&~'.indexOf(by.charAt(0)) < 0){
+					this.processChatData(toId(by), room, spl);
+				} else {
+					this.updateSeen(toId(by), 'c', room);
+				}
 				this.chatMessage(spl, by, room);
 				break;
 			case 'c:':
@@ -259,7 +263,11 @@ exports.parse = {
 				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 
 				spl = spl.slice(4).join('|');
-				if ('%@#&~'.indexOf(by.charAt(0)) < 0) this.processChatData(toId(by), room, spl);  //Insert an else for this if, passing it through .seen.
+				if ('%@#&~'.indexOf(by.charAt(0)) < 0){
+					this.processChatData(toId(by), room, spl);
+				} else {
+					this.updateSeen(toId(by), 'c', room);
+				}
 				this.chatMessage(spl, by, room);
 				break;
 			case 'pm':
@@ -666,7 +674,7 @@ exports.parse = {
 			break;
 		case 'N':
 			msg += 'changing nick to ';
-			if (detail.charAt(0) !== ' ') detail = detail.substr(1); //  What's happening here?  If the first thing of the detail, which should be toIded...
+//			if (detail.charAt(0) !== ' ') detail = detail.substr(1); //  What's happening here?  If the first thing of the detail, which should be toIded...
 			break;
 		}
 		msg += detail.trim() + '.';
