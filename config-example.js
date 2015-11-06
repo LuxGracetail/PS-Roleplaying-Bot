@@ -111,3 +111,6 @@ exports.avatarNumber = [''];
 
 //Here, you list the voices for the main roleplaying room, so the bot does not automatically devoice them.
 exports.voiceList = [''];
+
+//This is a list of the staff because nom is PMs only.
+exports.staffList = [''];

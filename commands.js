@@ -68,7 +68,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'http://www.smogon.com/stats/2015-09/';
+		text += 'http://www.smogon.com/stats/2015-10/';
 		this.say(room, text);
 	},
 
@@ -133,6 +133,7 @@ exports.commands = {
 			vab: 1,
 			vbw: 1,
 			endpoll: 1,
+			rppoll: 1,
 		};
 		var modOpts = {
 			flooding: 1,
@@ -891,7 +892,7 @@ exports.commands = {
         		return false;
 			}
     	}
-        if(RPOpts.indexOf(toId(arg)) == -1 && (!(this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
+        if(RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
             this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
             return false;
         }
@@ -933,6 +934,9 @@ exports.commands = {
 			setTimeout(function() {
 				this.say(room, '!poll display');
 			}.bind(this), 2 * 60 * 1000);
+			setTimeout(function() {
+				delete this.RP[room].endpollCalled;
+			}.bind(this), 3 * 60 * 1000);
 		}
 	},
 	legends: 'legend',
