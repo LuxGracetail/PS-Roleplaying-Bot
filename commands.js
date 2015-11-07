@@ -718,7 +718,7 @@ exports.commands = {
 		var voided = this.RP.void[room];
 		switch (voided.length) {
 			case 2:
-				text += voided[0] + ' and ' + voided[1] + ' are void.';
+				text += voided[0] + ' and ' + voided[1] + ' are void';
 				break;
 			case 1:
 				text += voided[0] + ' is void. The second-last RP in this room is unknown';
@@ -807,7 +807,7 @@ exports.commands = {
 		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
 	},
     rppoll: function(arg, by, room) {
-        if (!this.canUse('setrp', room, by) || room !== 'roleplaying') return false; //setrp perms? is this RP room?
+        if (!this.canUse('setrp', room, by) || this.RP['roleplaying'].plot || room !== 'roleplaying') return false; //setrp perms? is this RP room?
 		if (pollON[room]) { //if there's a poll already
 			this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already.');
 			return false; //exit function
@@ -892,6 +892,12 @@ exports.commands = {
         		return false;
 			}
     	}
+    	if(this.RP['rustyrp'].plot) {
+    	    if(toId(arg) == toId(splitDoc(this.RP['rustyrp'].plot))) {
+    	  	this.say(room, 'That RP is currently ongoing in rustyrp.');
+        		return false;
+			}
+    	}
         if(RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
             this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
             return false;
@@ -943,5 +949,17 @@ exports.commands = {
 	legend: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) return false;
 		this.say(room, '/w ' + by + ', Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
+	},
+	conquestRules: function (arg, by, room) {
+	if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].setAt || !(/conquest/i.test(toId(this.RP[room].plot)))) return false;
+		this.say(room, '**Rules are: Arceus, Darkrai, Mewtwo, Mega-Rayquaza, and Primal forms are banned. They may have up to two knights and only three kingdoms are allowed in an alliance.**');
+		this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
+		this.say(room, "**Blaziken, Greninja, Mega Gallade (for Psychic ONLY), Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Damp Rock, and Smooth Rock are banned.**");
+		this.say(room, "__Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.__");
+		this.say(room, "**Wanderers may challenge a Kingdom for knightship. This can't be declined, but if the Wanderer loses, they either die or cannot challenge the same kingdom again. They either fight the lone knight if there is only one, one of the knights of the Lord's choice if two, or the Lord himself.**");
+		this.say(room, "__If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights in this manner CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.__");
+		this.say(room, "**All participants within the RP may only have ONE chance to coup any kingdom. PM me/the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.**");
+		this.say(room, "__New feature: Trades are an exchange, between Warlords, of one non-Ace slot Pokémon, between two allied types. Trades must be agreed upon by both parties, and the traded Pokémon must be present in the team. You can make a trade with each of your allies.  You may only make one trade per ally.__");
+		this.say(room, "**Trades only last as long as the alliances they belong to, and are thus reversed upon their dissolution.**");
 	}
 };
