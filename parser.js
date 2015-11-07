@@ -299,8 +299,6 @@ exports.parse = {
 			case "html":
 				var cheerio = require('cheerio'),
     				$ = cheerio.load(spl[2]);
-    			//console.log('First div: ' + $('div'));
-    			//console.log('Second div: ' + $('div div'));
     			var third = $('div div strong');
     			var opts = [];
     			var perRaw = [];
@@ -327,21 +325,21 @@ exports.parse = {
 					}
 				}
 				for(var x = 0; x < per.length; x++) {
+					if(!tieopts[0]) tieopts[0] = opts[x];
 					if(per[x] > winpercent) {
 						winpercent = per[x];
 						winopt = opts[x];
 						tieopts[0] = opts[x];
 					}
-				}
-				for(var z = 0; x < per.length; x++) {
-					if(per[z] == winpercent) {
-						var istie = true;
-						tieopts.push(per[z]);
+					if(per[x] == winpercent) {
+						istie = true;
+						if(tieopts[0] == opts[x]) continue;
+						else tieopts.push(opts[x]);
 					}
 				}
 				if(toId(title).indexOf('endpoll') > -1) {
-					var endvote = per[opts.indexOf('End')] ? per[opts.indexOf('End')] : per[opts.indexOf('end')]
-					var contvote = per[opts.indexOf('Continue')] ? per[opts.indexOf('Continue')] : per[opts.indexOf('continue')]
+					var endvote = per[opts.indexOf('End')] ? per[opts.indexOf('End')] : per[opts.indexOf('end')];
+					var contvote = per[opts.indexOf('Continue')] ? per[opts.indexOf('Continue')] : per[opts.indexOf('continue')];
 					if (!contvote && per[opts.indexOf('cont')]) contvote = per[opts.indexOf('cont')];
 					if(endvote > 54) {
 						Parse.say(room, '**RP Ends with '+ endvote + '% end.**');
@@ -350,17 +348,22 @@ exports.parse = {
 						Parse.say(room, '**RP Continues with '+ contvote + '% continue.**');
 					}
 				} else if (toId(title).indexOf('host') > -1){
-					if(istie == true && tieopts > 1) {
-						Parse.say(room, '/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
-						Parse.say(room, '/poll timer 3');
+					if(istie == true && tieopts.length > 1) {
+						setTimeout(function(){
+							Parse.say(room, '/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
+							console.log('/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
+							Parse.say(room, '/poll timer 3');
+						}, 1000);
 					} else {
 						this.say(room, '**' + winopt + ' won with ' + winpercent + '%.**');
 						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'sethost ' + winopt);
 					}
 				} else if (toId(title).indexOf('nextrp') > -1) {
 					if(istie == true && tieopts > 1) {
-						Parse.say(room, '/poll create Tiebreaker RP Poll, ' + tieopts.join(', '));
-						Parse.say(room, '/poll timer 3');
+						setTimeout(function(){
+							Parse.say(room, '/poll create Tiebreaker RP Poll, ' + tieopts.join(', '));
+							Parse.say(room, '/poll timer 3');
+						}, 1000);
 					} else {
 						Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
 						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
@@ -674,7 +677,7 @@ exports.parse = {
 			break;
 		case 'N':
 			msg += 'changing nick to ';
-//			if (detail.charAt(0) !== ' ') detail = detail.substr(1); //  What's happening here?  If the first thing of the detail, which should be toIded...
+			if (detail.charAt(0) !== ' ') detail = detail.substr(1); //  What's happening here?  If the first thing of the detail, which should be toIded...
 			break;
 		}
 		msg += detail.trim() + '.';
@@ -716,7 +719,7 @@ exports.parse = {
 			writing = false;
 			if (writePending) {
 				writePending = false;
-				this.writeSettings();
+				Parse.writeSettings();
 			}
 		};
 		return function() {
