@@ -652,7 +652,7 @@ exports.parse = {
 	},
 
 	updateSeen: function(user, type, detail) {
-		if (type !== 'n' && config.rooms.indexOf(detail) === -1 || config.privaterooms.indexOf(toId(detail)) > -1) return;
+		if (type !== 'N' && config.rooms.indexOf(detail) === -1 || config.privaterooms.indexOf(toId(detail)) > -1) return;
 		var now = Date.now();
 		if (!this.chatData[user]) this.chatData[user] = {
 			zeroTol: 0,
@@ -677,7 +677,6 @@ exports.parse = {
 			break;
 		case 'N':
 			msg += 'changing nick to ';
-			if (detail.charAt(0) !== ' ') detail = detail.substr(1); //  What's happening here?  If the first thing of the detail, which should be toIded...
 			break;
 		}
 		msg += detail.trim() + '.';
