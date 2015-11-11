@@ -10,8 +10,8 @@ var sys = require('sys');
 var pollON = {};
 var pollTimer = {};
 var pollNoms = [];
-var RPOpts = ['freeroam','goodvsevil','conquest','trainer','pokehigh','totaldramaisland','prom','cruise','murdermystery','pokemonmysterydungeon','dungeonsndragonites','kingdom'];
-var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom'];
+var RPOpts = ['freeroam','goodvsevil','conquest','trainer','pokehigh','totaldramaisland','prom','cruise','murdermystery','pokemonmysterydungeon','dungeonsndragonites','kingdom', 'hungergames'];
+var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom', 'Hunger Games'];
 
 function splitDoc(voided) {
 	if (!/docs\./.test(voided)) return voided;
@@ -541,7 +541,7 @@ exports.commands = {
 		}
 
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
-			if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
+			if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 				this.say(room, '/modchat off');
 			}
 		}
@@ -626,7 +626,7 @@ exports.commands = {
 				}
 			}
 			if (!(this.RP[room].setAt)) {
-				if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
+				if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat +');
 					this.say(room, '/wall A reminder for newcomers that Modchat + is only up temporarily. After the RP is set up modchat will come down and everyone can talk again.');
 				}
@@ -656,7 +656,7 @@ exports.commands = {
 				this.say(room, '/roomdevoice '+ this.RP[room].host);
 				}
 			if (!(this.RP[room].setAt)){
-				if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
+				if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat off');
 				}
 			}
@@ -686,6 +686,11 @@ exports.commands = {
 				clearTimeout(this.freeroamTimeouts[room]);
 				delete this.freeroamTimeouts[room];
 			}
+			
+			if (/conquest/i.test(toId(this.RP[room].plot))){
+				clearTimeout(this.conquestTimeouts[room]);
+				delete this.conquestTimeouts[room];
+			}
 		}
 		
 		if (!(room == "amphyrp")){
@@ -694,7 +699,7 @@ exports.commands = {
 					this.say(room, '/roomdevoice '+ this.RP[room].host);
 					}
 				if (!(this.RP[room].setAt)){
-					if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
+					if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 						this.say(room, '/modchat off');
 					}
 				}
@@ -731,8 +736,8 @@ exports.commands = {
 		}
 		var concurrent = (room === 'roleplaying') ? splitDoc(this.RP['amphyrp'].plot) : splitDoc(this.RP['roleplaying'].plot);
 		var currentRust = (this.RP['rustyrp']) ? splitDoc(this.RP['rustyrp'].plot) : '';
-		if (concurrent) text += ' The RP in ' + ((room === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent;
-		if (currentRust) text+= ', and ' + currentRust + ' in RustyRP';
+		if (concurrent) text += '. The RP in ' + ((room === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent;
+		if (currentRust) text+= ', and the RP in RustyRP is ' + currentRust;
 		if(text.charAt(text.length - 1) !== '.') text += '.';
 
 		if (!this.canUse('setrp', room, by) || this.RP[room].voidCalled) {
@@ -883,6 +888,9 @@ exports.commands = {
         	case 'pmd':
         		arg = 'Pokemon Mystery Dungeon';
         		break;
+        	case 'hg':
+        		arg = 'Hunger Games';
+        		break;
         	default:
         		break;
         }
@@ -951,15 +959,16 @@ exports.commands = {
 		this.say(room, '/w ' + by + ', Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
 	},
 	conquestRules: function (arg, by, room) {
-	if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].setAt || !(/conquest/i.test(toId(this.RP[room].plot)))) return false;
-		this.say(room, '**Rules are: Arceus, Darkrai, Mewtwo, Mega-Rayquaza, and Primal forms are banned. They may have up to two knights and only three kingdoms are allowed in an alliance.**');
-		this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
-		this.say(room, "**Blaziken, Greninja, Mega Gallade (for Psychic ONLY), Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Damp Rock, and Smooth Rock are banned.**");
-		this.say(room, "__Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.__");
-		this.say(room, "**Wanderers may challenge a Kingdom for knightship. This can't be declined, but if the Wanderer loses, they either die or cannot challenge the same kingdom again. They either fight the lone knight if there is only one, one of the knights of the Lord's choice if two, or the Lord himself.**");
-		this.say(room, "__If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights in this manner CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.__");
-		this.say(room, "**All participants within the RP may only have ONE chance to coup any kingdom. PM me/the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.**");
-		this.say(room, "__New feature: Trades are an exchange, between Warlords, of one non-Ace slot Pokémon, between two allied types. Trades must be agreed upon by both parties, and the traded Pokémon must be present in the team. You can make a trade with each of your allies.  You may only make one trade per ally.__");
-		this.say(room, "**Trades only last as long as the alliances they belong to, and are thus reversed upon their dissolution.**");
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].setAt || !(/conquest/i.test(toId(this.RP[room].plot)))) return false;
+			this.say(room, '**Arceus, Darkrai, Mewtwo, Mega-Rayquaza, and Primal forms are banned. They may have up to two knights and only three kingdoms are allowed in an alliance.**');
+			this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
+			this.say(room, "**Blaziken, Greninja, Mega Gallade (for Psychic ONLY), Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Soul Dew, Damp Rock, and Smooth Rock are banned.**");
+			this.say(room, "__Ghost cannot have both Giratina-A and Aegislash on the same team.__");
+			this.say(room, "**Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.**");
+			this.say(room, "__Wanderers may challenge a Kingdom for knightship. This can't be declined, but if the Wanderer loses, they either die or cannot challenge the same kingdom again. They either fight the lone knight if there is only one, one of the knights of the Lord's choice if two, or the Lord himself.__");
+			this.say(room, "**If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights in this manner CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.**");
+			this.say(room, "__All participants within the RP may only have ONE chance to coup any kingdom. PM me/the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.__");
+			this.say(room, "**Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.**");
+			this.say(room, "__Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). Lastly, if a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.__");
 	}
 };
