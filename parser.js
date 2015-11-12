@@ -359,9 +359,9 @@ exports.parse = {
 						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'sethost ' + winopt);
 					}
 				} else if (toId(title).indexOf('nextrp') > -1) {
-					if(istie == true && tieopts > 1) {
+					if(istie == true && tieopts.length > 1) {
 						setTimeout(function(){
-							Parse.say(room, '/poll create Tiebreaker RP Poll, ' + tieopts.join(', '));
+							Parse.say(room, '/poll create Tiebreaker Next RP Poll, ' + tieopts.join(', '));
 							Parse.say(room, '/poll timer 3');
 						}, 1000);
 					} else {
