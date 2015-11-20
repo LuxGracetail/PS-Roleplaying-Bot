@@ -842,7 +842,7 @@ exports.commands = {
 		this.say(room, '/wall **PM Roleplaying Bot** with .nom [RP] to nominate the RP you want to be next. Remember to only PM RPs you can host. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()));
 		pollTimer[room] = setTimeout(function() {
 		    if(pollNoms.length == 1) {
-		    	this.splitMessage('>' + room + '\n|c|~Morfent' + config.commandcharacter + 'setrp' + pollNom[0]);
+		    	this.splitMessage('>' + room + '\n|c|~Morfent' + config.commandcharacter + 'setrp ' + pollNoms[0]);
 		    	pollON[room] = false;
 		       	pollNoms = [];
 		    	return false;
@@ -1007,4 +1007,8 @@ exports.commands = {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) return false;
 		this.say(room, '/w ' + by + ', Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
 	},
+	conquestRules: function(arg, by, room) {
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '+%@#&~') || !(room in this.RP)) return false;
+		this.say(room, '/w ' + by + ', The conquestRules command has been incorperated into .start.');
+	}
 };
