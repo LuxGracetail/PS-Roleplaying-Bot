@@ -276,22 +276,22 @@ exports.parse = {
 				break;
 			case 'N':
 				var by = spl[2];
-				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(spl[3], spl[1], toId(by)); // (original name, 'N', new nickname)
 				//Log Namechanges
-				if (config.logmain) console.log(spl[3].cyan + " has changed their nickname to " + by.cyan);
+				if (config.logmain) console.log(new Date().toString() + " " + spl[3].cyan + " has changed their nickname to " + by.cyan);
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				break;
 			case 'J': case 'j':
 				var by = spl[2];
-				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				this.updateSeen(toId(by), spl[1], room);
 				//Log showjoins
-				if (config.logmain) console.log(by.cyan + " has " + "joined".green + " the room " + room);
+				if (config.logmain) console.log(new Date().toString() + " " + by.cyan + " has " + "joined".green + " the room " + room);
+				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 				break;
 			case 'l': case 'L':
 				this.updateSeen(toId(spl[2]), spl[1], room);
 				//Log showjoins
-				if (config.logmain) console.log(spl[2].cyan + " has " + "left".red + " the room " + room);
+				if (config.logmain) console.log(new Date().toString() + " " + spl[2].cyan + " has " + "left".red + " the room " + room);
 				break;
 /*			case 'popup':
 				if (spl[2] === 'Room Owners (#):') this.amphyVoices = spl[spl.length - 1].split(', ');
@@ -351,9 +351,15 @@ exports.parse = {
 					if(istie == true && tieopts.length > 1) {
 						setTimeout(function(){
 							Parse.say(room, '/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
-							console.log('/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
 							Parse.say(room, '/poll timer 3');
+							console.log('/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
 						}, 1000);
+						setTimeout(function(){
+							Parse.say(room, '!poll display');
+						}, 60 * 1000 + 1000);
+						setTimeout(function(){
+							Parse.say(room, '!poll display');
+						}, 2 * 60 * 1000 + 1000);
 					} else {
 						this.say(room, '**' + winopt + ' won with ' + winpercent + '%.**');
 						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'sethost ' + winopt);
@@ -390,7 +396,7 @@ exports.parse = {
 			if (message.substr(0, 8) === '/invite ' && this.hasRank(by, '%@&~') && !(config.serverid === 'showdown' && toId(message.substr(8)) === 'lobby')) {
 				this.say('', '/join ' + message.substr(8));
 			}
-			if (config.logpms) console.log("Private Message from ".red + by.cyan + ": ".cyan + message);
+			if (config.logpms) console.log(new Date().toString() + " Private Message from ".red + by.cyan + ": ".cyan + message);
 		} else if (config.logmain) {
 			var sender;
 			if (!this.hasRank(by, '+%@#~')) {
@@ -406,7 +412,7 @@ exports.parse = {
 			} else if (this.hasRank(by, '~')) {
 				sender = by.green;
 			}
-			console.log(room.cyan + ': '.cyan + sender + ': '.cyan + message);
+			console.log(new Date().toString() + " " + room.cyan + ': '.cyan + sender + ': '.cyan + message);
 		}
 		if (config.reply) {
 			var spl = toId(message);
