@@ -13,6 +13,17 @@ var pollNoms = [];
 var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'totaldramaisland', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom', 'hungergames'];
 var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom', 'Hunger Games'];
 
+var goodvsevilNom = [];
+var conquestNom = [];
+var trainerNom = [];
+var pokehighNom = [];
+var totaldramaislandNom = [];
+var murdermysteryNom = [];
+var pokemonmysterydungeonNom = [];
+var dungeonsndragonitesNom = [];
+var kingdomNom = [];
+var hungergamesNom = [];
+
 function splitDoc(voided) {
 	if (!/docs\./.test(voided)) return voided;
 	voided = voided.replace(/(doc.*)?(https?:\/\/)?docs.*/i, '').replace(/[^a-z0-9]*$/i, '');
@@ -513,6 +524,7 @@ exports.commands = {
 		if(!this.RP[room]) this.RP[room] = {};
 		this.RP[room].plot = arg;
 		this.writeSettings();
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + 'The RP was set to ' + splitDoc(arg) + '.');
 		if (this.RP[room].setAt) return this.say(room, 'The RP was set to ' + arg + '.');
 		this.say(room, 'The RP was set to ' + arg + '. Use .start to start the RP.');
 	},
@@ -568,6 +580,7 @@ exports.commands = {
 		} else {
 			this.say(room, '**The RP has started.**');
 		}
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has started.");
 	},
 	'pause': 'rppause',
 	pauserp: 'rppause',
@@ -595,6 +608,7 @@ exports.commands = {
 		} else {
 			this.say(room, '**RP pause**');
 		}
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has been paused.");
 	},
 	'continue': 'rpcontinue',
 	'resume': 'rpcontinue',
@@ -633,7 +647,9 @@ exports.commands = {
 		} else {
 			this.say(room, '**RP continue**');
 		}
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has been resumed.");
 	},
+	sh: 'sethost',
 	sethost: function(arg, by, room) {
 		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!arg) return this.say(room, 'Please enter a host.');
@@ -658,7 +674,10 @@ exports.commands = {
 			this.say(room, '/roomvoice '+ arg);
 		}
 		this.say(room, 'The host was set to ' + arg + '.');
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "The host was set to " + arg + ".");
+
 	},
+	sch: 'setcohost',
 	setcohost: function(arg, by, room) {
 		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!arg) return this.say(room, 'Please enter a cohost.');
@@ -666,7 +685,9 @@ exports.commands = {
 		this.RP[room].cohost = arg;
 		this.writeSettings();
 		this.say(room, 'The cohost(s) was/were set to ' + arg + '.');
-	},	
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "The cohost(s) was/were set to " + arg + ".");
+	},
+	rh: 'rmhost',
 	rmhost: function(arg, by, room) {
 		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].host) return this.say(room, 'There is no host to remove.');
@@ -684,7 +705,9 @@ exports.commands = {
 		delete this.RP[room].host;
 		this.writeSettings();
 		this.say(room, 'The host has been removed.');
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "The host has been removed.");
 	},
+	rch: 'rmcohost',
 	rmcohost: function(arg, by, room) {
 		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
 		if (!this.RP[room].cohost) return this.say(room, 'There are no cohosts to remove.');
@@ -692,6 +715,7 @@ exports.commands = {
 		delete this.RP[room].cohost;
 		this.writeSettings();
 		this.say(room, 'The cohost(s) has/have been removed.');
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "The cohost(s) has/have been removed.");
 	},
 	rpend: 'endrp',
 	endrp: function(arg, by, room) {
@@ -711,7 +735,7 @@ exports.commands = {
 				delete this.conquestTimeouts[room];
 			}
 		}
-		
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended.");
 		if (!(room == "amphyrp")){
 			if (this.RP[room].host){
 				if (room == 'rustyrp' || (config.voiceList.indexOf(toId(this.RP[room].host)) == -1)) {
@@ -737,8 +761,23 @@ exports.commands = {
 		this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'void');
 	},
 	void: function(arg, by, room) {
-		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot || room === 'rustyrp') return false;
+		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot) return false;
 		var text = '';
+		if (room === 'rustyrp'){
+			text += '**';
+			if (this.RP['roleplaying'].plot) {
+				text += "The RP in Roleplaying is " + splitDoc(this.RP['roleplaying'].plot) + ".";
+			}
+			if (this.RP['amphyrp'].plot) {
+				text += " The RP in AmphyRP is " + splitDoc(this.RP['amphyrp'].plot) + ".";
+			}
+			if (!this.RP['roleplaying'].plot && !this.RP['amphyrp'].plot) {
+				text += "No RPs are void.";
+			}
+			text += "**";
+			return this.say(room, text);
+		}
+
 		var voided = this.RP.void[room];
 		switch (voided.length) {
 			case 2:
@@ -831,7 +870,7 @@ exports.commands = {
 		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
 	},
     rppoll: function(arg, by, room) {
-        if (!this.canUse('setrp', room, by) || this.RP['roleplaying'].plot || room !== 'roleplaying') return false; //setrp perms? is this RP room?
+        if (!this.hasRank(by, '%@#&~') || this.RP['roleplaying'].plot || room !== 'roleplaying') return false; //setrp perms? is this RP room?
 		if (pollON[room]) { //if there's a poll already
 			this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already.');
 			return false; //exit function
@@ -839,12 +878,16 @@ exports.commands = {
 		//No poll on
 		pollON[room] = true; //There's a poll on now.
 		var now = new Date(); //Good to know what time it is now
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "RP poll has been has been created by " + by + ".");
 		this.say(room, '/wall **PM Roleplaying Bot** with .nom [RP] to nominate the RP you want to be next. Remember to only PM RPs you can host. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()));
 		pollTimer[room] = setTimeout(function() {
 		    console.log(new Date().toString() + " Suggestion period has ended.");
 		    if(pollNoms.length == 1) {
-		    	this.splitMessage('>' + room + '\n|c|~Morfent' + config.commandcharacter + 'setrp ' + pollNoms[0]);
 		    	pollON[room] = false;
+		       	this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'setrp ' + pollNoms[0]);
+		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'cruise' || toId(pollNoms[0]) == 'prom') {
+		       		this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'start');
+		       	}
 		       	pollNoms = [];
 		    	return false;
 		    }
@@ -963,6 +1006,40 @@ exports.commands = {
         if (toId(this.RP.void['roleplaying'].toString()).indexOf(toId(arg)) > -1) {
         	return this.say(room, 'That RP is void.');
         }
+        switch (toId(arg)) {
+		    case 'goodvsevil':
+		    	goodvsevilNom.push(by);
+		        break;
+		    case 'conquest':
+		    	conquestNom.push(by);
+		        break;
+		    case 'trainer':
+		    	trainerNom.push(by);
+		        break;
+		    case 'pokehigh':
+		    	pokehighNom.push(by);
+		        break;
+		    case 'totaldramaisland':
+		    	totaldramaislandNom.push(by);
+		        break;
+		    case 'murdermystery':
+		    	murdermysteryNom.push(by);
+		        break;
+		    case 'pokemonmysterydungeon':
+		    	pokemonmysterydungeonNom.push(by);
+		        break;
+		    case 'dungeonsndragonites':
+		    	dungeonsndragonitesNom.push(by);
+		        break;
+		    case 'kingdom':
+		    	kingdomNom.push(by);
+		        break;
+		    case 'hungergames':
+		    	hungergamesNom.push(by);
+		        break;
+		    default:
+		    break;
+		}
         if(toId(pollNoms.toString()).indexOf(toId(arg)) > -1) {
         	this.say(room, 'That RP has already been suggested.');
         	return false;
@@ -986,11 +1063,14 @@ exports.commands = {
 			var now = new Date();
 			if (arg && toId(arg) !== 'requested' && toId(arg).length < 19) {
 				this.say(room, '/poll create End Poll: ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ". Requested by " + arg + " , Continue, End");
+				console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "End poll has been has been created by " + by + " upon request by " + arg + ".");
+				this.say(room, '/modnote ' + by + ' created an end poll upon request by ' + arg + "");
 			} else {
 				this.say(room, '/poll create End Poll: ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ", Continue, End");
+				console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "End poll has been has been created by " + by + ".");
+				this.say(room, '/modnote ' + by + ' created an end poll.');
 			}
 				this.say(room, '/poll timer 3');
-				this.say(room, '/modnote ' + by + ' created an end poll.');
 				this.RP[room].endpollCalled = true;
 				setTimeout(function() {
 					this.say(room, '!poll display');
@@ -1008,8 +1088,53 @@ exports.commands = {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) return false;
 		this.say(room, '/w ' + by + ', Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
 	},
-	conquestRules: function(arg, by, room) {
-		if (config.serverid !== 'showdown' || !this.hasRank(by, '+%@#&~') || !(room in this.RP)) return false;
-		this.say(room, '/w ' + by + ', The conquestRules command has been incorperated into .start.');
+	nominators: function (arg, by, room) {
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP)) return false;
+		if (RPOpts.indexOf(toId(arg)) > -1) {
+			switch (toId(arg)) {
+				case 'goodvsevil':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + goodvsevilNom.join(', '));
+				    break;
+				case 'conquest':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + conquestNom.join(', '));
+				    break;
+				case 'trainer':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + trainerNom.join(', '));
+				    break;
+				case 'pokehigh':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + pokehighNom.join(', '));
+				    break;
+				case 'totaldramaisland':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + totaldramaislandNom.join(', '));
+				    break;
+				case 'murdermystery':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + murdermysteryNom.join(', '));
+				    break;
+				case 'pokemonmysterydungeon':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + pokemonmysterydungeonNom.join(', '));
+				    break;
+				case 'dungeonsndragonites':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + dungeonsndragonitesNom.join(', '));
+				    break;
+				case 'kingdom':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + kingdomNom.join(', '));
+				    break;
+				case 'hungergames':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + hungergamesNom.join(', '));
+				    break;
+				default:
+				break;
+				}
+			goodvsevilNom = [];
+			conquestNom = [];
+			trainerNom = [];
+			pokehighNom = [];
+			totaldramaislandNom = [];
+			murdermysteryNom = [];
+			pokemonmysterydungeonNom = [];
+			dungeonsndragonitesNom = [];
+			kingdomNom = [];
+			hungergamesNom = [];
+		}
 	}
 };

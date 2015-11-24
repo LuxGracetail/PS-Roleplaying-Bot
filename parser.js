@@ -71,6 +71,11 @@ exports.parse = {
 			this.message(spl[i], room);
 		}
 	},
+	splitDoc: function(voided) {
+		if (!/docs\./.test(voided)) return voided;
+		voided = voided.replace(/(doc.*)?(https?:\/\/)?docs\.*/i, '');
+		return voided;
+	},
 	message: function(message, room) {
 		var spl = message.split('|');
 		switch (spl[1]) {
@@ -311,7 +316,7 @@ exports.parse = {
     			third.each(function(i, elem) {
   					opts.push($(this).text());
 				});
-				console.log('Poll opts: ' + opts.join(', '));
+				console.log(new Date().toString() + ' Poll opts: ' + opts.join(', '));
 				var percentage = $('div div small');
 				percentage.each(function(y, elem) {
 					perRaw[y] = $(this).text();
@@ -319,19 +324,20 @@ exports.parse = {
 				$('div p strong').each(function(i, elem) {
 					title = $(this).text();
 				});
-				for(var i = 0; i < perRaw.length; i++) {
-					if(perRaw[i].indexOf('%') > -1) {
+				for (var i = 0; i < perRaw.length; i++) {
+					if (perRaw[i].indexOf('%') > -1) {
 						per.push(Number(toId(perRaw[i])));
 					}
 				}
-				for(var x = 0; x < per.length; x++) {
-					if(!tieopts[0]) tieopts[0] = opts[x];
-					if(per[x] > winpercent) {
+				for (var x = 0; x < per.length; x++) {
+					if (!tieopts[0]) tieopts[0] = opts[x];
+					if (per[x] > winpercent) {
 						winpercent = per[x];
 						winopt = opts[x];
 						tieopts[0] = opts[x];
+						istie = false;
 					}
-					if(per[x] == winpercent) {
+					if (per[x] == winpercent) {
 						istie = true;
 						if(tieopts[0] == opts[x]) continue;
 						else tieopts.push(opts[x]);
@@ -341,14 +347,16 @@ exports.parse = {
 					var endvote = per[opts.indexOf('End')] ? per[opts.indexOf('End')] : per[opts.indexOf('end')];
 					var contvote = per[opts.indexOf('Continue')] ? per[opts.indexOf('Continue')] : per[opts.indexOf('continue')];
 					if (!contvote && per[opts.indexOf('cont')]) contvote = per[opts.indexOf('cont')];
-					if(endvote > 54) {
+					if (endvote > 54) {
 						Parse.say(room, '**RP Ends with '+ endvote + '% end.**');
+						console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + /*splitDoc(*/this.RP[room].plot/*)*/ + ' ends with ' + endvote + '% end.');
 						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'endrp');
 					} else {
 						Parse.say(room, '**RP Continues with '+ contvote + '% continue.**');
+						console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + /*splitDoc(*/this.RP[room].plot/*)*/ + ' continues with ' + contvote + '% continue.');
 					}
 				} else if (toId(title).indexOf('host') > -1){
-					if(istie == true && tieopts.length > 1) {
+					if (istie == true && tieopts.length > 1) {
 						setTimeout(function(){
 							Parse.say(room, '/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
 							Parse.say(room, '/poll timer 3');
@@ -362,19 +370,28 @@ exports.parse = {
 						}, 2 * 60 * 1000 + 1000);
 					} else {
 						this.say(room, '**' + winopt + ' won with ' + winpercent + '%.**');
+						console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + winopt + ' won with ' + winpercent + '%.');
 						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'sethost ' + winopt);
 					}
 				} else if (toId(title).indexOf('nextrp') > -1) {
-					if(istie == true && tieopts.length > 1) {
+					if (istie == true && tieopts.length > 1) {
 						setTimeout(function(){
 							Parse.say(room, '/poll create Tiebreaker Next RP Poll, ' + tieopts.join(', '));
 							Parse.say(room, '/poll timer 3');
 						}, 1000);
+						setTimeout(function(){
+							Parse.say(room, '!poll display');
+						}, 60 * 1000 + 1000);
+						setTimeout(function(){
+							Parse.say(room, '!poll display');
+						}, 2 * 60 * 1000 + 1000);
 					} else {
 						Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
 						this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
-						if(toId(winopt) == 'freeroam' || toId(winopt) == 'cruise' || toId(winopt) == 'prom') {
+						if (toId(winopt) == 'freeroam' || toId(winopt) == 'cruise' || toId(winopt) == 'prom') {
 							this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'start ' + winopt);
+						} else {
+							this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + winopt);
 						}
 					}
 				}
@@ -711,11 +728,6 @@ exports.parse = {
 		}
 		if (!times.length) return '0 seconds';
 		return times.join(', ');
-	},
-	splitDoc: function(voided) {
-		if (!/docs\./.test(voided)) return voided;
-		voided = voided.replace(/(doc.*)?(https?:\/\/)?docs\.*/i, '');
-		return voided;
 	},
 	writeSettings: (function() {
 		var writing = false;
