@@ -564,6 +564,8 @@ exports.commands = {
 				this.say(room, "__All participants within the RP may only have ONE chance to coup any kingdom. PM me/the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.__");
 				this.say(room, "**Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.**");
 				this.say(room, "__Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). Lastly, if a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.__");
+				this.say(room, "***Finally, a reminder that, if you do not RP, you are liable to be ignored by the person you are challenging.**");
+
 		}
 		
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
@@ -870,10 +872,10 @@ exports.commands = {
 		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
 	},
     rppoll: function(arg, by, room) {
-        if (!this.hasRank(by, '%@#&~') || this.RP['roleplaying'].plot || room !== 'roleplaying') return false; //setrp perms? is this RP room?
+        if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || room !== 'roleplaying') return false; //setrp perms? is this RP room?
 		if (pollON[room]) { //if there's a poll already
-			this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already.');
-			return false; //exit function
+			return this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already.');
+
 		}
 		//No poll on
 		pollON[room] = true; //There's a poll on now.
@@ -884,11 +886,13 @@ exports.commands = {
 		    console.log(new Date().toString() + " Suggestion period has ended.");
 		    if(pollNoms.length == 1) {
 		    	pollON[room] = false;
-		       	this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'setrp ' + pollNoms[0]);
+		    	this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'setrp ' + rpcaps[RPOpts.indexOf(toId(pollNoms[0]))]);
 		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'cruise' || toId(pollNoms[0]) == 'prom') {
-		       		this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'start');
+		       		pollNoms = [];
+		       		return this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'start');
 		       	}
-		       	pollNoms = [];
+		    	this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
+		    	pollNoms = [];
 		    	return false;
 		    }
 		    if(pollNoms.length > 1) { //If there are enough options to make a poll?
@@ -1059,6 +1063,7 @@ exports.commands = {
 	},
 	endpoll: function(arg, by, room) {
 		if (!this.canUse('endpoll', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false;
+		if (!arg) return this.say(room, 'Please specify the requester of the poll.');
 		if (!this.RP[room].endpollCalled) {
 			var now = new Date();
 			if (arg && toId(arg) !== 'requested' && toId(arg).length < 19) {
@@ -1138,3 +1143,4 @@ exports.commands = {
 		}
 	}
 };
+
