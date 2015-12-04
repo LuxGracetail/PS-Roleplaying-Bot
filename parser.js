@@ -14,7 +14,7 @@ var url = require('url');
 
 const ACTION_COOLDOWN = 3*1000;
 const FLOOD_MESSAGE_NUM = 5;
-const FLOOD_PER_MSG_MIN = 500; // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
+const FLOOD_PER_MSG_MIN = 200; // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
 const FLOOD_MESSAGE_TIME = 6*1000;
 const MIN_CAPS_LENGTH = 18;
 const MIN_CAPS_PROPORTION = 0.8;

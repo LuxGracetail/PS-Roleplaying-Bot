@@ -554,7 +554,7 @@ exports.commands = {
 			delete this.RP[room].endpollCalled;
 		}
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
-				this.say(room, '**Arceus, Darkrai, Mewtwo, Mega-Rayquaza, and Primal forms are banned. They may have up to two knights and only three kingdoms are allowed in an alliance.**');
+				this.say(room, '**Arceus, Darkrai, Mewtwo, Mega-Rayquaza, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
 				this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
 				this.say(room, "**Blaziken, Greninja, Mega Gallade (for Psychic ONLY), Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Soul Dew, Damp Rock, and Smooth Rock are banned.**");
 				this.say(room, "__Ghost cannot have both Giratina-A and Aegislash on the same team.__");
@@ -564,7 +564,7 @@ exports.commands = {
 				this.say(room, "__All participants within the RP may only have ONE chance to coup any kingdom. PM me/the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.__");
 				this.say(room, "**Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.**");
 				this.say(room, "__Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). Lastly, if a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.__");
-				this.say(room, "***Finally, a reminder that, if you do not RP, you are liable to be ignored by the person you are challenging.**");
+				this.say(room, "**Finally, a reminder that, if you do not RP, you are liable to be ignored by the person you are challenging.**");
 
 		}
 		
@@ -969,6 +969,9 @@ exports.commands = {
         	case 'hg':
         		arg = 'Hunger Games';
         		break;
+        	case 'za':
+        		arg = 'zombie apocalypse';
+        		break;
         	default:
         		break;
         }
@@ -1063,7 +1066,6 @@ exports.commands = {
 	},
 	endpoll: function(arg, by, room) {
 		if (!this.canUse('endpoll', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false;
-		if (!arg) return this.say(room, 'Please specify the requester of the poll.');
 		if (!this.RP[room].endpollCalled) {
 			var now = new Date();
 			if (arg && toId(arg) !== 'requested' && toId(arg).length < 19) {
