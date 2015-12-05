@@ -11,8 +11,8 @@ var pollON = false;
 var pollRoom = '';
 var pollTimer = {};
 var pollNoms = [];
-var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'totaldramaisland', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom', 'hungergames'];
-var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom', 'Hunger Games'];
+var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'totaldramaisland', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom', 'hungergames', 'zombieapocalypse'];
+var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom', 'Hunger Games', 'Zombie Apocalypse'];
 
 var goodvsevilNom = [];
 var conquestNom = [];
@@ -575,7 +575,7 @@ exports.commands = {
 				this.say(room, "__All participants within the RP may only have ONE chance to coup any kingdom. PM me/the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.__");
 				this.say(room, "**Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.**");
 				this.say(room, "__Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). Lastly, if a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.__");
-				this.say(room, "**Finally, a reminder that, if you do not RP, you are liable to be ignored by the person you are challenging.**");
+				this.say(room, "**Finally, a reminder that, if you do not RP properly, you are liable to be ignored by the person you are challenging.**");
 
 		}
 		
@@ -944,7 +944,7 @@ exports.commands = {
     rppoll: function(arg, by, room) {
         if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || !(room in this.RP)) return false; //setrp perms? is this RP room?
 		if (pollON) { //if there's a poll already
-			return this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already.');
+			return this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already in ' + pollRoom);
 		}
 		pollRoom = room;
 		//No poll on
@@ -1201,16 +1201,25 @@ exports.commands = {
 				default:
 				break;
 				}
-			goodvsevilNom = [];
-			conquestNom = [];
-			trainerNom = [];
-			pokehighNom = [];
-			totaldramaislandNom = [];
-			murdermysteryNom = [];
-			pokemonmysterydungeonNom = [];
-			dungeonsndragonitesNom = [];
-			kingdomNom = [];
-			hungergamesNom = [];
 		}
+		goodvsevilNom = [];
+		conquestNom = [];
+		trainerNom = [];
+		pokehighNom = [];
+		totaldramaislandNom = [];
+		murdermysteryNom = [];
+		pokemonmysterydungeonNom = [];
+		dungeonsndragonitesNom = [];
+		kingdomNom = [];
+		hungergamesNom = [];
+	},
+	customPriority: 'voidpoll',
+	voidpoll: function(arg, by, room) {
+		if (!pollON || !this.hasRank(by, '%@#&~')) return false;
+		pollON = false;
+		this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
+		pollNoms = [];
+		clearTimeout(pollTimer[pollRoom]);
+		return this.say(room, "Poll Voided");
 	}
 };
