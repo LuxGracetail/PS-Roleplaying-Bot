@@ -518,7 +518,12 @@ exports.commands = {
 	// Roleplaying commands
 	rpset: "setrp",
 	setrp: function(arg, by, room) {
-		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP)) return false;
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != undefined) {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host))) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by)) return false;
+		}
 		if (!arg) return this.say(room, 'Please enter an RP.');
 
 		if(!this.RP[room]) this.RP[room] = {};
@@ -531,7 +536,12 @@ exports.commands = {
 	startrp: 'start',
 	rpstart: 'start',
 	start: function(arg, by, room) {
-		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || this.RP[room].setAt) return false;
+		if (!(room in this.RP)) return false;
+		if (!!this.RP[room].host) {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || this.RP[room].setAt) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || this.RP[room].setAt) return false;
+		}
 		if (!this.RP[room].plot) {
 			if (!arg) return this.say(room, 'Please set an RP before using .start, or specify an RP with .start to start one immediately.');
 			this.RP[room].plot = arg;
@@ -587,7 +597,12 @@ exports.commands = {
 	'pause': 'rppause',
 	pauserp: 'rppause',
 	rppause: function(arg, by, room) {
-		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt || this.RP[room].pause) return false;
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != undefined) {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].setAt || this.RP[room].pause) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].setAt || this.RP[room].pause) return false;
+		}
 
 		this.RP[room].pause = new Date();
 		if (this.freeroamTimeouts[room] && toId(this.RP[room].plot) === 'freeroam') {
@@ -617,7 +632,12 @@ exports.commands = {
 	'rpresume': 'rpcontinue',
 	continuerp: 'rpcontinue',
 	rpcontinue: function(arg, by, room) {
-		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].setAt || !this.RP[room].pause) return false;
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != undefined) {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].setAt || !this.RP[room].pause) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].setAt || !this.RP[room].pause) return false;
+		}
 
 		var paused = new Date(this.RP[room].pause); //Time it was paused at.
 		var setAt = new Date(this.RP[room].setAt); //Time it was originally set at.
@@ -653,7 +673,12 @@ exports.commands = {
 	},
 	sh: 'sethost',
 	sethost: function(arg, by, room) {
-		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != undefined) {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
+		}
 		if (!arg) return this.say(room, 'Please enter a host.');
 
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
@@ -681,7 +706,12 @@ exports.commands = {
 	},
 	sch: 'setcohost',
 	setcohost: function(arg, by, room) {
-		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != undefined) {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
+		}
 		if (!arg) return this.say(room, 'Please enter a cohost.');
 				
 		this.RP[room].cohost = arg;
@@ -691,7 +721,12 @@ exports.commands = {
 	},
 	rh: 'rmhost',
 	rmhost: function(arg, by, room) {
-		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != undefined) {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
+		}
 		if (!this.RP[room].host) return this.say(room, 'There is no host to remove.');
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
 			if (room == 'rustyrp' || (config.voiceList.indexOf(toId(this.RP[room].host)) == -1)) {
@@ -711,7 +746,12 @@ exports.commands = {
 	},
 	rch: 'rmcohost',
 	rmcohost: function(arg, by, room) {
-		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != undefined) {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
+		}
 		if (!this.RP[room].cohost) return this.say(room, 'There are no cohosts to remove.');
 
 		delete this.RP[room].cohost;
@@ -721,7 +761,12 @@ exports.commands = {
 	},
 	rpend: 'endrp',
 	endrp: function(arg, by, room) {
-		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].plot) return false;
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != undefined) {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
+		}
 		if (config.serverid === 'showdown' && this.RP[room].setAt) {
 			nextVoid = splitDoc(this.RP[room].plot);
 			if (this.RP.void[room].length === 2) this.RP.void[room].shift();
@@ -811,6 +856,30 @@ exports.commands = {
 		}
 	},
 	rp: function(arg, by, room) {
+		if (room.charAt(0) === ','){
+			var text = '';
+			var roomArray = ['Roleplaying','AmphyRP','RustyRP'];
+			for (i = 0; i < roomArray.length; i ++) {
+				if (this.RP[toId(roomArray[i])].plot) {
+					text += " The RP in " + roomArray[i] + " is " + splitDoc(this.RP[toId(roomArray[i])].plot);
+					if (this.RP[toId(roomArray[i])].setAt) {
+						var start = new Date(this.RP[toId(roomArray[i])].setAt);
+						var now = (this.RP[toId(roomArray[i])].pause) ? new Date(this.RP[toId(roomArray[i])].pause) : new Date();
+						var diff = (now.getTime() - start.getTime()) / 1000;
+						var seconds = Math.floor(diff % 60);
+						diff /= 60;
+						var minutes = Math.floor(diff % 60);
+						diff /= 60;
+						var hours = Math.floor(diff % 24);
+						var progress = hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
+						text += ', in progress for ' + progress + '.';
+					} else {
+						text += '.';
+					}
+				}
+			}
+			return this.say(room, text);
+		}
 		if (!(room in this.RP)) return false;
 		if (this.RP[room].called) {
 			var text = '/pm ' + by + ', ';
@@ -875,7 +944,6 @@ exports.commands = {
         if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || room !== 'roleplaying') return false; //setrp perms? is this RP room?
 		if (pollON[room]) { //if there's a poll already
 			return this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already.');
-
 		}
 		//No poll on
 		pollON[room] = true; //There's a poll on now.
@@ -933,8 +1001,7 @@ exports.commands = {
     nominate: function(arg, by, room) {
     	if(room.charAt(0) !== ',') return false; //Making it PM only to prevent changes.  Making these edits at 2 AM, feel free to like...  fix them if I screwed up.
         if (!pollON['roleplaying']) {
-            this.say(room, 'There is no RP poll in progress.');
-            return false;
+            return this.say(room, 'There is no RP poll in progress.');
         } //  Why not an if else?
         switch (toId(arg)) { // ['freeroam','goodvsevil','conquest','trainer','pokehigh','totaldramaisland','prom','cruise', 'murdermystery'];
         	case 'fr':
@@ -977,19 +1044,16 @@ exports.commands = {
         }
         if(this.RP['amphyrp'].plot) {
     	    if(toId(arg) == toId(splitDoc(this.RP['amphyrp'].plot))) {
-    	  	this.say(room, 'That RP is currently ongoing in amphyrp.');
-        		return false;
+    	  		return this.say(room, 'That RP is currently ongoing in amphyrp.');
 			}
     	}
     	if(this.RP['rustyrp'].plot) {
     	    if(toId(arg) == toId(splitDoc(this.RP['rustyrp'].plot))) {
-    	  	this.say(room, 'That RP is currently ongoing in rustyrp.');
-        		return false;
+    		  	return this.say(room, 'That RP is currently ongoing in rustyrp.');
 			}
     	}
         if(RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
-            this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
-            return false;
+            return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
         if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
         	if(toId(this.RP.void['roleplaying'].toString()).indexOf('kingdom') > -1 || toId(this.RP.void['roleplaying'].toString()).indexOf('freeroam') > -1 || toId(this.RP.void['roleplaying'].toString()).indexOf('cruise') > -1 || toId(this.RP.void['roleplaying'].toString()).indexOf('prom') > -1)
@@ -999,14 +1063,12 @@ exports.commands = {
         	if(toId(this.RP.void['roleplaying'].toString()).indexOf('dungeonsnd') > -1 || toId(this.RP.void['roleplaying'].toString()).indexOf('dungeonsandd') > -1) return this.say(room, 'That RP is void.');
 		    if(this.RP['amphyrp'].plot) {
 			    if(toId((this.RP['amphyrp'].plot).toString()).indexOf('dungeonsnd') > -1 || toId((this.RP['amphyrp'].plot).toString()).indexOf('dungeonsandd') > -1) {
-			  	this.say(room, 'That RP is currently ongoing in amphyrp.');
-		    		return false;
+				  	return this.say(room, 'That RP is currently ongoing in amphyrp.');
 				}
 			}
 			if(this.RP['rustyrp'].plot) {
 			    if(toId((this.RP['rustyrp'].plot).toString()).indexOf('dungeonsnd') > -1 || toId((this.RP['rustyrp'].plot).toString()).indexOf('dungeonsandd') > -1) {
-			  	this.say(room, 'That RP is currently ongoing in rustyrp.');
-		    		return false;
+			  		return this.say(room, 'That RP is currently ongoing in rustyrp.');
 				}
 			}
         }
@@ -1048,8 +1110,7 @@ exports.commands = {
 		    break;
 		}
         if(toId(pollNoms.toString()).indexOf(toId(arg)) > -1) {
-        	this.say(room, 'That RP has already been suggested.');
-        	return false;
+        	return this.say(room, 'That RP has already been suggested.');
         } else {
     	    pollNoms.push(arg);
     	    this.say(room, 'Thank you for your suggestion! Please note that not all RPs may be added to poll.');
@@ -1066,6 +1127,7 @@ exports.commands = {
 	},
 	endpoll: function(arg, by, room) {
 		if (!this.canUse('endpoll', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false;
+//		if (!arg) return this.say(room, 'Please specify the requester of the poll.');
 		if (!this.RP[room].endpollCalled) {
 			var now = new Date();
 			if (arg && toId(arg) !== 'requested' && toId(arg).length < 19) {
@@ -1092,6 +1154,9 @@ exports.commands = {
 	},
 	legends: 'legend',
 	legend: function(arg, by, room) {
+		if (config.serverid == 'showdown' && room.charAt(0) === ',' && (config.staffList.indexOf(toId(by)) > -1)) {
+			return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
+		}
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) return false;
 		this.say(room, '/w ' + by + ', Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
 	},
