@@ -7,7 +7,8 @@
 var http = require('http');
 var sys = require('sys');
 
-var pollON = {};
+var pollON = false;
+var pollRoom = '';
 var pollTimer = {};
 var pollNoms = [];
 var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'totaldramaisland', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom', 'hungergames'];
@@ -941,19 +942,20 @@ exports.commands = {
 		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
 	},
     rppoll: function(arg, by, room) {
-        if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || room !== 'roleplaying') return false; //setrp perms? is this RP room?
-		if (pollON[room]) { //if there's a poll already
+        if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || !(room in this.RP)) return false; //setrp perms? is this RP room?
+		if (pollON) { //if there's a poll already
 			return this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already.');
 		}
+		pollRoom = room;
 		//No poll on
-		pollON[room] = true; //There's a poll on now.
+		pollON = true; //There's a poll on now.
 		var now = new Date(); //Good to know what time it is now
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "RP poll has been has been created by " + by + ".");
 		this.say(room, '/wall **PM Roleplaying Bot** with .nom [RP] to nominate the RP you want to be next. Remember to only PM RPs you can host. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()));
 		pollTimer[room] = setTimeout(function() {
 		    console.log(new Date().toString() + " Suggestion period has ended.");
 		    if(pollNoms.length == 1) {
-		    	pollON[room] = false;
+		    	pollON = false;
 		    	this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'setrp ' + rpcaps[RPOpts.indexOf(toId(pollNoms[0]))]);
 		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'cruise' || toId(pollNoms[0]) == 'prom') {
 		       		pollNoms = [];
@@ -961,10 +963,11 @@ exports.commands = {
 		       	}
 		    	this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
 		    	pollNoms = [];
+		    	pollroom = ''
 		    	return false;
 		    }
 		    if(pollNoms.length > 1) { //If there are enough options to make a poll?
-		    	pollON[room] = true; //There's still a poll in progress marker from earlier on? I'm not sure why you're restating this.
+		    	pollON = true; //There's still a poll in progress marker from earlier on? I'm not sure why you're restating this.
 		    	for(var y = 0; y < pollNoms.length; y++) { // y is which poll option you are at.
 		    		if(RPOpts.indexOf(toId(pollNoms[y])) > -1) { //If it's in the offical RP list
 		    			pollNoms[y] = rpcaps[RPOpts.indexOf(toId(pollNoms[y]))]; //Translate it to the properly capitalised version.
@@ -987,23 +990,24 @@ exports.commands = {
 			    	this.say(room, '!poll display');
 		    	}.bind(this), 2 * 60 * 1000);
 		    	setTimeout(function() {
-		    		pollON[room] = false;
+		    		pollON = false;
 	 				pollNoms = [];  // Maybe?  I dunno.  Clear poll noms after a poll has failed.
 		    	}.bind(this), 3 * 60 * 1000);
 		    } else {
 		        this.say(room, '/wall There were not enough nominations.');
-		        pollON[room] = false;
+		        pollON = false;
 		       	pollNoms = [];  // Maybe?  I dunno.  Clear poll noms after a poll has failed.
+		       	pollroom = ''
 		    }
 		}.bind(this), 3 * 60 * 1000);
     },
     nom: "nominate",
     nominate: function(arg, by, room) {
     	if(room.charAt(0) !== ',') return false; //Making it PM only to prevent changes.  Making these edits at 2 AM, feel free to like...  fix them if I screwed up.
-        if (!pollON['roleplaying']) {
+        if (!pollON) {
             return this.say(room, 'There is no RP poll in progress.');
         } //  Why not an if else?
-        switch (toId(arg)) { // ['freeroam','goodvsevil','conquest','trainer','pokehigh','totaldramaisland','prom','cruise', 'murdermystery'];
+        switch (toId(arg)) {
         	case 'fr':
         		arg = 'Freeroam';
         		break;
@@ -1042,15 +1046,15 @@ exports.commands = {
         	default:
         		break;
         }
-        if(this.RP['amphyrp'].plot) {
-    	    if(toId(arg) == toId(splitDoc(this.RP['amphyrp'].plot))) {
-    	  		return this.say(room, 'That RP is currently ongoing in amphyrp.');
+        for (i = 0; i < config.rprooms.length; i++) {
+			if (this.RP[config.rprooms[i]].plot) {
+				if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
+					return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
+				}
 			}
-    	}
-    	if(this.RP['rustyrp'].plot) {
-    	    if(toId(arg) == toId(splitDoc(this.RP['rustyrp'].plot))) {
-    		  	return this.say(room, 'That RP is currently ongoing in rustyrp.');
-			}
+		}
+    	if (pollRoom == 'amphyrp' && toId(arg) == 'freeroam'){
+    	    return this.say(room, "Freeroam cannot be run in AmphyRP.");
     	}
         if(RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
@@ -1210,4 +1214,3 @@ exports.commands = {
 		}
 	}
 };
-
