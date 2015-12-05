@@ -1076,7 +1076,7 @@ exports.commands = {
 				}
 			}
         }
-        if (toId(this.RP.void['roleplaying'].toString()).indexOf(toId(arg)) > -1) {
+        if (toId(this.RP.void[pollRoom].toString()).indexOf(toId(arg)) > -1) {
         	return this.say(room, 'That RP is void.');
         }
         switch (toId(arg)) {
