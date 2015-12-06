@@ -520,7 +520,7 @@ exports.commands = {
 	rpset: "setrp",
 	setrp: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
-		if (typeof this.RP[room].host != undefined) {
+		if (typeof this.RP[room].host != 'undefined') {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host))) return false;
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by)) return false;
@@ -599,7 +599,7 @@ exports.commands = {
 	pauserp: 'rppause',
 	rppause: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
-		if (typeof this.RP[room].host != undefined) {
+		if (typeof this.RP[room].host != 'undefined') {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].setAt || this.RP[room].pause) return false;
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].setAt || this.RP[room].pause) return false;
@@ -634,7 +634,7 @@ exports.commands = {
 	continuerp: 'rpcontinue',
 	rpcontinue: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
-		if (typeof this.RP[room].host != undefined) {
+		if (typeof this.RP[room].host != 'undefined') {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].setAt || !this.RP[room].pause) return false;
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].setAt || !this.RP[room].pause) return false;
@@ -675,7 +675,7 @@ exports.commands = {
 	sh: 'sethost',
 	sethost: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
-		if (typeof this.RP[room].host != undefined) {
+		if (typeof this.RP[room].host != 'undefined') {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
@@ -708,7 +708,7 @@ exports.commands = {
 	sch: 'setcohost',
 	setcohost: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
-		if (typeof this.RP[room].host != undefined) {
+		if (typeof this.RP[room].host != 'undefined') {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
@@ -723,7 +723,7 @@ exports.commands = {
 	rh: 'rmhost',
 	rmhost: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
-		if (typeof this.RP[room].host != undefined) {
+		if (typeof this.RP[room].host != 'undefined') {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
@@ -748,7 +748,7 @@ exports.commands = {
 	rch: 'rmcohost',
 	rmcohost: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
-		if (typeof this.RP[room].host != undefined) {
+		if (typeof this.RP[room].host != 'undefined') {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
@@ -763,7 +763,7 @@ exports.commands = {
 	rpend: 'endrp',
 	endrp: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
-		if (typeof this.RP[room].host != undefined) {
+		if (typeof this.RP[room].host != 'undefined') {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
@@ -951,7 +951,7 @@ exports.commands = {
 		pollON = true; //There's a poll on now.
 		var now = new Date(); //Good to know what time it is now
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "RP poll has been has been created by " + by + ".");
-		this.say(room, '/wall **PM Roleplaying Bot** with .nom [RP] to nominate the RP you want to be next. Remember to only PM RPs you can host. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()));
+		this.say(room, '/wall **PM Roleplaying Bot** with .nom [RP] to nominate the RP you want to be next. Remember to only PM RPs you can host and PM staff your customs. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()));
 		pollTimer[room] = setTimeout(function() {
 		    console.log(new Date().toString() + " Suggestion period has ended.");
 		    if(pollNoms.length == 1) {
