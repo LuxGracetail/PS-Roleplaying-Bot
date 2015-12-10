@@ -80,7 +80,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'http://www.smogon.com/stats/2015-10/';
+		text += 'http://www.smogon.com/stats/2015-11/';
 		this.say(room, text);
 	},
 
@@ -810,6 +810,11 @@ exports.commands = {
 	},
 	void: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot) return false;
+		if (arg && this.hasRank(by, '%@#&~')) { //Doesn't seem to recognise two arguments
+			var spl = arg.split(', ');
+			if(spl.length !== 2) return this.say(room, 'Void only accepts 2 arguments.');
+			this.RP.void[room] = [spl[0],spl[1]];
+		}
 		var text = '';
 		if (room === 'rustyrp'){
 			text += '**';
@@ -942,7 +947,7 @@ exports.commands = {
 		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
 	},
     rppoll: function(arg, by, room) {
-        if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || !(room in this.RP)) return false; //setrp perms? is this RP room?
+        if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || !(room in this.RP) || room === 'amphyrp') return false; //setrp perms? is this RP room?
 		if (pollON) { //if there's a poll already
 			return this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already in ' + pollRoom);
 		}
@@ -1064,15 +1069,15 @@ exports.commands = {
         	return this.say(room, 'That RP is void.');
         }
        if(toId(arg) == 'dungeonsndragonites' || toId(arg) == 'dungeonsndragons' || toId(arg) == 'dungeonsndruddigons') {
-        	if(toId(this.RP.void['roleplaying'].toString()).indexOf('dungeonsnd') > -1 || toId(this.RP.void['roleplaying'].toString()).indexOf('dungeonsandd') > -1) return this.say(room, 'That RP is void.');
-		    if(this.RP['amphyrp'].plot) {
-			    if(toId((this.RP['amphyrp'].plot).toString()).indexOf('dungeonsnd') > -1 || toId((this.RP['amphyrp'].plot).toString()).indexOf('dungeonsandd') > -1) {
-				  	return this.say(room, 'That RP is currently ongoing in amphyrp.');
-				}
-			}
-			if(this.RP['rustyrp'].plot) {
-			    if(toId((this.RP['rustyrp'].plot).toString()).indexOf('dungeonsnd') > -1 || toId((this.RP['rustyrp'].plot).toString()).indexOf('dungeonsandd') > -1) {
-			  		return this.say(room, 'That RP is currently ongoing in rustyrp.');
+        	if(toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1) return this.say(room, 'That RP is void.');
+		    
+		    for (i = 0; i < config.rprooms.length; i++) {
+				if (this.RP[config.rprooms[i]].plot) {
+					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsnd') > -1 || toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsandd') > -1) {
+						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
+							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
+						}
+					}
 				}
 			}
         }
@@ -1223,3 +1228,4 @@ exports.commands = {
 		return this.say(room, "Poll Voided");
 	}
 };
+
