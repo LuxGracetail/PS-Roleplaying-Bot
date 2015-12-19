@@ -810,10 +810,12 @@ exports.commands = {
 	},
 	void: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot) return false;
-		if (arg && this.hasRank(by, '%@#&~')) { //Doesn't seem to recognise two arguments
-			var spl = arg.split(', ');
+		if (arg && this.hasRank(by, '%@#&~')) {
+			var spl = arg.split(',');
+			console.log(spl);
 			if(spl.length !== 2) return this.say(room, 'Void only accepts 2 arguments.');
 			this.RP.void[room] = [spl[0],spl[1]];
+			this.writeSettings();
 		}
 		var text = '';
 		if (room === 'rustyrp'){
@@ -947,7 +949,7 @@ exports.commands = {
 		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
 	},
     rppoll: function(arg, by, room) {
-        if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || !(room in this.RP) || room === 'amphyrp') return false; //setrp perms? is this RP room?
+        if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || !(room in this.RP)) return false; //setrp perms? is this RP room?
 		if (pollON) { //if there's a poll already
 			return this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already in ' + pollRoom);
 		}
@@ -1065,12 +1067,12 @@ exports.commands = {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
         if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
-        	if(toId(this.RP.void['roleplaying'].toString()).indexOf('kingdom') > -1 || toId(this.RP.void['roleplaying'].toString()).indexOf('freeroam') > -1 || toId(this.RP.void['roleplaying'].toString()).indexOf('cruise') > -1 || toId(this.RP.void['roleplaying'].toString()).indexOf('prom') > -1)
+        	if(toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1)
         	return this.say(room, 'That RP is void.');
         }
        if(toId(arg) == 'dungeonsndragonites' || toId(arg) == 'dungeonsndragons' || toId(arg) == 'dungeonsndruddigons') {
         	if(toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1) return this.say(room, 'That RP is void.');
-		    
+        	
 		    for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
 					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsnd') > -1 || toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsandd') > -1) {
