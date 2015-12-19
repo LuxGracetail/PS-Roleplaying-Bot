@@ -96,7 +96,7 @@ exports.commands = {
 		if (!this.hasRank(by, '#~')) return false;
 		try {
 			this.uncacheTree('./commands.js');
-			Commands = require('./commands.js').commands;
+			global.Commands = require('./commands.js').commands;
 			this.say(room, 'Commands reloaded.');
 		} catch (e) {
 			error('failed to reload: ' + sys.inspect(e));
@@ -123,6 +123,39 @@ exports.commands = {
 		} catch (e) {
 			this.say(room, e.name + ": " + e.message);
 		}
+	},
+	uptime: function (arg, by, room) {
+		var text = config.excepts.indexOf(toId(by)) < 0 ? '/pm ' + by + ', **Uptime:** ' : '**Uptime:** ';
+		var divisors = [52, 7, 24, 60, 60];
+		var units = ['week', 'day', 'hour', 'minute', 'second'];
+		var buffer = [];
+		var uptime = ~~(process.uptime());
+		do {
+			var divisor = divisors.pop();
+			var unit = uptime % divisor;
+			buffer.push(unit > 1 ? unit + ' ' + units.pop() + 's' : unit + ' ' + units.pop());
+			uptime = ~~(uptime / divisor);
+		} while (uptime);
+
+		switch (buffer.length) {
+		case 5:
+			text += buffer[4] + ', ';
+			/* falls through */
+		case 4:
+			text += buffer[3] + ', ';
+			/* falls through */
+		case 3:
+			text += buffer[2] + ', ' + buffer[1] + ', and ' + buffer[0];
+			break;
+		case 2:
+			text += buffer[1] + ' and ' + buffer[0];
+			break;
+		case 1:
+			text += buffer[0];
+			break;
+		}
+
+		this.say(room, text);
 	},
 
 	/**
@@ -560,6 +593,12 @@ exports.commands = {
 				delete this.conquestTimeouts[room];
 			}.bind(this), 10 * 60 * 1000);
 		}
+		if (this.conquestLockouts && /conquest/i.test(toId(this.RP[room].plot))){
+			this.conquestLockouts[room] = setTimeout(function() {
+					this.say(room, '**Types are now locked.**');
+					delete this.conquestLockouts[room];
+			}.bind(this), 2 * 60 * 60 * 1000);
+		}
 		
 		if (this.RP[room].endpollCalled) {
 			delete this.RP[room].endpollCalled;
@@ -567,15 +606,14 @@ exports.commands = {
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
 				this.say(room, '**Arceus, Darkrai, Mewtwo, Mega-Rayquaza, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
 				this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
-				this.say(room, "**Blaziken, Greninja, Mega Gallade (for Psychic ONLY), Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Soul Dew, Damp Rock, and Smooth Rock are banned.**");
-				this.say(room, "__Ghost cannot have both Giratina-A and Aegislash on the same team.__");
-				this.say(room, "**Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.**");
-				this.say(room, "__Wanderers may challenge a Kingdom for knightship. This can't be declined, but if the Wanderer loses, they either die or cannot challenge the same kingdom again. They either fight the lone knight if there is only one, one of the knights of the Lord's choice if two, or the Lord himself.__");
-				this.say(room, "**If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights in this manner CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.**");
-				this.say(room, "__All participants within the RP may only have ONE chance to coup any kingdom. PM me/the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.__");
-				this.say(room, "**Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.**");
-				this.say(room, "__Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). Lastly, if a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.__");
-				this.say(room, "**Finally, a reminder that, if you do not RP properly, you are liable to be ignored by the person you are challenging.**");
+				this.say(room, "**Blaziken, Greninja, Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Soul Dew, Damp Rock, and Smooth Rock are banned. Ghost cannot have both Giratina-A and Aegislash on the same team.  Types are locked at two hours.**");
+				this.say(room, "__Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.__");
+				this.say(room, "**Wanderers may challenge a Kingdom for knightship. This can't be declined, but if the Wanderer loses, they either die or cannot challenge the same kingdom again. They either fight the lone knight if there is only one, one of the knights of the Lord's choice if two, or the Lord himself.((");
+				this.say(room, "__If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights in this manner CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.__");
+				this.say(room, "**All participants within the RP may only have ONE chance to coup any kingdom. PM me/the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.**");
+				this.say(room, "__Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.__");
+				this.say(room, "**Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). Lastly, if a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.((");
+				this.say(room, "__Finally, a reminder that, if you do not RP properly, you are liable to be ignored by the person you are challenging.__");
 
 		}
 		
@@ -610,9 +648,15 @@ exports.commands = {
 			clearTimeout(this.freeroamTimeouts[room]);
 			delete this.freeroamTimeouts[room];
 		}
-		if (this.conquestTimeouts[room] && /conquest/i.test(toId(this.RP[room].plot))) {
-			clearTimeout(this.conquestTimeouts[room]);
-			delete this.conquestTimeouts[room];
+		if (/conquest/i.test(toId(this.RP[room].plot))) {
+			if (this.conquestTimeouts[room]){
+				clearTimeout(this.conquestTimeouts[room]);
+				delete this.conquestTimeouts[room];
+			}
+			if (this.conquestLockouts[room]){
+				clearTimeout(this.conquestLockouts[room]);
+				delete this.conquestLockouts[room];
+			}
 		}
 		
 		if (this.RP[room].endpollCalled) {
@@ -639,7 +683,7 @@ exports.commands = {
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].setAt || !this.RP[room].pause) return false;
 		}
-
+		
 		var paused = new Date(this.RP[room].pause); //Time it was paused at.
 		var setAt = new Date(this.RP[room].setAt); //Time it was originally set at.
 		var diff = new Date(); //Now
@@ -649,12 +693,22 @@ exports.commands = {
 		var timeLeft =  2 * 60 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
 		var conquestTimeLeft = 10 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
 		
-		if (!this.conquestTimeouts[room] && /conquest/i.test(toId(this.RP[room].plot)) && conquestTimeLeft > 0) {
-			this.conquestTimeouts[room] = setTimeout(function() {
-				this.say(room, '**Grace Period has ended.**');
-				delete this.conquestTimeouts[room];
-			}.bind(this), conquestTimeLeft);
+		if (!this.conquestTimeouts[room] && /conquest/i.test(toId(this.RP[room].plot))){
+			
+			if (conquestTimeLeft > 0) {
+				this.conquestTimeouts[room] = setTimeout(function() {
+					this.say(room, '**Grace Period has ended.**');
+					delete this.conquestTimeouts[room];
+				}.bind(this), conquestTimeLeft);
+			}
+			if (timeLeft > 0){
+				this.conquestLockouts[room] = setTimeout(function() {
+					this.say(room, '**Types are now locked.**');
+					delete this.conquestLockouts[room];
+				}.bind(this), timeLeft);
+			}
 		}
+		
 		
 		if (!this.freeroamTimeouts[room] && toId(this.RP[room].plot) === 'freeroam') {
 			this.freeroamTimeouts[room] = setTimeout(function() {
@@ -703,7 +757,7 @@ exports.commands = {
 		}
 		this.say(room, 'The host was set to ' + arg + '.');
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "The host was set to " + arg + ".");
-
+		this.RP[room].setUpAt = new Date;
 	},
 	sch: 'setcohost',
 	setcohost: function(arg, by, room) {
@@ -781,6 +835,8 @@ exports.commands = {
 			if (/conquest/i.test(toId(this.RP[room].plot))){
 				clearTimeout(this.conquestTimeouts[room]);
 				delete this.conquestTimeouts[room];
+				clearTimeout(this.conquestLockouts[room]);
+				delete this.conquestLockouts[room];
 			}
 		}
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended.");
@@ -807,16 +863,19 @@ exports.commands = {
 			this.say(room, '**The RP has ended.**');
 		}
 		this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'void');
+		this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'rppoll');
+	},
+	setvoid: function(arg, by, room) {
+		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot || !arg || !this.hasRank(by, '%@#&~')) return false;
+		var spl = arg.split(',');
+		console.log(spl);
+		if(spl.length !== 2) return this.say(room, 'Void only accepts 2 arguments.');
+		this.RP.void[room] = [spl[0],spl[1]];
+		this.writeSettings();
+		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'void');
 	},
 	void: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot) return false;
-		if (arg && this.hasRank(by, '%@#&~')) {
-			var spl = arg.split(',');
-			console.log(spl);
-			if(spl.length !== 2) return this.say(room, 'Void only accepts 2 arguments.');
-			this.RP.void[room] = [spl[0],spl[1]];
-			this.writeSettings();
-		}
 		var text = '';
 		if (room === 'rustyrp'){
 			text += '**';
@@ -931,12 +990,7 @@ exports.commands = {
 	},
 	voice: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !('amphyrp' in this.RP) || room.charAt(0) !== ',') return false;
-
-		if (this.canUse('voice', room, by) || room.charAt(0) === ',') {
-			var text = '';
-		} else {
-			var text = '/pm ' + by + ', ';
-		}
+		var text = '/pm ' + by + ', ';
 		return this.say(room, text + 'The command ".voice" has been deprecated, please PM a mod for voice.');
 	},
 	site: function(arg, by, room) {
@@ -958,7 +1012,7 @@ exports.commands = {
 		pollON = true; //There's a poll on now.
 		var now = new Date(); //Good to know what time it is now
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "RP poll has been has been created by " + by + ".");
-		this.say(room, '/wall **PM Roleplaying Bot** with .nom [RP] to nominate the RP you want to be next. Remember to only PM RPs you can host and PM staff your customs. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()));
+		this.say(room, '/wall **PM Roleplaying Bot** with .nom [RP] to nominate the RP you want to be next. **Remember to only PM RPs you can host** and PM staff your customs. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()));
 		pollTimer[room] = setTimeout(function() {
 		    console.log(new Date().toString() + " Suggestion period has ended.");
 		    if(pollNoms.length == 1) {
@@ -969,6 +1023,7 @@ exports.commands = {
 		       		return this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'start');
 		       	}
 		    	this.splitMessage('>' + room + '\n|c|~Morfent|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
+		    	pollON = false;
 		    	pollNoms = [];
 		    	pollroom = ''
 		    	return false;
@@ -1042,6 +1097,7 @@ exports.commands = {
         		arg = 'Dungeons \'n Dragonites';
         		break;
         	case 'pmd':
+        	case 'pokmonmysterydungeon':
         		arg = 'Pokemon Mystery Dungeon';
         		break;
         	case 'hg':
@@ -1070,7 +1126,33 @@ exports.commands = {
         	if(toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1)
         	return this.say(room, 'That RP is void.');
         }
-       if(toId(arg) == 'dungeonsndragonites' || toId(arg) == 'dungeonsndragons' || toId(arg) == 'dungeonsndruddigons') {
+       	if(toId(arg) == 'pokemonmysterydungeon') {
+       		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokmonmysterydungeon') > -1) return this.say(room, 'That RP is void.');
+        	
+		    for (i = 0; i < config.rprooms.length; i++) {
+				if (this.RP[config.rprooms[i]].plot) {
+					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('pokmonmysterydungeon') > -1) {
+						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
+							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
+						}
+					}
+				}
+			}    			
+        }
+        if(toId(arg) == 'pokehigh') {
+       		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokhigh') > -1) return this.say(room, 'That RP is void.');
+        	
+		    for (i = 0; i < config.rprooms.length; i++) {
+				if (this.RP[config.rprooms[i]].plot) {
+					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('pokhigh') > -1) {
+						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
+							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
+						}
+					}
+				}
+			}    			
+        }
+    	if(toId(arg) == 'dungeonsndragonites' || toId(arg) == 'dungeonsndragons' || toId(arg) == 'dungeonsndruddigons') {
         	if(toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1) return this.say(room, 'That RP is void.');
         	
 		    for (i = 0; i < config.rprooms.length; i++) {
@@ -1168,8 +1250,13 @@ exports.commands = {
 		if (config.serverid == 'showdown' && room.charAt(0) === ',' && (config.staffList.indexOf(toId(by)) > -1)) {
 			return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
 		}
-		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) return false;
-		this.say(room, '/w ' + by + ', Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP))
+		{
+			var text = '/w '+ by + ',';
+		} else {
+			var text = '';
+		}
+		this.say(room, text + ' Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
 	},
 	nominators: function (arg, by, room) {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP)) return false;
@@ -1220,6 +1307,7 @@ exports.commands = {
 		kingdomNom = [];
 		hungergamesNom = [];
 	},
+	cp: 'voidpoll',
 	customPriority: 'voidpoll',
 	voidpoll: function(arg, by, room) {
 		if (!pollON || !this.hasRank(by, '%@#&~')) return false;
@@ -1228,6 +1316,24 @@ exports.commands = {
 		pollNoms = [];
 		clearTimeout(pollTimer[pollRoom]);
 		return this.say(room, "Poll Voided");
+	},
+	timer: function(arg, by, room){
+		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].host || this.RP[room].setAt) return false; //  If there's no RP on, if the RP hasn't started, and if...  That's all.
+		
+		var start = new Date(this.RP[room].setUpAt);
+		var now = new Date();
+		if (/conquest/i.test(toId(this.RP[room].plot))) {
+			var diff = (15 * 60 * 1000 - (now.getTime() - start.getTime())) / 1000
+		} else {
+			var diff = (30 * 60 * 1000 - (now.getTime() - start.getTime())) / 1000;
+		}
+		var seconds = Math.floor(diff % 60);
+		diff /= 60;
+		var minutes = Math.floor(diff % 60);
+		diff /= 60;
+		var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
+		// If timeleft is less than 0, give a warning that there is no more time left.
+		this.say (room, "The host has " + timeleft + " seconds left to set up.");
 	}
 };
 
