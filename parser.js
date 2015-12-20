@@ -187,6 +187,7 @@ exports.parse = {
 					this.amphyVoices = [];
 					this.freeroamTimeouts = {};
 					this.conquestTimeouts = {};
+					this.conquestLockouts = {};
 					if (this.settings && this.settings.RP) {
 						this.RP.void = {};
 
@@ -316,7 +317,7 @@ exports.parse = {
     			third.each(function(i, elem) {
   					opts.push($(this).text());
 				});
-				console.log(new Date().toString() + ' Poll opts: ' + opts.join(', '));
+				console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + 'Poll opts: ' + opts.join(', '));
 				var percentage = $('div div small');
 				percentage.each(function(y, elem) {
 					perRaw[y] = $(this).text();
