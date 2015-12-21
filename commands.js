@@ -1127,7 +1127,7 @@ exports.commands = {
         	return this.say(room, 'That RP is void.');
         }
        	if(toId(arg) == 'pokemonmysterydungeon') {
-       		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokmonmysterydungeon') > -1) return this.say(room, 'That RP is void.');
+       		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokmonmysterydungeon') > -1 && room != 'rustyrp') return this.say(room, 'That RP is void.');
         	
 		    for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
@@ -1140,7 +1140,7 @@ exports.commands = {
 			}    			
         }
         if(toId(arg) == 'pokehigh') {
-       		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokhigh') > -1) return this.say(room, 'That RP is void.');
+       		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokhigh') > -1 && room != 'rustyrp') return this.say(room, 'That RP is void.');
         	
 		    for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
@@ -1153,7 +1153,7 @@ exports.commands = {
 			}    			
         }
     	if(toId(arg) == 'dungeonsndragonites' || toId(arg) == 'dungeonsndragons' || toId(arg) == 'dungeonsndruddigons') {
-        	if(toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1) return this.say(room, 'That RP is void.');
+        	if(toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1 && room != 'rustyrp') return this.say(room, 'That RP is void.');
         	
 		    for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
@@ -1165,7 +1165,7 @@ exports.commands = {
 				}
 			}
         }
-        if (toId(this.RP.void[pollRoom].toString()).indexOf(toId(arg)) > -1) {
+        if (toId(this.RP.void[pollRoom].toString()).indexOf(toId(arg)) > -1 && room != 'rustyrp') {
         	return this.say(room, 'That RP is void.');
         }
         switch (toId(arg)) {
@@ -1323,7 +1323,7 @@ exports.commands = {
 		var start = new Date(this.RP[room].setUpAt);
 		var now = new Date();
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
-			var diff = (15 * 60 * 1000 - (now.getTime() - start.getTime())) / 1000
+			var diff = (15 * 60 * 1000 - (now.getTime() - start.getTime())) / 1000;
 		} else {
 			var diff = (30 * 60 * 1000 - (now.getTime() - start.getTime())) / 1000;
 		}
@@ -1333,7 +1333,7 @@ exports.commands = {
 		diff /= 60;
 		var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
 		// If timeleft is less than 0, give a warning that there is no more time left.
-		if (timeleft > 0) {
+		if (diff > 0) {
 			this.say (room, "The host has " + timeleft + " seconds left to set up.");
 		} else {
 			this.say (room, "The host has exhausted the time alloted for set up.");
