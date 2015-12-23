@@ -974,6 +974,21 @@ exports.commands = {
 		this.say(room, text + 'The RP is ' + this.RP[room].plot + ', in progress for ' + progress + '.');
 	},
 	host: function(arg, by, room) {
+		if (room.charAt(0) === ','){
+			var text = '';
+			var roomArray = ['Roleplaying','AmphyRP','RustyRP'];
+			for (i = 0; i < roomArray.length; i ++) {
+				if (this.RP[toId(roomArray[i])].plot) {
+					text += " " + this.RP[toId(roomArray[i])].host + " is hosting in " + roomArray[i];
+					if (this.RP[toId(roomArray[i])].cohost) {
+						text += ', with ' + this.RP[toId(roomArray[i])].cohost + ' as cohost(s).';
+					} else {
+						text += '.';
+					}
+				}
+			}
+			return this.say(room, text);
+		}
 		if (!(room in this.RP)) return false;
 		if (this.RP[room].hostCalled) {
 			var text = '/pm ' + by + ', ';
@@ -1153,7 +1168,7 @@ exports.commands = {
 			}    			
         }
     	if(toId(arg) == 'dungeonsndragonites' || toId(arg) == 'dungeonsndragons' || toId(arg) == 'dungeonsndruddigons') {
-        	if(toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1 && room != 'rustyrp') return this.say(room, 'That RP is void.');
+        	if((toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1) && room != 'rustyrp') return this.say(room, 'That RP is void.');
         	
 		    for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
@@ -1257,7 +1272,7 @@ exports.commands = {
 				var minutes = Math.floor(diff % 60);
 				diff /= 60;
 				var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
-				this.say(room, '/w ' + by + ', The last endpoll was made ' + timeleft + ' ago.')
+				this.say(room, '/w ' + by + ', The last endpoll was made ' + timeleft + ' seconds ago.')
 			}
 		}
 	},
