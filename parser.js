@@ -335,6 +335,7 @@ exports.parse = {
 					if (per[x] > winpercent) {
 						winpercent = per[x];
 						winopt = opts[x];
+						tieopts = [];
 						tieopts[0] = opts[x];
 						istie = false;
 					}
