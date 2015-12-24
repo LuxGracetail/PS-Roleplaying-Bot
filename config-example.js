@@ -4,7 +4,7 @@
 // If you really don't know how to do this... Run `node getserver.js URL`.
 // Fill in the URL of the client where `URL` is.
 // For example: `node getserver.js http://example-server.psim.us/`
-exports.server = 'sim.psim.us';
+exports.server = 'sim.smogon.com';
 exports.port = 8000;
 
 // This is the server id.
@@ -17,22 +17,22 @@ exports.serverid = 'showdown';
 
 // The nick and password to log in with
 // If no password is required, leave pass empty
-exports.nick = 'Example bot nick';
-exports.pass = '';
+exports.nick = 'Roleplaying Bot';
+exports.pass = 'N0t1ceMeSenpa1';
 
 // The rooms that should be joined.
 // Joining Smogon's Showdown's Lobby is not allowed.
-exports.rooms = ['example room name', 'another example'];
+exports.rooms = ["roleplaying","amphyrp"];
 
 // Any private rooms that should be joined.
 // Private rooms will be moderated differently (since /warn doesn't work in them).
 // The bot will also avoid leaking the private rooms through .seen
-exports.privaterooms = [];
+exports.privaterooms = ["rustyrp"];
 
 // Roleplaying rooms.
 // Roleplaying rooms are rooms where the roleplaying commands should be enabled,
 // in case the bot moderates rooms where there is none.
-exports.rprooms = [];
+exports.rprooms = ["roleplaying","amphyrp","rustyrp"];
 
 // The character text should start with to be seen as a command.
 // Note that using / and ! might be 'dangerous' since these are used in
@@ -47,7 +47,7 @@ exports.defaultrank = '%';
 // Whether this file should be watched for changes or not.
 // If you change this option, the server has to be restarted in order for it to
 // take effect.
-exports.watchconfig = false;
+exports.watchconfig = true;
 
 // Secondary websocket protocols should be defined here, however, Showdown
 // doesn't support that yet, so it's best to leave this empty.
@@ -64,17 +64,17 @@ exports.debuglevel = 3;
 
 // Users who can use all commands regardless of their rank. Be very cautious
 // with this, especially on servers other than main.
-exports.excepts = [];
+exports.excepts = ["luxlucario","tiberiusaurelius","chronospatiomancer","thecatsmrawr","alastairhawthorne", "starbloom"];
 
 // Whitelisted users are those who the bot will not enforce moderation for.
 exports.whitelist = [];
 
-// Users in this list can use the regex autoban commands. Only add users who know how to write regular expressions and have your complete trust not to abuse the commands.
-exports.regexautobanwhitelist = [];
+// Users in this list can use the regex autoban commands. Only add users who know how to write regular expressions and have your complete trust 	not to abuse the commands.
+exports.regexautobanwhitelist = ["luxlucario"];
 
 // Add a link to the help for the bot here. When there is a link here, .help and .guide
 // will link to it.
-exports.botguide = '';
+exports.botguide = 'http://pastebin.com/LvmU0xfq';
 
 // Add a link to the git repository for the bot here for .git to link to.
 exports.fork = 'https://github.com/LuxGracetail/PS-Roleplaying-Bot';
@@ -85,7 +85,7 @@ exports.fork = 'https://github.com/LuxGracetail/PS-Roleplaying-Bot';
 // exercise moderator discretion. In addition, it currently uses a very simple method of 
 // determining who to mute and so may miss people who should be muted, or mute those who 
 // shouldn't. Use with caution.
-exports.allowmute = false;
+exports.allowmute = true;
 
 // The punishment values system allows you to customise how you want the bot to deal with
 // rulebreakers. Spamming has a points value of 2, all caps has a points value of 1, etc.
@@ -101,16 +101,28 @@ exports.punishvals = {
 exports.logmain = false;
 
 //This allows the bot to log PMs sent to it in the console. Off by default.
-exports.logpms = false;
+exports.logpms = true;
 
-//Read everything else in the chat, like ban messages and the start of tournaments.
+//Read everything else in the chat, like ban messages and the start of torunaments.
 exports.readElse = false;
 
 //Here, you specify the avatar you want the bot to use. Nice and handy if you don't want it to constantly have the default avatar.
-exports.avatarNumber = [''];
+exports.avatarNumber = ['70'];
 
-//Here, you list the voices for the main roleplaying room, so the bot does not automatically devoice them.
-exports.voiceList = [''];
+//This is a list of voices for the main roleplaying room, so the bot does not automatically devoice them.
+exports.voiceList = ['ahritles224', 'beedrill', 'beowulf', 'darthtoran', 'dayofthedead', 'deemioabsol', 'doomsdaydevice01', 'espurr', 'fallenastoria', 'flareblitzle', 'goldentrialsix', 'hikarusan', 'isisdragonite', 'kidincred', 'mist', 'moecflareon', 'mukyuuri', 'notprem', 'psychoreality', 'skitty', 'thedragonstale', 'vinnyk', 'volteli', 'wolfemblemstudios'];
 
 //This is a list of the staff because nom is PMs only.
-exports.staffList = [''];
+exports.staffList = ['articuno', 'formerhope', 'rico', 'chihirosalterego', 'darknessumbreon', 'galom', 'lumasoul', 'monistar', 'nitroshock6', 'roleplayingbot', 'zester', 'areidis', 'charingo', 'daleofthevalley', 'gekkonidae', 'kantsu', 'koki', 'luxlucario', 'mightyenaboy', 'millianah', 'penelopeskie', 'potatoblaster', 'sabremanectric', 'starbloom', 'ventvanitas', 'xenephiliuss'];
+
+//This is a list of the legendaries for matching with indexOf.
+exports.legendtoIdList = ['articuno', 'zapdos', 'moltres', 'suicune', 'entei', 'raikou', 'hooh', 'lugia', 'mew', 'mewtwo', 'celebi', 'victini', 'jirachi', 'shaymin', 'meloetta', 'regice', 'regirock', 'registeel', 'regigigas', 'latios', 'latias', 'kyogre', 'groudon', 'rayquaza', 'azelf', 'mespirt', 'uxie', 'dialga', 'palkia', 'giratina', 'cresselia', 'darkrai', 'manaphy', 'phione', 'heatran', 'terrakion', 'cobalion', 'virizion', 'keldeo', 'tornadus', 'thundurus', 'landorus', 'reshiram', 'zekrom', 'kyurem', 'genesect', 'xerneas', 'yveltal', 'zygarde', 'diancie', 'hoopa'];
+
+//This is a list of the legendaries properly capitalised.
+exports.legendList = ['Articuno', 'Zapdos', 'Moltres', 'Suicune', 'Entei', 'Raikou', 'Ho-Oh', 'Lugia', 'Mew', 'Mewtwo', 'Celebi', 'Victini', 'Jirachi', 'Shaymin', 'Meloetta', 'Regice', 'Regirock', 'Registeel', 'Regigigas', 'Latios', 'Latias', 'Kyogre', 'Groudon', 'Rayquaza', 'Azelf', 'Mespirt', 'Uxie', 'Dialga', 'Palkia', 'Giratina', 'Cresselia', 'Darkrai', 'Manaphy', 'Phione', 'Heatran', 'Terrakion', 'Cobalion', 'Virizion', 'Keldeo', 'Tornadus', 'Thundurus', 'Landorus', 'Reshiram', 'Zekrom', 'Kyurem', 'Genesect', 'Xerneas', 'Yveltal', 'Zygarde', 'Diancie', 'Hoopa'];
+
+//This is a list of the legendaries' owners.  (Legendary names are placeholders )
+exports.legendOwnerList = ['Articuno', 'Zapdos', 'Moltres', 'Suicune', 'Entei', 'Raikou', 'Ho-Oh', 'Lugia', 'Mew', 'Mewtwo', 'Celebi', 'Victini', 'Jirachi', 'Shaymin', 'Meloetta', 'Regice', 'Regirock', 'Registeel', 'Regigigas', 'Latios', 'Latias', 'Kyogre', 'Groudon', 'Rayquaza', 'Azelf', 'Mespirt', 'Uxie', 'Dialga', 'Palkia', 'Giratina', 'Cresselia', 'Darkrai', 'Manaphy', 'Phione', 'Heatran', 'Terrakion', 'Cobalion', 'Virizion', 'Keldeo', 'Tornadus', 'Thundurus', 'Landorus', 'Reshiram', 'Zekrom', 'Kyurem', 'Genesect', 'Xerneas', 'Yveltal', 'Zygarde', 'Diancie', 'Hoopa'];
+
+//This is a list of the legendary OC's names. (Legendary names are placeholders )
+exports.legendOCList = ['Articuno', 'Zapdos', 'Moltres', 'Suicune', 'Entei', 'Raikou', 'Ho-Oh', 'Lugia', 'Mew', 'Mewtwo', 'Celebi', 'Victini', 'Jirachi', 'Shaymin', 'Meloetta', 'Regice', 'Regirock', 'Registeel', 'Regigigas', 'Latios', 'Latias', 'Kyogre', 'Groudon', 'Rayquaza', 'Azelf', 'Mespirt', 'Uxie', 'Dialga', 'Palkia', 'Giratina', 'Cresselia', 'Darkrai', 'Manaphy', 'Phione', 'Heatran', 'Terrakion', 'Cobalion', 'Virizion', 'Keldeo', 'Tornadus', 'Thundurus', 'Landorus', 'Reshiram', 'Zekrom', 'Kyurem', 'Genesect', 'Xerneas', 'Yveltal', 'Zygarde', 'Diancie', 'Hoopa'];

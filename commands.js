@@ -1276,10 +1276,17 @@ exports.commands = {
 			}
 		}
 	},
-	legends: 'legend',
-	legend: function(arg, by, room) {
-		if (config.serverid == 'showdown' && room.charAt(0) === ',' && (config.staffList.indexOf(toId(by)) > -1)) {
-			return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
+	legend: 'legends',
+	legends: function(arg, by, room) {
+		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
+			if (arg) {
+				if (config.legendtoIdList.indexOf(toId(arg)) > -1) {
+					var legendNum = config.legendtoIdList.indexOf(toId(arg))
+					return this.say(room, text + ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.')
+				}
+			} else {
+				return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
+			}
 		}
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP))
 		{
@@ -1287,7 +1294,14 @@ exports.commands = {
 		} else {
 			var text = '';
 		}
+		if (arg) {
+			if (config.legendtoIdList.indexOf(toId(arg)) > -1) {
+				var legendNum = config.legendtoIdList.indexOf(toId(arg))
+				 return this.say(room, text + ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.')
+			}
+		} else {
 		this.say(room, text + ' Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
+		}
 	},
 	nominators: function (arg, by, room) {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP)) return false;
