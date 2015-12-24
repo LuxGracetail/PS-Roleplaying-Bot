@@ -1282,7 +1282,7 @@ exports.commands = {
 			if (arg) {
 				if (config.legendtoIdList.indexOf(toId(arg)) > -1) {
 					var legendNum = config.legendtoIdList.indexOf(toId(arg))
-					return this.say(room, text + ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.')
+					return this.say(room, ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.')
 				}
 			} else {
 				return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
