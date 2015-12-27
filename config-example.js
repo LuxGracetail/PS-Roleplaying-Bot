@@ -115,6 +115,9 @@ exports.voiceList = [];
 //This is a list of the staff because nom is PMs only.
 exports.staffList = [];
 
+//Here, you specify something that the bot announces with .psa.
+exports.publicSeviceAnnouncement = '';
+
 //This is a list of the legendaries for matching with indexOf.
 exports.legendtoIdList = ['articuno', 'zapdos', 'moltres', 'suicune', 'entei', 'raikou', 'hooh', 'lugia', 'mew', 'mewtwo', 'celebi', 'victini', 'jirachi', 'shaymin', 'meloetta', 'regice', 'regirock', 'registeel', 'regigigas', 'latios', 'latias', 'kyogre', 'groudon', 'rayquaza', 'azelf', 'mespirt', 'uxie', 'dialga', 'palkia', 'giratina', 'cresselia', 'darkrai', 'manaphy', 'phione', 'heatran', 'terrakion', 'cobalion', 'virizion', 'keldeo', 'tornadus', 'thundurus', 'landorus', 'reshiram', 'zekrom', 'kyurem', 'genesect', 'xerneas', 'yveltal', 'zygarde', 'diancie', 'hoopa'];
 

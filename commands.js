@@ -1370,20 +1370,22 @@ exports.commands = {
 	vp: 'voidpoll',
 	voidpoll: function(arg, by, room) {
 		if (!pollON && !this.RP[room].endpollProgress || !this.hasRank(by, '%@#&~')) return false;
-		if (pollON){
-			pollON = false;
-			this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
-			pollNoms = [];
-			clearTimeout(pollTimer[pollRoom]);
-			this.voidpoll[room] = true;
-			return this.say(room, "/poll end");
-		} else {
+		if (endpollProgress){
 			delete this.RP[room].endpollCalled;
 			delete this.RP[room].endpollProgress;
 			clearTimeout(this.RP[room].endpollTimerSet);
 			delete this.RP[room].endpollTimerSet;
 			this.voidpoll[room] = true;
-			return this.say(room, "/poll end");
+			this.say(room, "/poll end");
+			return this.say(room, 'Endpoll voided.');
+		} else {
+			pollON = false;
+			this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
+			pollNoms = [];
+			clearTimeout(pollTimer[pollRoom]);
+			this.voidpoll[room] = true;
+			this.say(room, "/poll end");
+			return this.say(room, 'RP Poll voided.');
 		}
 	},
 	timer: function(arg, by, room){
@@ -1407,5 +1409,21 @@ exports.commands = {
 		} else {
 			this.say (room, "The host has exhausted the time alloted for set up.");
 		}
+	},
+	psa: 'publicserviceannouncement',
+	publicserviceannouncement: function(arg, by, room) {
+		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
+			return this.say(room, 'Merry Christmas all~!  ^w^');
+		}
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP))
+		{
+			var text = '/w '+ by + ',';
+		} else {
+			var text = '';
+			if (this.RP[room].setAt && !this.RP[room].paused) {
+				return this.say(room, text + ' ((' + config.publicSeviceAnnouncement + '))');
+			}
+		}
+		this.say(room, text + ' ' + config.publicSeviceAnnouncement);
 	}
 };
