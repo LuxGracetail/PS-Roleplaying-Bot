@@ -867,7 +867,7 @@ exports.commands = {
 	},
 	setvoid: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot || !arg || !this.hasRank(by, '%@#&~')) return false;
-		var spl = arg.split(',');
+		var spl = arg.split(', ');
 		console.log(spl);
 		if(spl.length !== 2) return this.say(room, 'Void only accepts 2 arguments.');
 		this.RP.void[room] = [spl[0],spl[1]];
@@ -1032,7 +1032,11 @@ exports.commands = {
 		    console.log(new Date().toString() + " Suggestion period has ended.");
 		    if(pollNoms.length == 1) {
 		    	pollON = false;
-		    	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp ' + rpcaps[RPOpts.indexOf(toId(pollNoms[0]))]);
+		    	if (RPOpts.indexOf(toId(pollNoms[0])) > -1){
+		    		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp ' + rpcaps[RPOpts.indexOf(toId(pollNoms[0]))]);
+		    	} else {
+		    		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp ' + pollNoms[0]);
+		    	}
 		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'cruise' || toId(pollNoms[0]) == 'prom') {
 		       		pollNoms = [];
 		       		return this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
@@ -1249,17 +1253,19 @@ exports.commands = {
 			}
 				this.say(room, '/poll timer 3');
 				this.RP[room].endpollCalled = true;
+				this.RP[room].endpollProgress = true;
 				setTimeout(function() {
 					this.say(room, '!poll display');
 				}.bind(this), 60 * 1000);
 				setTimeout(function() {
 					this.say(room, '!poll display');
 				}.bind(this), 2 * 60 * 1000);
-				setTimeout(function() {
+				this.RP[room].endpollTimerSet = setTimeout(function() {
+					delete this.endpollProgress;
 					this.RP[room].lastEndPoll = new Date();
 				}.bind(this), 3 * 60 * 1000);
 				setTimeout(function() {
-					delete this.RP[room].lastEndPoll
+					delete this.RP[room].lastEndPoll;
 					delete this.RP[room].endpollCalled;
 				}.bind(this), 13 * 60 * 1000);
 		} else {
@@ -1363,12 +1369,22 @@ exports.commands = {
 	},
 	vp: 'voidpoll',
 	voidpoll: function(arg, by, room) {
-		if (!pollON || !this.hasRank(by, '%@#&~')) return false;
-		pollON = false;
-		this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
-		pollNoms = [];
-		clearTimeout(pollTimer[pollRoom]);
-		return this.say(room, "Poll Voided");
+		if (!pollON && !this.RP[room].endpollProgress || !this.hasRank(by, '%@#&~')) return false;
+		if (pollON){
+			pollON = false;
+			this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
+			pollNoms = [];
+			clearTimeout(pollTimer[pollRoom]);
+			this.voidpoll[room] = true;
+			return this.say(room, "/poll end");
+		} else {
+			delete this.RP[room].endpollCalled;
+			delete this.RP[room].endpollProgress;
+			clearTimeout(this.RP[room].endpollTimerSet);
+			delete this.RP[room].endpollTimerSet;
+			this.voidpoll[room] = true;
+			return this.say(room, "/poll end");
+		}
 	},
 	timer: function(arg, by, room){
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].host || this.RP[room].setAt) return false; //  If there's no RP on, if the RP hasn't started, and if...  That's all.
