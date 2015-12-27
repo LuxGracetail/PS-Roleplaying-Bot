@@ -1064,6 +1064,7 @@ exports.commands = {
 		            this.say(room, '/poll create Next RP? Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', ' + pollNoms.join(', '));
 		            this.say(room, '/poll timer 3');
 		        }
+		        this.RP[room].rppollProgress = true;
 			    setTimeout(function() {
 			    	this.say(room, '!poll display');
 			    }.bind(this), 60 * 1000);
@@ -1073,6 +1074,7 @@ exports.commands = {
 		    	setTimeout(function() {
 		    		pollON = false;
 	 				pollNoms = [];  // Maybe?  I dunno.  Clear poll noms after a poll has failed.
+	 				delete this.RP[room].rppollProgress;
 		    	}.bind(this), 3 * 60 * 1000);
 		    } else {
 		        this.say(room, '/wall There were not enough nominations.');
@@ -1369,24 +1371,28 @@ exports.commands = {
 	},
 	vp: 'voidpoll',
 	voidpoll: function(arg, by, room) {
-		if (!pollON && !this.RP[room].endpollProgress || !this.hasRank(by, '%@#&~')) return false;
-		if (endpollProgress){
-			delete this.RP[room].endpollCalled;
-			delete this.RP[room].endpollProgress;
-			clearTimeout(this.RP[room].endpollTimerSet);
-			delete this.RP[room].endpollTimerSet;
-			this.voidpoll[room] = true;
-			this.say(room, "/poll end");
-			return this.say(room, 'Endpoll voided.');
-		} else {
+		if (!pollON || !this.hasRank(by, '%@#&~')) return false;
 			pollON = false;
 			this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
 			pollNoms = [];
 			clearTimeout(pollTimer[pollRoom]);
 			this.voidpoll[room] = true;
-			this.say(room, "/poll end");
+			if (this.RP[room].rppollProgress){
+				this.say(room, "/poll end");
+				delete this.RP[room].rppollProgress;
+			}
 			return this.say(room, 'RP Poll voided.');
-		}
+	},
+	vep: 'voidendpoll',
+	voidendpoll: function(arg, by, room) {
+		if (!this.RP[room].endpollProgress || !this.hasRank(by, '%@#&~')) return false;
+		delete this.RP[room].endpollCalled;
+		delete this.RP[room].endpollProgress;
+		clearTimeout(this.RP[room].endpollTimerSet);
+		delete this.RP[room].endpollTimerSet;
+		this.voidpoll[room] = true;
+		this.say(room, "/poll end");
+		return this.say(room, 'Endpoll voided.');
 	},
 	timer: function(arg, by, room){
 		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].host || this.RP[room].setAt) return false; //  If there's no RP on, if the RP hasn't started, and if...  That's all.
