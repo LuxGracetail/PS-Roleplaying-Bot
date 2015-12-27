@@ -189,6 +189,7 @@ exports.parse = {
 					this.conquestTimeouts = {};
 					this.conquestLockouts = {};
 					this.voidpoll = {};
+					this.endpollTimerSet = {};
 					if (this.settings && this.settings.RP) {
 						this.RP.void = {};
 

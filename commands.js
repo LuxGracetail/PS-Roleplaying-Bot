@@ -603,6 +603,7 @@ exports.commands = {
 		if (this.RP[room].endpollCalled) {
 			delete this.RP[room].endpollCalled;
 		}
+		
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
 				this.say(room, '**Arceus, Darkrai, Mewtwo, Mega-Rayquaza, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
 				this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
@@ -1262,9 +1263,10 @@ exports.commands = {
 				setTimeout(function() {
 					this.say(room, '!poll display');
 				}.bind(this), 2 * 60 * 1000);
-				this.RP[room].endpollTimerSet = setTimeout(function() {
-					delete this.endpollProgress;
+				this.endpollTimerSet[room] = setTimeout(function() {
+					delete this.RP[room].endpollProgress;
 					this.RP[room].lastEndPoll = new Date();
+					delete this.endpollTimerSet[room];
 				}.bind(this), 3 * 60 * 1000);
 				setTimeout(function() {
 					delete this.RP[room].lastEndPoll;
@@ -1377,7 +1379,7 @@ exports.commands = {
 			pollNoms = [];
 			clearTimeout(pollTimer[pollRoom]);
 			this.voidpoll[room] = true;
-			if (this.RP[room].rppollProgress){
+			if (this.RP[room].rppollProgress) {
 				this.say(room, "/poll end");
 				delete this.RP[room].rppollProgress;
 			}
@@ -1388,8 +1390,8 @@ exports.commands = {
 		if (!this.RP[room].endpollProgress || !this.hasRank(by, '%@#&~')) return false;
 		delete this.RP[room].endpollCalled;
 		delete this.RP[room].endpollProgress;
-		clearTimeout(this.RP[room].endpollTimerSet);
-		delete this.RP[room].endpollTimerSet;
+		clearTimeout(this.endpollTimerSet[room]);
+		delete this.endpollTimerSet[room];
 		this.voidpoll[room] = true;
 		this.say(room, "/poll end");
 		return this.say(room, 'Endpoll voided.');
