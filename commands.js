@@ -1426,17 +1426,35 @@ exports.commands = {
 	psa: 'publicserviceannouncement',
 	publicserviceannouncement: function(arg, by, room) {
 		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
-			return this.say(room, 'Merry Christmas all~!  ^w^');
+			return this.say(room, config.publicSeviceAnnouncement);
 		}
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP))
 		{
 			var text = '/w '+ by + ',';
 		} else {
 			var text = '';
-			if (this.RP[room].setAt && !this.RP[room].paused) {
+			if (this.RP[room].setAt && !this.RP[room].pause) {
 				return this.say(room, text + ' ((' + config.publicSeviceAnnouncement + '))');
 			}
 		}
 		this.say(room, text + ' ' + config.publicSeviceAnnouncement);
+	},
+	botissue: 'botsuggestions',
+	botissues: 'botsuggestions',
+	botsuggest: 'botsuggestions',
+	botsuggestions: function(arg, by, room) {
+		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
+			return this.say(room, config.fork + '/issues');
+		}
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP))
+		{
+			var text = '/w '+ by + ',';
+		} else {
+			var text = '';
+			if (this.RP[room].setAt && !this.RP[room].pause) {
+				return this.say(room, text + ' ((' + config.fork + '/issues))');
+			}
+		}
+		this.say(room, text + ' ' + config.fork + '/issues');
 	}
 };
