@@ -1444,7 +1444,7 @@ exports.commands = {
 	botsuggest: 'botsuggestions',
 	botsuggestions: function(arg, by, room) {
 		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
-			return this.say(room, config.fork + '/issues');
+			return this.say(room, 'Any issues I have go here!  N-not that I have any! ' + config.fork + '/issues');
 		}
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP))
 		{
@@ -1452,9 +1452,9 @@ exports.commands = {
 		} else {
 			var text = '';
 			if (this.RP[room].setAt && !this.RP[room].pause) {
-				return this.say(room, text + ' ((' + config.fork + '/issues))');
+				return this.say(room, text + ' ((Any issues I have go here!  N-not that I have any!' + config.fork + '/issues))');
 			}
 		}
-		this.say(room, text + ' ' + config.fork + '/issues');
+		this.say(room, text + ' Any issues I have go here!  N-not that I have any! ' + config.fork + '/issues');
 	}
 };
