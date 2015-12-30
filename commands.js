@@ -1271,7 +1271,7 @@ exports.commands = {
 				setTimeout(function() {
 					delete this.RP[room].lastEndPoll;
 					delete this.RP[room].endpollCalled;
-				}.bind(this), 13 * 60 * 1000);
+				}.bind(this), 18 * 60 * 1000);
 		} else {
 			if (this.RP[room].lastEndPoll) {
 				var start = new Date(this.RP[room].lastEndPoll);
@@ -1420,7 +1420,7 @@ exports.commands = {
 		if (diff > 0) {
 			this.say (room, "The host has " + timeleft + " seconds left to set up.");
 		} else {
-			this.say (room, "The host has exhausted the time alloted for set up.");
+			this.say (room, "The host has exhausted the time alloted for set up.  Highlighting mods.");
 		}
 	},
 	psa: 'publicserviceannouncement',
