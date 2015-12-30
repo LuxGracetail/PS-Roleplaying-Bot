@@ -1378,8 +1378,8 @@ exports.commands = {
 			this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
 			pollNoms = [];
 			clearTimeout(pollTimer[pollRoom]);
-			this.voidpoll[room] = true;
 			if (this.RP[room].rppollProgress) {
+				this.voidpoll[room] = true;
 				this.say(room, "/poll end");
 				delete this.RP[room].rppollProgress;
 			}
