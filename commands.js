@@ -1397,8 +1397,13 @@ exports.commands = {
 		return this.say(room, 'Endpoll voided.');
 	},
 	timer: function(arg, by, room){
-		if (!this.canUse('setrp', room, by) || !(room in this.RP) || !this.RP[room].host || this.RP[room].setAt) return false; //  If there's no RP on, if the RP hasn't started, and if...  That's all.
-		
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != 'undefined') {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host))  || !this.RP[room].host || this.RP[room].setAt) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].host || this.RP[room].setAt) return false;
+		}
+
 		var start = new Date(this.RP[room].setUpAt);
 		var now = new Date();
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
