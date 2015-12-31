@@ -1081,7 +1081,7 @@ exports.commands = {
 		        this.say(room, '/wall There were not enough nominations.');
 		        pollON = false;
 		       	pollNoms = [];  // Maybe?  I dunno.  Clear poll noms after a poll has failed.
-		       	pollroom = ''
+		       	pollroom = '';
 		    }
 		}.bind(this), 3 * 60 * 1000);
     },
@@ -1269,21 +1269,54 @@ exports.commands = {
 					delete this.endpollTimerSet[room];
 				}.bind(this), 3 * 60 * 1000);
 				setTimeout(function() {
-					delete this.RP[room].lastEndPoll;
 					delete this.RP[room].endpollCalled;
 				}.bind(this), 18 * 60 * 1000);
 		} else {
-			if (this.RP[room].lastEndPoll) {
-				var start = new Date(this.RP[room].lastEndPoll);
-				var now = new Date();
-				var diff = (now.getTime() - start.getTime()) / 1000;
-				var seconds = Math.floor(diff % 60);
-				diff /= 60;
-				var minutes = Math.floor(diff % 60);
-				diff /= 60;
-				var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
-				this.say(room, '/w ' + by + ', The last endpoll was made ' + timeleft + ' seconds ago.')
+			this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'lastendpoll');
+		}
+	},
+	lep: 'lastendpoll'
+	lastendpoll: function(arg, by, room) {
+		if (room.charAt(0) === ','){
+			var text = '';
+			var roomArray = ['Roleplaying','AmphyRP','RustyRP'];
+			for (i = 0; i < roomArray.length; i ++) {
+				if (this.RP[toId(roomArray[i])].setAt) { // If an RP is set
+					if (this.RP[toId(roomArray[i])].lastEndPoll) { // Check if an endpoll has been done
+						var start = new Date(this.RP[room].lastEndPoll);
+						var now = new Date();
+						var diff = (now.getTime() - start.getTime()) / 1000;
+						var seconds = Math.floor(diff % 60);
+						diff /= 60;
+						var minutes = Math.floor(diff % 60);
+						diff /= 60;
+						var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
+						text += 'The last endpoll was made ' + timeleft + ' seconds ago, in' + roomArray[i];
+						if (this.RP[room].lastPollVoided) text += ', but was voided';
+						text += '.';
+					} else {
+						text += 'No endpoll has run since the RP was started in ' + roomArray[i] + '.';
+					}
+				}
 			}
+			return this.say(room, text);
+		}
+		if (!this.canUse('endpoll', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false; 
+		if (this.RP[room].lastEndPoll) {
+			var start = new Date(this.RP[room].lastEndPoll);
+			var now = new Date();
+			var diff = (now.getTime() - start.getTime()) / 1000;
+			var seconds = Math.floor(diff % 60);
+			diff /= 60;
+			var minutes = Math.floor(diff % 60);
+			diff /= 60;
+			var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
+			text += 'The last endpoll was made ' + timeleft + ' seconds ago'
+			if (this.RP[room].lastPollVoided) text += ', but was voided'
+			this.say(room, '/w ' + by + ', ' + text + '.');
+			}
+		} else {
+			this.say(room, '/w ' + by +', No endpoll has run since the RP was started.');
 		}
 	},
 	legend: 'legends',
@@ -1428,8 +1461,7 @@ exports.commands = {
 		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
 			return this.say(room, config.publicSeviceAnnouncement);
 		}
-		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP))
-		{
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) {
 			var text = '/w '+ by + ',';
 		} else {
 			var text = '';

@@ -307,9 +307,11 @@ exports.parse = {
 			case "html":
 				if (this.voidpoll[room]){
 					delete this.voidpoll[room];
+					this.RP[room].lastPollVoided = true;
 					console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + 'Poll has been voided.');
 					return this.say(room, "Poll's results have been voided.");
 				} else {
+					if (this.RP[room].lastPollVoided) delete this.RP[room].lastPollVoided;
 					var cheerio = require('cheerio'),
 	    				$ = cheerio.load(spl[2]);
 	    			var third = $('div div strong');
