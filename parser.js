@@ -283,19 +283,22 @@ exports.parse = {
 				var by = spl[2];
 				this.chatMessage(spl.slice(4).join('|'), by, ',' + by);
 				var now = Date.now();
-				if (!this.userArray[user]) this.userArray[user] = {
-					lastPM = now;
-					PMtimes = 0;
+				if (!this.userArray[toId(by)]) {
+					this.userArray[toId(by)] = {
+					lastPM: now,
+					PMtimes: 0
 				};
+				send("|/pm " + by + ", " + "Greetings," + by + ". I am the RP room's resident AI, Synthia.  Please pm another staff member for assistance.  Command list: " + config.botguide);	
+				}
 				if (!(spl[4].substr(0,1) === config.commandcharacter) && !(toId(by) === toId('Roleplaying Bot'))) {
-					this.userArray[user].PMtimes += 1;
-					var start = new Date(this.RP[room].lastPM);
-		var now = new Date();
-		var diff = 10 * 60 * 1000 - (now.getTime() - start.getTime())
-					if (timeleft < 0) {
+					this.userArray[toId(by)].PMtimes += 1;
+					var start = new Date(this.userArray[toId(by)].lastPM);
+					var now = new Date();
+					var diff = 10 * 60 * 1000 - (now.getTime() - start.getTime())
+					if (diff < 0) {
 						send("|/pm " + by + ", " + "Greetings," + by + ". I am the RP room's resident AI, Synthia.  Please pm another staff member for assistance.  Command list: " + config.botguide);	
 					}
-					this.userArray[user].lastPM = now;
+					this.userArray[toId(by)].lastPM = now;
 				}
 				break;
 			case 'N':

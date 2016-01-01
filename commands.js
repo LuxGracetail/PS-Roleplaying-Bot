@@ -1145,8 +1145,7 @@ exports.commands = {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
         if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
-        	if(toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1) || toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1
-        	return this.say(room, 'That RP is void.');
+        	if(toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1) return this.say(room, 'That RP is void.');
         }
        	if(toId(arg) == 'pokemonmysterydungeon') {
        		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokmonmysterydungeon') > -1 && room != 'rustyrp') return this.say(room, 'That RP is void.');
@@ -1275,7 +1274,7 @@ exports.commands = {
 			this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'lastendpoll');
 		}
 	},
-	lep: 'lastendpoll'
+	lep: 'lastendpoll',
 	lastendpoll: function(arg, by, room) {
 		if (room.charAt(0) === ','){
 			var text = '';
@@ -1314,8 +1313,7 @@ exports.commands = {
 			text += 'The last endpoll was made ' + timeleft + ' seconds ago'
 			if (this.RP[room].lastPollVoided) text += ', but was voided'
 			this.say(room, '/w ' + by + ', ' + text + '.');
-			}
-		} else {
+			} else {
 			this.say(room, '/w ' + by +', No endpoll has run since the RP was started.');
 		}
 	},
