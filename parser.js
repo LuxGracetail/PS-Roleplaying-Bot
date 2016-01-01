@@ -30,6 +30,7 @@ exports.parse = {
 	room: 'lobby',
 	'settings': settings,
 	chatData: {},
+	userArray: {},
 	ranks: {},
 	RP: {},
 	blacklistRegexes: {},
@@ -281,6 +282,21 @@ exports.parse = {
 			case 'pm':
 				var by = spl[2];
 				this.chatMessage(spl.slice(4).join('|'), by, ',' + by);
+				var now = Date.now();
+				if (!this.userArray[user]) this.userArray[user] = {
+					lastPM = now;
+					PMtimes = 0;
+				};
+				if (!(spl[4].substr(0,1) === config.commandcharacter) && !(toId(by) === toId('Roleplaying Bot'))) {
+					this.userArray[user].PMtimes += 1;
+					var start = new Date(this.RP[room].lastPM);
+		var now = new Date();
+		var diff = 10 * 60 * 1000 - (now.getTime() - start.getTime())
+					if (timeleft < 0) {
+						send("|/pm " + by + ", " + "Greetings," + by + ". I am the RP room's resident AI, Synthia.  Please pm another staff member for assistance.  Command list: " + config.botguide);	
+					}
+					this.userArray[user].lastPM = now;
+				}
 				break;
 			case 'N':
 				var by = spl[2];
