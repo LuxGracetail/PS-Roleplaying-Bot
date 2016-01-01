@@ -907,11 +907,13 @@ exports.commands = {
 			default:
 				return this.say(room, 'Something went wrong with how void RPs are stored');
 		}
-		var concurrent = (room === 'roleplaying') ? splitDoc(this.RP['amphyrp'].plot) : splitDoc(this.RP['roleplaying'].plot);
-		var currentRust = (this.RP['rustyrp']) ? splitDoc(this.RP['rustyrp'].plot) : '';
-		if (concurrent) text += '. The RP in ' + ((room === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent;
-		if (currentRust) text+= ', and the RP in RustyRP is ' + currentRust;
-		if(text.charAt(text.length - 1) !== '.') text += '.';
+		if (config.serverid === 'showdown') {
+			var concurrent = (room === 'roleplaying') ? splitDoc(this.RP['amphyrp'].plot) : splitDoc(this.RP['roleplaying'].plot);
+			var currentRust = (this.RP['rustyrp']) ? splitDoc(this.RP['rustyrp'].plot) : '';
+			if (concurrent) text += '. The RP in ' + ((room === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent;
+			if (currentRust) text+= ', and the RP in RustyRP is ' + currentRust;
+			if(text.charAt(text.length - 1) !== '.') text += '.';
+		}
 
 		if (!this.canUse('setrp', room, by) || this.RP[room].voidCalled) {
 			this.say(room, '/pm ' + by + ', ' + text + " (" + room + ")");
@@ -926,7 +928,7 @@ exports.commands = {
 	rp: function(arg, by, room) {
 		if (room.charAt(0) === ','){
 			var text = '';
-			var roomArray = ['Roleplaying','AmphyRP','RustyRP'];
+			if (config.serverid === 'showdown') ? var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = config.rprooms;
 			for (i = 0; i < roomArray.length; i ++) {
 				if (this.RP[toId(roomArray[i])].plot) {
 					text += " The RP in " + roomArray[i] + " is " + splitDoc(this.RP[toId(roomArray[i])].plot);
@@ -977,8 +979,7 @@ exports.commands = {
 	host: function(arg, by, room) {
 		if (room.charAt(0) === ','){
 			var text = '';
-			var roomArray = ['Roleplaying','AmphyRP','RustyRP'];
-			for (i = 0; i < roomArray.length; i ++) {
+			if (config.serverid === 'showdown') ? var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = config.rprooms;			for (i = 0; i < roomArray.length; i ++) {
 				if (this.RP[toId(roomArray[i])].plot) {
 					text += " " + this.RP[toId(roomArray[i])].host + " is hosting in " + roomArray[i];
 					if (this.RP[toId(roomArray[i])].cohost) {
@@ -1278,7 +1279,7 @@ exports.commands = {
 	lastendpoll: function(arg, by, room) {
 		if (room.charAt(0) === ','){
 			var text = '';
-			var roomArray = ['Roleplaying','AmphyRP','RustyRP'];
+			if (config.serverid === 'showdown') ? var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = config.rprooms;
 			for (i = 0; i < roomArray.length; i ++) {
 				if (this.RP[toId(roomArray[i])].setAt) { // If an RP is set
 					if (this.RP[toId(roomArray[i])].lastEndPoll) { // Check if an endpoll has been done
@@ -1310,8 +1311,8 @@ exports.commands = {
 			var minutes = Math.floor(diff % 60);
 			diff /= 60;
 			var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
-			text += 'The last endpoll was made ' + timeleft + ' seconds ago'
-			if (this.RP[room].lastPollVoided) text += ', but was voided'
+			text += 'The last endpoll was made ' + timeleft + ' seconds ago';
+			if (this.RP[room].lastPollVoided) text += ', but was voided';
 			this.say(room, '/w ' + by + ', ' + text + '.');
 			} else {
 			this.say(room, '/w ' + by +', No endpoll has run since the RP was started.');
@@ -1395,7 +1396,7 @@ exports.commands = {
 	},
 	cp: 'customPriority',
 	customPriority: function (arg, by, room) {
-		if (!this.hasRank(by, '%@#&~') || room != 'amphyrp' || typeof this.RP[room].setAt != 'undefined') return false;
+		if (!this.hasRank(by, '%@#&~') || room != 'amphyrp' || typeof this.RP[room].setAt != 'undefined' || config.serverid != 'showdown') return false;
 		if (pollRoom == 'amphyrp') this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'voidpoll');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp CP');
 		if (arg && toId(arg) !== 'requested' && toId(arg).length < 19) {
