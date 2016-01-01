@@ -288,13 +288,13 @@ exports.parse = {
 					lastPM: now,
 					PMtimes: 0
 				};
-				send("|/pm " + by + ", " + "Greetings," + by + ". I am the RP room's resident AI, Synthia.  Please pm another staff member for assistance.  Command list: " + config.botguide);	
+  					if(!(spl[4].substr(0,1) === config.commandcharacter) && !(toId(by) === toId(config.nick))) send("|/pm " + by + ", " + "Greetings," + by + ". I am the RP room's resident AI, Synthia.  Please pm another staff member for assistance.  Command list: " + config.botguide);
 				}
-				if (!(spl[4].substr(0,1) === config.commandcharacter) && !(toId(by) === toId('Roleplaying Bot'))) {
+				if (!(spl[4].substr(0,1) === config.commandcharacter) && !(toId(by) === toId(config.nick))) {
 					this.userArray[toId(by)].PMtimes += 1;
 					var start = new Date(this.userArray[toId(by)].lastPM);
 					var now = new Date();
-					var diff = 10 * 60 * 1000 - (now.getTime() - start.getTime())
+					var diff = 10 * 60 * 1000 - (now.getTime() - start.getTime());
 					if (diff < 0) {
 						send("|/pm " + by + ", " + "Greetings," + by + ". I am the RP room's resident AI, Synthia.  Please pm another staff member for assistance.  Command list: " + config.botguide);	
 					}

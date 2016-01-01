@@ -928,7 +928,7 @@ exports.commands = {
 	rp: function(arg, by, room) {
 		if (room.charAt(0) === ','){
 			var text = '';
-			if (config.serverid === 'showdown') ? var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = config.rprooms;
+			var roomArray = (config.serverid === 'showdown') ? ['Roleplaying','AmphyRP','RustyRP'] : config.rprooms;
 			for (i = 0; i < roomArray.length; i ++) {
 				if (this.RP[toId(roomArray[i])].plot) {
 					text += " The RP in " + roomArray[i] + " is " + splitDoc(this.RP[toId(roomArray[i])].plot);
@@ -979,7 +979,8 @@ exports.commands = {
 	host: function(arg, by, room) {
 		if (room.charAt(0) === ','){
 			var text = '';
-			if (config.serverid === 'showdown') ? var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = config.rprooms;			for (i = 0; i < roomArray.length; i ++) {
+			var roomArray = (config.serverid === 'showdown') ? ['Roleplaying','AmphyRP','RustyRP'] : config.rprooms;
+			for (i = 0; i < roomArray.length; i ++) {
 				if (this.RP[toId(roomArray[i])].plot) {
 					text += " " + this.RP[toId(roomArray[i])].host + " is hosting in " + roomArray[i];
 					if (this.RP[toId(roomArray[i])].cohost) {
@@ -1279,7 +1280,7 @@ exports.commands = {
 	lastendpoll: function(arg, by, room) {
 		if (room.charAt(0) === ','){
 			var text = '';
-			if (config.serverid === 'showdown') ? var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = ['Roleplaying','AmphyRP','RustyRP'] : var roomArray = config.rprooms;
+			var roomArray = (config.serverid === 'showdown') ? ['Roleplaying','AmphyRP','RustyRP'] : config.rprooms;
 			for (i = 0; i < roomArray.length; i ++) {
 				if (this.RP[toId(roomArray[i])].setAt) { // If an RP is set
 					if (this.RP[toId(roomArray[i])].lastEndPoll) { // Check if an endpoll has been done
