@@ -566,6 +566,7 @@ exports.commands = {
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + 'The RP was set to ' + splitDoc(arg) + '.');
 		if (this.RP[room].setAt) return this.say(room, 'The RP was set to ' + arg + '.');
 		this.say(room, 'The RP was set to ' + arg + '. Use .start to start the RP.');
+		if (room === 'rustyrp') this.say(room, '/modchat off');
 	},
 	startrp: 'start',
 	rpstart: 'start',
@@ -863,6 +864,7 @@ exports.commands = {
 		} else {
 			this.say(room, '**The RP has ended.**');
 		}
+		if (room === 'rustyrp') this.say(room, '/modchat +');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'void');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'rppoll');
 	},
@@ -884,7 +886,8 @@ exports.commands = {
 				text += "The RP in Roleplaying is " + splitDoc(this.RP['roleplaying'].plot) + ".";
 			}
 			if (this.RP['amphyrp'].plot) {
-				text += " The RP in AmphyRP is " + splitDoc(this.RP['amphyrp'].plot) + ".";
+				if (this.RP['roleplaying'].plot) text += ' ';
+				text += "The RP in AmphyRP is " + splitDoc(this.RP['amphyrp'].plot) + ".";
 			}
 			if (!this.RP['roleplaying'].plot && !this.RP['amphyrp'].plot) {
 				text += "No RPs are void.";
@@ -1284,7 +1287,7 @@ exports.commands = {
 			for (i = 0; i < roomArray.length; i ++) {
 				if (this.RP[toId(roomArray[i])].setAt) { // If an RP is set
 					if (this.RP[toId(roomArray[i])].lastEndPoll) { // Check if an endpoll has been done
-						var start = new Date(this.RP[room].lastEndPoll);
+						var start = new Date(this.RP[toId(roomArray[i])].lastEndPoll);
 						var now = new Date();
 						var diff = (now.getTime() - start.getTime()) / 1000;
 						var seconds = Math.floor(diff % 60);
