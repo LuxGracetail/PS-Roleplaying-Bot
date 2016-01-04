@@ -566,7 +566,7 @@ exports.commands = {
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + 'The RP was set to ' + splitDoc(arg) + '.');
 		if (this.RP[room].setAt) return this.say(room, 'The RP was set to ' + arg + '.');
 		this.say(room, 'The RP was set to ' + arg + '. Use .start to start the RP.');
-		if (room === 'rustyrp') this.say(room, '/modchat off');
+//		if (room === 'rustyrp') this.say(room, '/modchat off');
 	},
 	startrp: 'start',
 	rpstart: 'start',
@@ -864,7 +864,7 @@ exports.commands = {
 		} else {
 			this.say(room, '**The RP has ended.**');
 		}
-		if (room === 'rustyrp') this.say(room, '/modchat +');
+//		if (room === 'rustyrp') this.say(room, '/modchat +');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'void');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'rppoll');
 	},
@@ -1414,6 +1414,7 @@ exports.commands = {
 			this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
 			pollNoms = [];
 			clearTimeout(pollTimer[pollRoom]);
+			delete pollTimer[pollRoom];
 			if (this.RP[room].rppollProgress) {
 				this.voidpoll[room] = true;
 				this.say(room, "/poll end");
@@ -1487,7 +1488,7 @@ exports.commands = {
 		} else {
 			var text = '';
 			if (this.RP[room].setAt && !this.RP[room].pause) {
-				return this.say(room, text + ' ((Any issues I have go here!  N-not that I have any!' + config.fork + '/issues))');
+				return this.say(room, text + ' ((Any issues I have go here!  N-not that I have any! ' + config.fork + '/issues))');
 			}
 		}
 		this.say(room, text + ' Any issues I have go here!  N-not that I have any! ' + config.fork + '/issues');
