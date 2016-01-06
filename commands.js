@@ -875,7 +875,7 @@ exports.commands = {
 		if(spl.length !== 2) return this.say(room, 'Void only accepts 2 arguments.');
 		this.RP.void[room] = [spl[0],spl[1]];
 		this.writeSettings();
-		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'void');
+			this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'void');
 	},
 	void: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot) return false;
@@ -1307,6 +1307,7 @@ exports.commands = {
 		}
 		if (!this.canUse('endpoll', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false; 
 		if (this.RP[room].lastEndPoll) {
+			var text = '';
 			var start = new Date(this.RP[room].lastEndPoll);
 			var now = new Date();
 			var diff = (now.getTime() - start.getTime()) / 1000;
@@ -1317,9 +1318,9 @@ exports.commands = {
 			var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
 			text += 'The last endpoll was made ' + timeleft + ' seconds ago';
 			if (this.RP[room].lastPollVoided) text += ', but was voided';
-			this.say(room, '/w ' + by + ', ' + text + '.');
+				this.say(room, '/w ' + by + ', ' + text + '.');
 			} else {
-			this.say(room, '/w ' + by +', No endpoll has run since the RP was started.');
+				this.say(room, '/w ' + by +', No endpoll has run since the RP was started.');
 		}
 	},
 	legend: 'legends',
