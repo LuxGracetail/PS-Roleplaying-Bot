@@ -1024,7 +1024,7 @@ exports.commands = {
 		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
 	},
     rppoll: function(arg, by, room) {
-        if (!this.hasRank(by, '%@#&~') || this.RP[room].plot || !(room in this.RP)) return false; //setrp perms? is this RP room?
+        if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || this.RP[room].plot || !(room in this.RP)) return false; //setrp perms? is this RP room?
 		if (pollON) { //if there's a poll already
 			return this.say(room, '/msg ' + by + ', A RP poll cannot be started, as one is in progress already in ' + pollRoom);
 		}
@@ -1296,7 +1296,7 @@ exports.commands = {
 						diff /= 60;
 						var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
 						text += 'The last endpoll was made ' + timeleft + ' seconds ago, in' + roomArray[i];
-						if (this.RP[room].lastPollVoided) text += ', but was voided';
+						if (this.RP[roomArray[i]].lastPollVoided) text += ', but was voided';
 						text += '.';
 					} else {
 						text += 'No endpoll has run since the RP was started in ' + roomArray[i] + '.';
