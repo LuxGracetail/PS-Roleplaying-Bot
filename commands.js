@@ -624,7 +624,7 @@ exports.commands = {
 				this.say(room, '/modchat off');
 			}
 		}
-
+		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
 		var now = new Date();
 		this.RP[room].setAt = now;
 		this.writeSettings();
@@ -1150,7 +1150,7 @@ exports.commands = {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
         if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
-        	if(toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1) return this.say(room, 'That RP is void.');
+        	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1) && pollRoom != 'rustyrp') return this.say(room, 'That RP is void.');
         }
        	if(toId(arg) == 'pokemonmysterydungeon') {
        		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokmonmysterydungeon') > -1 && room != 'rustyrp') return this.say(room, 'That RP is void.');
@@ -1191,7 +1191,7 @@ exports.commands = {
 				}
 			}
         }
-        if (toId(this.RP.void[pollRoom].toString()).indexOf(toId(arg)) > -1 && room != 'rustyrp') {
+        if (toId(this.RP.void[pollRoom].toString()).indexOf(toId(arg)) > -1 && pollRoom != 'rustyrp') {
         	return this.say(room, 'That RP is void.');
         }
         switch (toId(arg)) {
@@ -1296,10 +1296,10 @@ exports.commands = {
 						diff /= 60;
 						var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
 						text += 'The last endpoll was made ' + timeleft + ' seconds ago, in' + roomArray[i];
-						if (this.RP[roomArray[i]].lastPollVoided) text += ', but was voided';
-						text += '.';
+						if (this.RP[toId(roomArray[i])].lastPollVoided) text += ', but was voided';
+						text += '. ';
 					} else {
-						text += 'No endpoll has run since the RP was started in ' + roomArray[i] + '.';
+						text += 'No endpoll has run since the RP was started in ' + roomArray[i] + '. ';
 					}
 				}
 			}
