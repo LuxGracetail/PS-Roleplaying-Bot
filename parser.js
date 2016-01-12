@@ -388,7 +388,8 @@ exports.parse = {
 					} else if (toId(title).indexOf('host') > -1){
 						if (istie == true && tieopts.length > 1) {
 							setTimeout(function(){
-								Parse.say(room, '/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
+								now = new Date();
+								Parse.say(room, '/poll create Tiebreaker Host Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', ' + tieopts.join(', '));
 								Parse.say(room, '/poll timer 3');
 								console.log('/poll create Tiebreaker Host Poll, ' + tieopts.join(', '));
 							}, 1000);
@@ -406,7 +407,8 @@ exports.parse = {
 					} else if (toId(title).indexOf('nextrp') > -1) {
 						if (istie == true && tieopts.length > 1) {
 							setTimeout(function(){
-								Parse.say(room, '/poll create Tiebreaker Next RP Poll, ' + tieopts.join(', '));
+								now = new Date();
+								Parse.say(room, '/poll create Tiebreaker Next RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', ' + tieopts.join(', '));
 								Parse.say(room, '/poll timer 3');
 							}, 1000);
 							setTimeout(function(){
