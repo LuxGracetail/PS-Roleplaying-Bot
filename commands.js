@@ -624,7 +624,7 @@ exports.commands = {
 				this.say(room, '/modchat off');
 			}
 		}
-		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
+		if (pollRoom == room) this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
 		var now = new Date();
 		this.RP[room].setAt = now;
 		this.writeSettings();
@@ -1295,9 +1295,7 @@ exports.commands = {
 						var minutes = Math.floor(diff % 60);
 						diff /= 60;
 						var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
-						text += 'The last endpoll was made ' + timeleft + ' seconds ago, in' + roomArray[i];
-						if (this.RP[toId(roomArray[i])].lastPollVoided) text += ', but was voided';
-						text += '. ';
+						text += 'The last endpoll was made ' + timeleft + ' seconds ago, in' + roomArray[i] + '. ';
 					} else {
 						text += 'No endpoll has run since the RP was started in ' + roomArray[i] + '. ';
 					}
