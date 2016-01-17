@@ -824,11 +824,12 @@ exports.commands = {
 		} else {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
 		}
+		
+		nextVoid = splitDoc(this.RP[room].plot);
+		if (this.RP.void[room].length === 2) this.RP.void[room].shift();
+		this.RP.void[room].push(nextVoid);
+		
 		if (config.serverid === 'showdown' && this.RP[room].setAt) {
-			nextVoid = splitDoc(this.RP[room].plot);
-			if (this.RP.void[room].length === 2) this.RP.void[room].shift();
-			this.RP.void[room].push(nextVoid);
-
 			if (toId(this.RP[room].plot) === 'freeroam') {
 				clearTimeout(this.freeroamTimeouts[room]);
 				delete this.freeroamTimeouts[room];
@@ -869,7 +870,7 @@ exports.commands = {
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'rppoll');
 	},
 	setvoid: function(arg, by, room) {
-		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot || !arg || !this.hasRank(by, '%@#&~')) return false;
+		if (!(room in this.RP) || this.RP[room].plot || !arg || !this.hasRank(by, '%@#&~')) return false;
 		var spl = arg.split(', ');
 		console.log(spl);
 		if(spl.length !== 2) return this.say(room, 'Void only accepts 2 arguments.');
@@ -878,9 +879,9 @@ exports.commands = {
 			this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'void');
 	},
 	void: function(arg, by, room) {
-		if (config.serverid !== 'showdown' || !(room in this.RP) || this.RP[room].plot) return false;
+		if (!(room in this.RP) || this.RP[room].plot) return false;
 		var text = '';
-		if (room === 'rustyrp'){
+		if (room === 'rustyrp' || config.serverid === 'showdown'){
 			text += '**';
 			if (this.RP['roleplaying'].plot) {
 				text += "The RP in Roleplaying is " + splitDoc(this.RP['roleplaying'].plot) + ".";
