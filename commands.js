@@ -940,6 +940,7 @@ exports.commands = {
 			}.bind(this), 60 * 1000);
 		}
 	},
+	arpee: 'rp',
 	rp: function(arg, by, room) {
 		if (room.charAt(0) === ','){
 			var text = '';
@@ -996,7 +997,7 @@ exports.commands = {
 			var text = '';
 			var roomArray = (config.serverid === 'showdown') ? ['Roleplaying','AmphyRP','RustyRP'] : config.rprooms;
 			for (i = 0; i < roomArray.length; i ++) {
-				if (this.RP[toId(roomArray[i])].plot) {
+				if (this.RP[toId(roomArray[i])].plot && this.RP[toId(roomArray[i])].host) {
 					text += " " + this.RP[toId(roomArray[i])].host + " is hosting in " + roomArray[i];
 					if (this.RP[toId(roomArray[i])].cohost) {
 						text += ', with ' + this.RP[toId(roomArray[i])].cohost + ' as cohost(s).';
