@@ -550,6 +550,7 @@ exports.commands = {
 	},
 
 	// Roleplaying commands
+	sr: "setrp",
 	rpset: "setrp",
 	setrp: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
@@ -571,7 +572,7 @@ exports.commands = {
 	sd: 'setdoc',
 	docset: 'setdoc',
 	setdoc: function(arg, by, room) {
-		if (!(room in this.RP)) return false;
+		if (!(room in this.RP) || !this.RP[room].plot) return false;
 		if (typeof this.RP[room].host != 'undefined') {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host))) return false;
 		} else {
