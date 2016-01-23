@@ -637,7 +637,7 @@ exports.commands = {
 				this.say(room, '/modchat off');
 			}
 		}
-		if (pollRoom === room) this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
+		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
 		var now = new Date();
 		this.RP[room].setAt = now;
 		this.writeSettings();
@@ -941,6 +941,7 @@ exports.commands = {
 			}.bind(this), 60 * 1000);
 		}
 	},
+	roleplay: 'rp',
 	arpee: 'rp',
 	rp: function(arg, by, room) {
 		if (room.charAt(0) === ','){
@@ -1196,34 +1197,34 @@ exports.commands = {
         }
         switch (toId(arg)) {
 		    case 'goodvsevil':
-		    	goodvsevilNom.push(by);
+		    	if (goodvsevilNom.indexOf(by) == -1) goodvsevilNom.push(by);
 		        break;
 		    case 'conquest':
-		    	conquestNom.push(by);
+		    	if (conquestNom.indexOf(by) == -1) conquestNom.push(by);
 		        break;
 		    case 'trainer':
-		    	trainerNom.push(by);
+		    	if (trainerNom.indexOf(by) == -1) trainerNom.push(by);
 		        break;
 		    case 'pokehigh':
-		    	pokehighNom.push(by);
+		    	if (pokehighNom.indexOf(by) == -1) pokehighNom.push(by);
 		        break;
 		    case 'totaldramaisland':
-		    	totaldramaislandNom.push(by);
+		    	if (totaldramaislandNom.indexOf(by) == -1) totaldramaislandNom.push(by);
 		        break;
 		    case 'murdermystery':
-		    	murdermysteryNom.push(by);
+		    	if (murdermysteryNom.indexOf(by) == -1) murdermysteryNom.push(by);
 		        break;
 		    case 'pokemonmysterydungeon':
-		    	pokemonmysterydungeonNom.push(by);
+		    	if (pokemonmysterydungeonNom.indexOf(by) == -1) pokemonmysterydungeonNom.push(by);
 		        break;
 		    case 'dungeonsndragonites':
-		    	dungeonsndragonitesNom.push(by);
+		    	if (dungeonsndragonitesNom.indexOf(by) == -1) dungeonsndragonitesNom.push(by);
 		        break;
 		    case 'kingdom':
-		    	kingdomNom.push(by);
+		    	if (kingdomNom.indexOf(by) == -1) kingdomNom.push(by);
 		        break;
 		    case 'hungergames':
-		    	hungergamesNom.push(by);
+		    	if (hungergamesNom.indexOf(by) == -1) hungergamesNom.push(by);
 		        break;
 		    default:
 		    break;
@@ -1373,7 +1374,7 @@ exports.commands = {
 	},
 	vp: 'voidpoll',
 	voidpoll: function(arg, by, room) {
-		if (!pollON || !this.hasRank(by, '%@#&~')) return false;
+		if (!pollON || !this.hasRank(by, '%@#&~') || pollRoom != room) return false;
 			pollON = false;
 			this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
 			pollNoms = [];
