@@ -11,8 +11,8 @@ var pollON = false;
 var pollRoom = '';
 var pollTimer = {};
 var pollNoms = [];
-var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'totaldramaisland', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom', 'hungergames', 'zombieapocalypse'];
-var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom', 'Hunger Games', 'Zombie Apocalypse'];
+var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'totaldramaisland', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom', 'hungergames', 'survival'];
+var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom', 'Hunger Games', 'Survival'];
 
 var goodvsevilNom = [];
 var conquestNom = [];
@@ -1374,7 +1374,8 @@ exports.commands = {
 	},
 	vp: 'voidpoll',
 	voidpoll: function(arg, by, room) {
-		if (!pollON || !this.hasRank(by, '%@#&~') || pollRoom != room) return false;
+		if (room.charAt(0) === ',' && (config.staffList.indexOf(toId(by)) > -1)) room = pollRoom;
+		if (!(room in this.RP) || !pollON || !this.hasRank(by, '%@#&~') || pollRoom != room) return false;
 			pollON = false;
 			this.splitMessage('>' + pollRoom + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators boop');
 			pollNoms = [];
