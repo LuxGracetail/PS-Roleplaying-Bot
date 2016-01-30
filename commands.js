@@ -11,8 +11,8 @@ var pollON = false;
 var pollRoom = '';
 var pollTimer = {};
 var pollNoms = [];
-var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'totaldramaisland', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom', 'hungergames', 'survival'];
-var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom', 'Hunger Games', 'Survival'];
+var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'totaldramaisland', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom', 'survival'];
+var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Total Drama Island', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom', 'Survival'];
 
 var goodvsevilNom = [];
 var conquestNom = [];
@@ -1336,8 +1336,13 @@ exports.commands = {
 						diff /= 60;
 						var minutes = Math.floor(diff % 60);
 						diff /= 60;
-						var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
-						text += 'The last endpoll was made ' + timeleft + ' seconds ago, in' + roomArray[i] + '. ';
+						var hours = Math.floor(diff % 24);
+						if (hours == 0) {
+							var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
+						} else {
+							var timeleft = (hours == 1) ?  hours + ' hour, ' +  (((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds)) :( hours + ' hours, ' + ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds));
+						}
+						text += 'The last endpoll was made ' + timeleft + ' seconds ago, in ' + roomArray[i] + '. ';
 					} else {
 						text += 'No endpoll has run since the RP was started in ' + roomArray[i] + '. ';
 					}
@@ -1355,7 +1360,12 @@ exports.commands = {
 			diff /= 60;
 			var minutes = Math.floor(diff % 60);
 			diff /= 60;
-			var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
+			var hours = Math.floor(diff % 24);
+			if (hours == 0) {
+				var timeleft = ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds);
+			} else {
+				var timeleft = (hours == 1) ?  hours + ' hour, ' +  (((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds)) :( hours + ' hours, ' + ((minutes < 10) ? '0' + minutes : minutes) + ' minutes and ' + ((seconds < 10) ? '0' + seconds : seconds));
+			}
 			text += 'The last endpoll was made ' + timeleft + ' seconds ago';
 			if (this.RP[room].lastPollVoided) text += ', but was voided';
 				this.say(room, '/w ' + by + ', ' + text + '.');
