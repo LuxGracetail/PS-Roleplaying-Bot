@@ -18,12 +18,11 @@ var goodvsevilNom = [];
 var conquestNom = [];
 var trainerNom = [];
 var pokehighNom = [];
-var totaldramaislandNom = [];
 var murdermysteryNom = [];
 var pokemonmysterydungeonNom = [];
 var dungeonsndragonitesNom = [];
 var kingdomNom = [];
-var hungergamesNom = [];
+var survivalNom = [];
 
 function splitDoc(voided) {
 	if (!/docs\./.test(voided)) return voided;
@@ -1208,9 +1207,6 @@ exports.commands = {
 		    case 'pokehigh':
 		    	if (pokehighNom.indexOf(by) == -1) pokehighNom.push(by);
 		        break;
-		    case 'totaldramaisland':
-		    	if (totaldramaislandNom.indexOf(by) == -1) totaldramaislandNom.push(by);
-		        break;
 		    case 'murdermystery':
 		    	if (murdermysteryNom.indexOf(by) == -1) murdermysteryNom.push(by);
 		        break;
@@ -1223,8 +1219,8 @@ exports.commands = {
 		    case 'kingdom':
 		    	if (kingdomNom.indexOf(by) == -1) kingdomNom.push(by);
 		        break;
-		    case 'hungergames':
-		    	if (hungergamesNom.indexOf(by) == -1) hungergamesNom.push(by);
+		    case 'survival':
+		    	if (survivalNom.indexOf(by) == -1) survivalNom.push(by);
 		        break;
 		    default:
 		    break;
@@ -1253,9 +1249,6 @@ exports.commands = {
 				case 'pokehigh':
 				    this.say(room, 'Nominators for ' + arg + ' were ' + pokehighNom.join(', '));
 				    break;
-				case 'totaldramaisland':
-				    this.say(room, 'Nominators for ' + arg + ' were ' + totaldramaislandNom.join(', '));
-				    break;
 				case 'murdermystery':
 				    this.say(room, 'Nominators for ' + arg + ' were ' + murdermysteryNom.join(', '));
 				    break;
@@ -1268,8 +1261,8 @@ exports.commands = {
 				case 'kingdom':
 				    this.say(room, 'Nominators for ' + arg + ' were ' + kingdomNom.join(', '));
 				    break;
-				case 'hungergames':
-				    this.say(room, 'Nominators for ' + arg + ' were ' + hungergamesNom.join(', '));
+				case 'survival':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + survivalNom.join(', '));
 				    break;
 				default:
 				break;
@@ -1279,12 +1272,11 @@ exports.commands = {
 		conquestNom = [];
 		trainerNom = [];
 		pokehighNom = [];
-		totaldramaislandNom = [];
 		murdermysteryNom = [];
 		pokemonmysterydungeonNom = [];
 		dungeonsndragonitesNom = [];
 		kingdomNom = [];
-		hungergamesNom = [];
+		survivalNom = [];
 	},
 	endpoll: function(arg, by, room) {
 		if (!this.canUse('endpoll', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false;
