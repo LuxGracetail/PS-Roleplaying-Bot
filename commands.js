@@ -23,6 +23,7 @@ var pokemonmysterydungeonNom = [];
 var dungeonsndragonitesNom = [];
 var kingdomNom = [];
 var survivalNom = [];
+var customPriorityFlag = false;
 
 function splitDoc(voided) {
 	if (!/docs\./.test(voided)) return voided;
@@ -637,6 +638,10 @@ exports.commands = {
 			}
 		}
 		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
+		if (customPriorityFlag && room == 'amphyrp') {
+			this.say(room, '/modnote ' + this.RP[room].host + ' has started the CPed custom RP ' + splitDoc(this.RP[room].plot));
+			customPriorityFlag = false;
+		}
 		var now = new Date();
 		this.RP[room].setAt = now;
 		this.writeSettings();
@@ -865,6 +870,11 @@ exports.commands = {
 					}
 				}
 			}
+		}
+
+		if (customPriorityFlag && room == 'amphyrp' && !this.RP[room].setAt) {
+			this.say(room, '/modnote ' + this.RP[room].host + ' failed to run the custom RP ' + splitDoc(this.RP[room].plot) + '.');
+			customPriorityFlag = false;
 		}
 
 		for (var i in this.RP[room]) {
@@ -1368,11 +1378,12 @@ exports.commands = {
 	cp: 'customPriority',
 	customPriority: function (arg, by, room) {
 		if (!this.hasRank(by, '%@#&~') || room != 'amphyrp' || typeof this.RP[room].setAt != 'undefined' || config.serverid != 'showdown') return false;
+		if (!arg || toId(arg).length > 19 || toId(arg) == 'requested') return this.say(room, 'Please specify the person claiming custom priority.');
 		if (pollRoom == 'amphyrp') this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'voidpoll');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp CP');
-		if (arg && toId(arg) !== 'requested' && toId(arg).length < 19) {
-			this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'sethost ' + arg);
-		}
+		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'sethost ' + arg);
+		customPriorityFlag = true;
+		this.say(room, '/modnote ' + arg + ' has claimed custom priority.');
 	},
 	vp: 'voidpoll',
 	voidpoll: function(arg, by, room) {
