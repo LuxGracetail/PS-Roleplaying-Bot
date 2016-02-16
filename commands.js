@@ -639,7 +639,7 @@ exports.commands = {
 		}
 		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
 		if (customPriorityFlag && room == 'amphyrp') {
-			this.say(room, '/modnote ' + this.RP[room].host + ' has started the CPed custom RP ' + splitDoc(this.RP[room].plot));
+			this.say(room, '/modnote ' + this.RP[room].host + ' has started the custom RP ' + splitDoc(this.RP[room].plot));
 			customPriorityFlag = false;
 		}
 		var now = new Date();
@@ -890,6 +890,7 @@ exports.commands = {
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'void');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'rppoll');
 	},
+	sv: 'setvoid',
 	setvoid: function(arg, by, room) {
 		if (!(room in this.RP) || this.RP[room].plot || !arg || !this.hasRank(by, '%@#&~')) return false;
 		var spl = arg.split(', ');
@@ -1094,6 +1095,7 @@ exports.commands = {
 		    	}.bind(this), 3 * 60 * 1000);
 		    } else {
 		        this.say(room, '/wall There were not enough nominations.');
+		        console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "The RP poll failed due to lack of suggestions.");
 		        pollON = false;
 		       	pollNoms = [];  // Maybe?  I dunno.  Clear poll noms after a poll has failed.
 		       	pollroom = '';
@@ -1399,6 +1401,7 @@ exports.commands = {
 				this.say(room, "/poll end");
 				delete this.RP[room].rppollProgress;
 			}
+			console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "The RP poll has been voided.");
 			return this.say(room, 'RP Poll voided.');
 	},
 	vep: 'voidendpoll',
