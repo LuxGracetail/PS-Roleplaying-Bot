@@ -886,7 +886,7 @@ exports.commands = {
 		}
 
 		if (customPriorityFlag && room == 'amphyrp' && !this.RP[room].setAt) {
-			this.say(room, '/modnote ' + this.RP[room].host + ' failed to run the custom RP ' + splitDoc(this.RP[room].plot) + '.');
+			this.say(room, '/modnote ' + this.RP[room].host + ' failed to run the CPed custom RP ' + splitDoc(this.RP[room].plot) + '.');
 			customPriorityFlag = false;
 		}
 		if (this.RP[room].setAt) {
