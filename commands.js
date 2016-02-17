@@ -870,8 +870,11 @@ exports.commands = {
 		var hours = Math.floor(diff % 24);
 		var progress = hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
 
-		
-		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended after "+ progress + ".");
+		if (this.RP[room].setAt) {
+			console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended after "+ progress + ".");
+		} else {
+			console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended.");
+		}
 		if (!(room == "amphyrp")){
 			if (this.RP[room].host){
 				if (room == 'rustyrp' || (config.voiceList.indexOf(toId(this.RP[room].host)) == -1)) {
