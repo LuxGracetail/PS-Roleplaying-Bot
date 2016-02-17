@@ -646,13 +646,13 @@ exports.commands = {
 		this.RP[room].setAt = now;
 		this.writeSettings();
 		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
-			this.say(room, '/wall The RP has started.');
+			this.say(room, '/wall The RP (' +  splitDoc(this.RP[room].plot) + ') has started.');
 		} else {
-			this.say(room, '**The RP has started.**');
+			this.say(room, '**The RP (' +  splitDoc(this.RP[room].plot) + ') has started.**');
 		}
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has started.");
 	},
-	'pause': 'rppause',
+	pause: 'rppause',
 	pauserp: 'rppause',
 	rppause: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
@@ -858,7 +858,20 @@ exports.commands = {
 				delete this.conquestLockouts[room];
 			}
 		}
-		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended.");
+		
+		// How long it's been going for when it ends.
+		var start = new Date(this.RP[room].setAt);
+		var now = (this.RP[room].pause) ? new Date(this.RP[room].pause) : new Date();
+		var diff = (now.getTime() - start.getTime()) / 1000;
+		var seconds = Math.floor(diff % 60);
+		diff /= 60;
+		var minutes = Math.floor(diff % 60);
+		diff /= 60;
+		var hours = Math.floor(diff % 24);
+		var progress = hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
+
+		
+		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended after "+ progress + ".");
 		if (!(room == "amphyrp")){
 			if (this.RP[room].host){
 				if (room == 'rustyrp' || (config.voiceList.indexOf(toId(this.RP[room].host)) == -1)) {
@@ -876,16 +889,24 @@ exports.commands = {
 			this.say(room, '/modnote ' + this.RP[room].host + ' failed to run the custom RP ' + splitDoc(this.RP[room].plot) + '.');
 			customPriorityFlag = false;
 		}
-
+		if (this.RP[room].setAt) {
+			if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+				this.say(room, '/wall The RP has ended after ' + progress + '.');
+			} else {
+				this.say(room, '**The RP has ended after ' + progress + '.**');
+			}
+		} else {
+			if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+				this.say(room, '/wall The RP has ended.');
+			} else {
+				this.say(room, '**The RP has ended.**');
+			}
+		}
+		
 		for (var i in this.RP[room]) {
 			delete this.RP[room][i];
 		}
 		this.writeSettings();
-		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
-			this.say(room, '/wall The RP has ended.');
-		} else {
-			this.say(room, '**The RP has ended.**');
-		}
 //		if (room === 'rustyrp') this.say(room, '/modchat +');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'void');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'rppoll');
