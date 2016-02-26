@@ -579,7 +579,7 @@ exports.commands = {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by)) return false;
 		}
 		if (!arg) return this.say(room, 'Please enter a doc.');
-		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setrp ' + splitDoc(this.RP[room].plot) + '. Doc: ' + arg);
+		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setrp ' + splitDoc(this.RP[room].plot) + ' || Doc: ' + arg);
 	},
 	startrp: 'start',
 	rpstart: 'start',
