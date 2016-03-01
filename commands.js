@@ -595,7 +595,7 @@ exports.commands = {
 			this.RP[room].plot = arg;
 		}
 
-		if (this.freeroamTimeouts && toId(this.RP[room].plot) === 'freeroam') {
+		if (this.freeroamTimeouts && toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom') {
 			this.freeroamTimeouts[room] = setTimeout(function() {
 				this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
 				delete this.freeroamTimeouts[room];
@@ -663,7 +663,7 @@ exports.commands = {
 		}
 
 		this.RP[room].pause = new Date();
-		if (this.freeroamTimeouts[room] && toId(this.RP[room].plot) === 'freeroam') {
+		if (this.freeroamTimeouts[room] && (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom')) {
 			clearTimeout(this.freeroamTimeouts[room]);
 			delete this.freeroamTimeouts[room];
 		}
@@ -729,7 +729,7 @@ exports.commands = {
 		}
 		
 		
-		if (!this.freeroamTimeouts[room] && toId(this.RP[room].plot) === 'freeroam') {
+		if (!this.freeroamTimeouts[room] && (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom')) {
 			this.freeroamTimeouts[room] = setTimeout(function() {
 				this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
 				delete this.freeroamTimeouts[room];
@@ -846,7 +846,7 @@ exports.commands = {
 			if (this.RP.void[room].length === 2) this.RP.void[room].shift();
 			this.RP.void[room].push(nextVoid);
 
-			if (toId(this.RP[room].plot) === 'freeroam') {
+			if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom') {
 				clearTimeout(this.freeroamTimeouts[room]);
 				delete this.freeroamTimeouts[room];
 			}
@@ -1045,6 +1045,7 @@ exports.commands = {
 			return this.say(room, text);
 		}
 		if (!(room in this.RP)) return false;
+		if (!this.RP[room].host) return false;
 		if (this.RP[room].hostCalled) {
 			var text = '/pm ' + by + ', ';
 		} else {
@@ -1185,9 +1186,9 @@ exports.commands = {
         if(RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
-        if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
+/*        if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
         	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1) && pollRoom != 'rustyrp') return this.say(room, 'That RP is void.');
-        }
+        }*/
        	if(toId(arg) == 'pokemonmysterydungeon') {
        		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokmonmysterydungeon') > -1 && room != 'rustyrp') return this.say(room, 'That RP is void.');
         	
