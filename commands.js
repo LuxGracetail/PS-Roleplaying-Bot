@@ -1315,6 +1315,7 @@ exports.commands = {
 		kingdomNom = [];
 		survivalNom = [];
 	},
+	ep: "endpoll",
 	endpoll: function(arg, by, room) {
 		if (!this.canUse('endpoll', room, by) || !(room in this.RP) || !this.RP[room].setAt) return false;
 //		if (!arg) return this.say(room, 'Please specify the requester of the poll.');
