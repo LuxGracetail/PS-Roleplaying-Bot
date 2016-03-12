@@ -402,11 +402,11 @@ exports.parse = {
 							console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + winopt + ' won with ' + winpercent + '%.');
 							this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'sethost ' + winopt);
 						}
-					} else if (toId(title).indexOf('nextrp') > -1) {
-						if (istie == true && tieopts.length > 1) {
+					}  else if (toId(title).indexOf('variantrp') > -1) {
+							if (istie == true && tieopts.length > 1) {
 							setTimeout(function(){
 								now = new Date();
-								Parse.say(room, '/poll create Tiebreaker Next RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', ' + tieopts.join(', '));
+								Parse.say(room, '/poll create Tiebreaker Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', ' + tieopts.join(', '));
 								Parse.say(room, '/poll timer 3');
 							}, 1000);
 							setTimeout(function(){
@@ -424,7 +424,44 @@ exports.parse = {
 								this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + winopt);
 							}
 						}
+					} else if (toId(title).indexOf('nextrp') > -1) {
+						if (istie == true && tieopts.length > 1) {
+							setTimeout(function(){
+								now = new Date();
+								Parse.say(room, '/poll create Tiebreaker Next RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', ' + tieopts.join(', '));
+								Parse.say(room, '/poll timer 3');
+							}, 1000);
+							setTimeout(function(){
+								Parse.say(room, '!poll display');
+							}, 60 * 1000 + 1000);
+							setTimeout(function(){
+								Parse.say(room, '!poll display');
+							}, 2 * 60 * 1000 + 1000);
+						} else {
+							if (toId(winopt) == 'freeroam' || toId(winopt) == 'prom') {
+								setTimeout(function(){
+									now = new Date();
+									Parse.say(room, '/poll create Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Freeroam, Prom');
+									Parse.say(room, '/poll timer 3');
+								}, 1000);
+								setTimeout(function(){
+									Parse.say(room, '!poll display');
+								}, 60 * 1000 + 1000);
+								setTimeout(function(){
+									Parse.say(room, '!poll display');
+								}, 2 * 60 * 1000 + 1000);
+							} else{
+								Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
+								this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
+								if (toId(winopt) == 'freeroam' || toId(winopt) == 'cruise' || toId(winopt) == 'prom') {
+									this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'start ' + winopt);
+								} else {
+									this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + winopt);
+								}
+							}
+						}
 					}
+
 				}
 				break;
 			default:

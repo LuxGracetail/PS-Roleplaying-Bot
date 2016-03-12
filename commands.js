@@ -1183,9 +1183,15 @@ exports.commands = {
     	if (pollRoom == 'amphyrp' && toId(arg) == 'freeroam'){
     	    return this.say(room, "Freeroam cannot be run in AmphyRP.");
     	}
+    	if (pollRoom == 'amphyrp' && toId(arg) == 'prom'){
+    		return this.say(room, "Prom cannot be run in AmphyRP");
+    	}
         if(RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
+        if(toId(arg) == 'freeroam' || toId(arg) == 'prom') {
+        	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1) && pollRoom != 'rustyrp') return this.say(room, 'That RP is void.');
+          }
 /*        if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
         	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1) && pollRoom != 'rustyrp') return this.say(room, 'That RP is void.');
         }*/
