@@ -1191,7 +1191,13 @@ exports.commands = {
         }
         if(toId(arg) == 'freeroam' || toId(arg) == 'prom') {
         	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1) && pollRoom != 'rustyrp') return this.say(room, 'That RP is void.');
-          }
+        }
+        if (toId(arg) == 'freeroam' || toId(arg) == 'prom'){
+	        if (toId(pollNoms.toString()).indexOf(toId('freeroam')) > -1 || toId(pollNoms.toString()).indexOf(toId('freeroam')) > -1) {
+	        	return this.say(room, 'That RP has already been suggested.');
+	        }
+	        
+        }
 /*        if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
         	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1) && pollRoom != 'rustyrp') return this.say(room, 'That RP is void.');
         }*/
