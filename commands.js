@@ -1135,6 +1135,7 @@ exports.commands = {
         } //  Why not an if else?
         switch (toId(arg)) {
         	case 'fr':
+        	case 'prom':
         		arg = 'Freeroam';
         		break;
         	case 'cq':
@@ -1181,7 +1182,7 @@ exports.commands = {
 			}
 		}
     	if (pollRoom == 'amphyrp' && toId(arg) == 'freeroam'){
-    	    return this.say(room, "Freeroam cannot be run in AmphyRP.");
+    	    return this.say(room, "Freeroam and its variants cannot be run in AmphyRP.");
     	}
     	if (pollRoom == 'amphyrp' && toId(arg) == 'prom'){
     		return this.say(room, "Prom cannot be run in AmphyRP");
