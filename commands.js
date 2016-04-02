@@ -617,7 +617,7 @@ exports.commands = {
 		if (this.RP[room].endpollCalled) {
 			delete this.RP[room].endpollCalled;
 		}
-		
+
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
 				this.say(room, '**Arceus, Darkrai, Mewtwo, Mega-Rayquaza, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
 				this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
@@ -713,7 +713,6 @@ exports.commands = {
 		var conquestTimeLeft = 10 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
 		
 		if (!this.conquestTimeouts[room] && /conquest/i.test(toId(this.RP[room].plot))){
-			
 			if (conquestTimeLeft > 0) {
 				this.conquestTimeouts[room] = setTimeout(function() {
 					this.say(room, '**Grace Period has ended.**');
@@ -727,8 +726,7 @@ exports.commands = {
 				}.bind(this), timeLeft);
 			}
 		}
-		
-		
+
 		if (!this.freeroamTimeouts[room] && (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom')) {
 			this.freeroamTimeouts[room] = setTimeout(function() {
 				this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
@@ -850,11 +848,13 @@ exports.commands = {
 			}
 			this.RP.void[room].push(nextVoid);
 
+			
+
 			if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom') {
 				clearTimeout(this.freeroamTimeouts[room]);
 				delete this.freeroamTimeouts[room];
 			}
-			
+
 			if (/conquest/i.test(toId(this.RP[room].plot))){
 				clearTimeout(this.conquestTimeouts[room]);
 				delete this.conquestTimeouts[room];
@@ -1590,6 +1590,6 @@ exports.commands = {
 		} else {		
 			var text = '/pm ' + by + ', ';		
 		}
-		this.say(room, text + 'Check out the new compulsory RP Map: http://i.imgur.com/l8q7O8j.png');		
+		this.say(room, text + 'Check out the new RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');		
 	}
 };
