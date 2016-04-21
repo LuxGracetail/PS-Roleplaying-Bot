@@ -189,6 +189,8 @@ exports.parse = {
 					this.freeroamTimeouts = {};
 					this.conquestTimeouts = {};
 					this.conquestLockouts = {};
+					this.staffAnnounceEndTimeouts = {};
+					this.autoTimeOut = {};
 					this.voidpoll = {};
 					this.endpollTimerSet = {};
 					if (this.settings && this.settings.RP) {
@@ -418,7 +420,9 @@ exports.parse = {
 						} else {
 							Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
 							this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
-							if (toId(winopt) == 'freeroam' || toId(winopt) == 'cruise' || toId(winopt) == 'prom') {
+							this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + winopt);
+							if (toId(winopt) == 'freeroam' || toId(winopt) == 'prom') {
+//								if (toId(winopt) == 'freeroam') this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setdoc http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
 								this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'start ' + winopt);
 							} else {
 								this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + winopt);
@@ -453,7 +457,8 @@ exports.parse = {
 							} else{
 								Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
 								this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
-								if (toId(winopt) == 'freeroam' || toId(winopt) == 'cruise' || toId(winopt) == 'prom') {
+								this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + winopt);
+								if (toId(winopt) == 'freeroam' || toId(winopt) == 'prom') {
 									this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'start ' + winopt);
 								} else {
 									this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + winopt);
@@ -600,19 +605,33 @@ exports.parse = {
 		}
 		this.blacklistRegexes[room] = new RegExp(buffer.join('|'), 'i');
 	},
-	uploadToHastebin: function(toUpload, callback) {
+	uploadToHastebin: function (toUpload, callback) {
+		if (typeof callback !== 'function') return false;
 		var reqOpts = {
 			hostname: "hastebin.com",
 			method: "POST",
 			path: '/documents'
 		};
-
-		var req = require('http').request(reqOpts, function(res) {
-			res.on('data', function(chunk) {
-				if (callback && typeof callback === "function") callback("hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
+		
+		var req = http.request(reqOpts, function (res) {
+			res.on('data', function (chunk) {
+                // CloudFlare can go to hell for sending the body in a header request like this
+				try {
+                    var filename = JSON.parse(chunk).key;
+                } catch (e) {
+                    if (typeof chunk === 'string' && /^[^\<]*\<!DOCTYPE html\>/.test(chunk)) {
+                        callback('Cloudflare-related error uploading to Hastebin: ' + e.message);
+                    } else {
+                        callback('Unknown error uploading to Hastebin: ' + e.message);
+                    }
+                }
+                callback('http://hastebin.com/raw/' + filename);
 			});
+        });
+        req.on('error', function (e) {
+			callback('Error uploading to Hastebin: ' + e.message);
+			throw e;
 		});
-
 		req.write(toUpload);
 		req.end();
 	},

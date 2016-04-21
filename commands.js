@@ -11,18 +11,18 @@ var pollON = false;
 var pollRoom = '';
 var pollTimer = {};
 var pollNoms = [];
-var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom', 'survival'];
-var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom', 'Survival'];
+var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom'];
+var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom'];
 
 var goodvsevilNom = [];
 var conquestNom = [];
 var trainerNom = [];
 var pokehighNom = [];
+var cruiseNom = [];
 var murdermysteryNom = [];
 var pokemonmysterydungeonNom = [];
 var dungeonsndragonitesNom = [];
 var kingdomNom = [];
-var survivalNom = [];
 var customPriorityFlag = false;
 
 function splitDoc(voided) {
@@ -594,13 +594,31 @@ exports.commands = {
 			if (!arg) return this.say(room, 'Please set an RP before using .start, or specify an RP with .start to start one immediately.');
 			this.RP[room].plot = arg;
 		}
-
-		if (this.freeroamTimeouts && toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom') {
-			this.freeroamTimeouts[room] = setTimeout(function() {
-				this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
-				delete this.freeroamTimeouts[room];
-			}.bind(this), 2 * 60 * 60 * 1000);
+		
+		if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom'){
+			if (this.freeroamTimeouts) {
+				this.freeroamTimeouts[room] = setTimeout(function() {
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
+					delete this.freeroamTimeouts[room];
+				}.bind(this), 2 * 60 * 60 * 1000);
+			}
+		} else {
+			if (this.staffAnnounceEndTimeouts) {
+				this.staffAnnounceEndTimeouts[room] = setTimeout(function() {
+					this.say(room, "/wall The RP has been in progress for **Three Hours**. Any Moderator or Driver may now end the RP. The RP will auto-end in **One Hour**");
+					delete this.staffAnnounceEndTimeouts[room];
+				}.bind(this), 3 * 60 * 60 * 1000);
+			}
+			if (this.autoTimeOut) {
+				this.autoTimeOut[room] = setTimeout(function() {
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
+					this.say(room, "/wall The RP has reached its time limit of 4 hours. Consider scheduling a time in Rusty to continue the RP with the same players.");
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'rustyrp');
+					delete this.autoTimeOut[room];
+				}.bind(this), 4 * 60 * 60 * 1000);
+			}
 		}
+		
 		if (this.conquestTimeouts && /conquest/i.test(toId(this.RP[room].plot))){
 			this.conquestTimeouts[room] = setTimeout(function() {
 				this.say(room, '**Grace Period has ended.**');
@@ -667,6 +685,23 @@ exports.commands = {
 			clearTimeout(this.freeroamTimeouts[room]);
 			delete this.freeroamTimeouts[room];
 		}
+		
+		if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom'){
+			if (this.freeroamTimeouts[room]) {
+				clearTimeout(this.freeroamTimeouts[room]);
+				delete this.freeroamTimeouts[room];
+			}
+		} else {
+			if (this.staffAnnounceEndTimeouts[room]) {
+				clearTimeout(this.staffAnnounceEndTimeouts[room]);
+				delete this.staffAnnounceEndTimeouts[room];
+			}
+			if (this.autoTimeOut[room]) {
+				clearTimeout(this.autoTimeOut[room]);
+				delete this.autoTimeOut[room];
+			}
+		}
+		
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
 			if (this.conquestTimeouts[room]){
 				clearTimeout(this.conquestTimeouts[room]);
@@ -711,6 +746,8 @@ exports.commands = {
 		this.RP[room].setAt = setAt;
 		var timeLeft =  2 * 60 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
 		var conquestTimeLeft = 10 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
+		var announceTimeLeft  = 3 * 60 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
+		var autoEndTimeLeft  = 4 * 60 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
 		
 		if (!this.conquestTimeouts[room] && /conquest/i.test(toId(this.RP[room].plot))){
 			if (conquestTimeLeft > 0) {
@@ -727,11 +764,28 @@ exports.commands = {
 			}
 		}
 
-		if (!this.freeroamTimeouts[room] && (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom')) {
-			this.freeroamTimeouts[room] = setTimeout(function() {
-				this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
-				delete this.freeroamTimeouts[room];
-			}.bind(this), timeLeft);
+		if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom') {
+			if (!this.freeroamTimeouts[room]) {
+				this.freeroamTimeouts[room] = setTimeout(function() {
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
+					delete this.freeroamTimeouts[room];
+				}.bind(this), timeLeft);
+			}
+		} else {
+			if (this.staffAnnounceEndTimeouts && announceTimeLeft > 0) {
+				this.staffAnnounceEndTimeouts[room] = setTimeout(function() {
+					this.say(room, "/wall The RP has been in progress for **Three Hours**. Any Moderator or Driver may now end the RP. The RP will auto-end in **One Hour**");
+					delete this.staffAnnounceEndTimeouts[room];
+				}.bind(this), announceTimeLeft);
+			}
+			if (this.autoTimeOut && autoEndTimeLeft > 0) {
+				this.autoTimeOut[room] = setTimeout(function() {
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
+					this.say(room, "/wall The RP has reached its time limit of 4 hours. Consider scheduling a time in Rusty to continue the RP with the same players.");
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'rustyrp');
+					delete this.autoTimeOut[room];
+				}.bind(this), autoEndTimeLeft);
+			}
 		}
 
 		delete this.RP[room].pause;
@@ -853,6 +907,11 @@ exports.commands = {
 			if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom') {
 				clearTimeout(this.freeroamTimeouts[room]);
 				delete this.freeroamTimeouts[room];
+			} else {
+				clearTimeout(this.staffAnnounceEndTimeouts[room]);
+				delete this.staffAnnounceEndTimeouts[room];
+				clearTimeout(this.autoTimeOut[room]);
+				delete this.autoTimeOut[room];
 			}
 
 			if (/conquest/i.test(toId(this.RP[room].plot))){
@@ -1024,6 +1083,14 @@ exports.commands = {
 					}
 				}
 			}
+			for (i = 0; i < roomArray.length; i ++) {
+				if (this.RP[toId(roomArray[i])].plot) {
+					if (toId(this.RP[toId(roomArray[i])].plot) == 'freeroam') {
+						this.say(room, text);
+						return this.say(room, 'Check out the new RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
+					}
+				}
+			}
 			return this.say(room, text);
 		}
 		if (!(room in this.RP)) return false;
@@ -1051,6 +1118,7 @@ exports.commands = {
 
 		if (this.RP[room].pause) return this.say(room, text + 'The RP is ' + this.RP[room].plot + ', but it is paused. Paused at: ' + progress);
 		this.say(room, text + 'The RP is ' + this.RP[room].plot + ', in progress for ' + progress + '.');
+		if (toId(this.RP[room].plot) === 'freeroam') this.splitMessage('>' + room + '\n|c|~' + by + '|' + config.commandcharacter + 'mapassist');
 	},
 	host: function(arg, by, room) {
 		if (room.charAt(0) === ','){
@@ -1293,9 +1361,6 @@ exports.commands = {
 		    case 'kingdom':
 		    	if (kingdomNom.indexOf(by) == -1) kingdomNom.push(by);
 		        break;
-		    case 'survival':
-		    	if (survivalNom.indexOf(by) == -1) survivalNom.push(by);
-		        break;
 		    default:
 		    break;
 		}
@@ -1323,6 +1388,9 @@ exports.commands = {
 				case 'pokehigh':
 				    this.say(room, 'Nominators for ' + arg + ' were ' + pokehighNom.join(', '));
 				    break;
+				case 'cruise':
+				    this.say(room, 'Nominators for ' + arg + ' were ' + cruiseNom.join(', '));
+				    break;
 				case 'murdermystery':
 				    this.say(room, 'Nominators for ' + arg + ' were ' + murdermysteryNom.join(', '));
 				    break;
@@ -1335,9 +1403,6 @@ exports.commands = {
 				case 'kingdom':
 				    this.say(room, 'Nominators for ' + arg + ' were ' + kingdomNom.join(', '));
 				    break;
-				case 'survival':
-				    this.say(room, 'Nominators for ' + arg + ' were ' + survivalNom.join(', '));
-				    break;
 				default:
 				break;
 				}
@@ -1346,11 +1411,11 @@ exports.commands = {
 		conquestNom = [];
 		trainerNom = [];
 		pokehighNom = [];
+		cruiseNom = [];
 		murdermysteryNom = [];
 		pokemonmysterydungeonNom = [];
 		dungeonsndragonitesNom = [];
 		kingdomNom = [];
-		survivalNom = [];
 	},
 	ep: "endpoll",
 	endpoll: function(arg, by, room) {
@@ -1502,7 +1567,7 @@ exports.commands = {
 		if (diff > 0) {
 			this.say (room, "The host has " + timeleft + " seconds left to set up.");
 		} else {
-			this.say (room, "The host has exhausted the time alloted for set up.  Highlighting mods.");
+			this.say (room, "The host has exhausted the time allotted for set up.  Highlighting mods.");
 		}
 	},
 	psa: 'publicserviceannouncement',
@@ -1583,13 +1648,48 @@ exports.commands = {
 		}
 		this.say(room, text + 'Roleplaying\'s Forum: http://psroleplaying.forumotion.com/');
 	},
+	rustyrp: function(arg, by, room) {		
+	if (config.serverid !== 'showdown' ||  !(room in this.RP)) return false;
+		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
+			var text = '';		
+		} else {		
+			var text = '/pm ' + by + ', ';		
+		}
+		this.say(room, text + 'http://psroleplaying.forumotion.com/t1599-rustyrp-rebirth#36632');		
+	},
+	worldmap: 'map',
 	map: function(arg, by, room) {		
-	if (config.serverid !== 'showdown') return false;		
+	if (config.serverid !== 'showdown') return false;
 		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
 			var text = '';		
 		} else {		
 			var text = '/pm ' + by + ', ';		
 		}
 		this.say(room, text + 'Check out the new RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');		
+	},
+	mapassist: function(arg, by, room) {
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP) || toId(this.RP[room].plot) !== 'freeroam') return false;
+		if (this.RP[room].mapcalled) {
+			var text = '/pm ' + by + ', ';
+		} else {
+			var text = '';
+			this.RP[room].mapcalled = true;
+			setTimeout(function() {
+				delete this.RP[room].mapcalled;
+			}.bind(this), 60 * 1000);
+		}
+		this.say(room, text + 'Check out the new RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
+	},
+	defaultDoc: function (arg, by, room) {
+		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP)) return false;
+		if (RPOpts.indexOf(toId(arg)) > -1) {
+			switch (toId(arg)) {
+				case 'cruise':
+				    	this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1BWKfcir8fCSROEId4r1hqxe1DnAETkbdv2pKBxapgcI');
+					break;
+				default:
+				break;
+				}
+		}
 	}
 };
