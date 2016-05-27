@@ -478,7 +478,7 @@ exports.parse = {
 		}
 	},
 	chatMessage: function (message, by, room) {
-		if (toId(by) === toId(config.nick)) return;
+//		if (toId(by) === toId(config.nick)) return;
 		var cmdrMessage = '["' + room + '|' + by + '|' + message + '"]';
 		message = message.trim();
 		if (room.charAt(0) === ',') {
@@ -606,31 +606,16 @@ exports.parse = {
 		this.blacklistRegexes[room] = new RegExp(buffer.join('|'), 'i');
 	},
 	uploadToHastebin: function (toUpload, callback) {
-		if (typeof callback !== 'function') return false;
 		var reqOpts = {
 			hostname: "hastebin.com",
 			method: "POST",
 			path: '/documents'
 		};
-		
-		var req = http.request(reqOpts, function (res) {
-			res.on('data', function (chunk) {
-                // CloudFlare can go to hell for sending the body in a header request like this
-				try {
-                    var filename = JSON.parse(chunk).key;
-                } catch (e) {
-                    if (typeof chunk === 'string' && /^[^\<]*\<!DOCTYPE html\>/.test(chunk)) {
-                        callback('Cloudflare-related error uploading to Hastebin: ' + e.message);
-                    } else {
-                        callback('Unknown error uploading to Hastebin: ' + e.message);
-                    }
-                }
-                callback('http://hastebin.com/raw/' + filename);
+
+		var req = require('http').request(reqOpts, function(res) {
+			res.on('data', function(chunk) {
+				if (callback && typeof callback === "function") callback("hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
 			});
-        });
-        req.on('error', function (e) {
-			callback('Error uploading to Hastebin: ' + e.message);
-			throw e;
 		});
 		req.write(toUpload);
 		req.end();
@@ -677,7 +662,7 @@ exports.parse = {
 				var bannedPhrases = !!bannedPhraseSettings ? (Object.keys(bannedPhraseSettings[room] || {})).concat(Object.keys(bannedPhraseSettings.global || {})) : [];
 				for (var i = 0; i < bannedPhrases.length; i++) {
 					if (msg.toLowerCase().indexOf(bannedPhrases[i]) > -1) {
-						pointVal = 2;
+						pointVal = 4;
 						muteMessage = ', Automated response: your message contained a banned phrase';
 						break;
 					}

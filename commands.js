@@ -637,7 +637,7 @@ exports.commands = {
 		}
 
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
-				this.say(room, '**Arceus, Darkrai, Mewtwo, Mega-Rayquaza, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
+				this.say(room, '**Arceus, Darkrai, Mewtwo, Mega-Rayquaza, Kyogre, Yveltal, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
 				this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
 				this.say(room, "**Blaziken, Greninja, Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Soul Dew, Damp Rock, and Smooth Rock are banned. Ghost cannot have both Giratina-A and Aegislash on the same team.  Types are locked at two hours.**");
 				this.say(room, "__Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.__");
@@ -1171,10 +1171,11 @@ exports.commands = {
 		    	} else {
 		    		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp ' + pollNoms[0]);
 		    	}
-		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'cruise' || toId(pollNoms[0]) == 'prom') {
+		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'prom') {
 		       		pollNoms = [];
 		       		return this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
 		       	}
+		       	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + pollNoms[0]);
 		    	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
 		    	pollON = false;
 		    	pollNoms = [];
