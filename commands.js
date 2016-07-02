@@ -45,7 +45,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += '**Roleplaying Bot**: fork of **Pokemon Showdown Bot** by Quinella and TalkTakesTime, with custom roleplaying commands by Morfent.';
+		text += '**Roleplaying Bot**: fork of **Pokemon Showdown Bot** by Quinella and TalkTakesTime, with custom roleplaying commands by Morfent, Starbloom and Lux.';
 		this.say(room, text);
 	},
 	git: function(arg, by, room) {
@@ -80,7 +80,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'http://www.smogon.com/stats/2015-11/';
+		text += 'http://www.smogon.com/stats/2016-06/';
 		this.say(room, text);
 	},
 
@@ -637,16 +637,17 @@ exports.commands = {
 		}
 
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
-				this.say(room, '**Arceus, Darkrai, Mewtwo, Mega-Rayquaza, Kyogre, Yveltal, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
+				this.say(room, '**Arceus, ' + /*Darkrai, Mewtwo,*/ 'Mega-Rayquaza, Kyogre, Yveltal, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
 				this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
 				this.say(room, "**Blaziken, Greninja, Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Soul Dew, Damp Rock, and Smooth Rock are banned. Ghost cannot have both Giratina-A and Aegislash on the same team.  Types are locked at two hours.**");
-				this.say(room, "__Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.__");
-				this.say(room, "**Wanderers may challenge a Kingdom for knightship. This can't be declined, but if the Wanderer loses, they either die or cannot challenge the same kingdom again. They either fight the lone knight if there is only one, one of the knights of the Lord's choice if two, or the Lord himself.**");
-				this.say(room, "__If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights in this manner CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.__");
-				this.say(room, "**All participants within the RP may only have ONE chance to coup any kingdom. PM the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.**");
-				this.say(room, "__Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.__");
-				this.say(room, "**Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). Lastly, if a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.**");
-				this.say(room, "__Finally, a reminder that, if you do not RP properly, you are liable to be ignored by the person you are challenging.__");
+				this.say(room, "__In addition to the primary Ace Slot, a knight or a ruler is allowed to, but not requird to, add an additional legend (in their types) of RU or lower to their team.__");
+				this.say(room, "**Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.**");
+				this.say(room, "__Wanderers may challenge a Kingdom for knightship. This can't be declined, but if the Wanderer loses, they either die or cannot challenge the same kingdom again. They either fight the lone knight if there is only one, one of the knights of the Lord's choice if two, or the Lord himself.__");
+				this.say(room, "**If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights in this manner CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.**");
+				this.say(room, "__All participants within the RP may only have ONE chance to coup any kingdom. PM the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.__");
+				this.say(room, "**Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.**");
+				this.say(room, "__Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). Lastly, if a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.__");
+				this.say(room, "**Finally, a reminder that, if you do not RP properly, you are liable to be ignored by the person you are challenging.**");
 
 		}
 		
@@ -1087,10 +1088,11 @@ exports.commands = {
 				if (this.RP[toId(roomArray[i])].plot) {
 					if (toId(this.RP[toId(roomArray[i])].plot) == 'freeroam') {
 						this.say(room, text);
-						return this.say(room, 'Check out the new RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
+						return this.say(room, 'Check out the RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
 					}
 				}
 			}
+			if (text == '') text += 'There are no RPs in progress.';
 			return this.say(room, text);
 		}
 		if (!(room in this.RP)) return false;
@@ -1350,6 +1352,9 @@ exports.commands = {
 		    case 'pokehigh':
 		    	if (pokehighNom.indexOf(by) == -1) pokehighNom.push(by);
 		        break;
+		    case 'cruise':
+		    	if (cruiseNom.indexOf(by) == -1) cruiseNom.push(by);
+		        break;
 		    case 'murdermystery':
 		    	if (murdermysteryNom.indexOf(by) == -1) murdermysteryNom.push(by);
 		        break;
@@ -1584,7 +1589,7 @@ exports.commands = {
 				return this.say(room, text + ' ((' + config.publicSeviceAnnouncement + '))');
 			}
 		}
-		this.say(room, text + ' ' + config.publicSeviceAnnouncement);
+		this.say(room, text + config.publicSeviceAnnouncement);
 	},
 	botissue: 'botsuggestions',
 	botissues: 'botsuggestions',
@@ -1613,7 +1618,7 @@ exports.commands = {
 					return this.say(room, ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.')
 				}
 			} else {
-				return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
+				return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions Legend AFK Check (July 2016) http://psroleplaying.forumotion.com/t1590-legendary-permission-afk-check');
 			}
 		}
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP))
@@ -1628,7 +1633,7 @@ exports.commands = {
 				 return this.say(room, text + ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.')
 			}
 		} else {
-		this.say(room, text + ' Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
+		this.say(room, text + ' Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions Legend AFK Check (July 2016) http://psroleplaying.forumotion.com/t1590-legendary-permission-afk-check');
 		}
 	},
 	site: function(arg, by, room) {
@@ -1666,7 +1671,7 @@ exports.commands = {
 		} else {		
 			var text = '/pm ' + by + ', ';		
 		}
-		this.say(room, text + 'Check out the new RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');		
+		this.say(room, text + 'Check out the RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');		
 	},
 	mapassist: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP) || toId(this.RP[room].plot) !== 'freeroam') return false;
@@ -1679,7 +1684,7 @@ exports.commands = {
 				delete this.RP[room].mapcalled;
 			}.bind(this), 60 * 1000);
 		}
-		this.say(room, text + 'Check out the new RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
+		this.say(room, text + 'Check out the RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
 	},
 	defaultDoc: function (arg, by, room) {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP)) return false;
@@ -1692,5 +1697,14 @@ exports.commands = {
 				break;
 				}
 		}
+	},
+	report: function(arg, by, room) {		
+	if (config.serverid !== 'showdown') return false;
+		if ((this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
+			var text = '';		
+		} else {		
+			var text = '/pm ' + by + ', ';		
+		}
+		this.say(room, text + 'Report bad behaviour here: https://docs.google.com/forms/d/1EXzyEuStwlhydYp_BK94JsLdnbJGBPYpPO85BKaHyIg/viewform');		
 	}
 };
