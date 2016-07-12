@@ -376,8 +376,23 @@ exports.commands = {
 	vab: 'viewblacklist',
 	viewautobans: 'viewblacklist',
 	viewblacklist: function(arg, by, room) {
-		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
-
+		if (!this.canUse('autoban', room, by) &&  !(config.staffList.indexOf(toId(by)) > -1)) return false;
+		
+		if (room.charAt(0) === ',') {
+			if (toId(arg) == 'roleplaying' || toId(arg) == 'amphyrp' || toId(arg) == 'rustyrp') {
+				if (toId(arg) == 'roleplaying') {
+					if (!(config.modList.indexOf(toId(by)) > -1)){
+						return this.say(room, "No, it doesn't work for main if you're not mod or above there.");
+					}
+				}
+				room = toId(arg);
+				arg = '';
+			} else {
+				return this.say(room, "Please specify a room.");
+			}
+			
+		}
+		
 		var text = '';
 		if (!this.settings.blacklist || !this.settings.blacklist[room]) {
 			text = 'No users are blacklisted in this room.';
@@ -635,7 +650,11 @@ exports.commands = {
 		if (this.RP[room].endpollCalled) {
 			delete this.RP[room].endpollCalled;
 		}
-
+		
+		if (this.RP[room].endpollProgress) {
+			delete this.RP[room].endpollProgress;
+		}
+		
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
 				this.say(room, '**Arceus, ' + /*Darkrai, Mewtwo,*/ 'Mega-Rayquaza, Kyogre, Yveltal, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
 				this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
@@ -716,6 +735,10 @@ exports.commands = {
 		
 		if (this.RP[room].endpollCalled) {
 			delete this.RP[room].endpollCalled;
+		}
+		
+		if (this.RP[room].endpollProgress) {
+			delete this.RP[room].endpollProgress;
 		}
 		
 		this.writeSettings();
@@ -895,15 +918,18 @@ exports.commands = {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
 		}
 		if (this.RP[room].setAt) {
-			nextVoid = splitDoc(this.RP[room].plot);
-			if (room == 'roleplaying') {
-				if (this.RP.void[room].length === 3) this.RP.void[room].shift();
-			} else {
-				if (this.RP.void[room].length === 2) this.RP.void[room].shift();
-			}
-			this.RP.void[room].push(nextVoid);
+			var setAt = new Date(this.RP[room].setAt);
+			var timeThreshold =  5 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
 
-			
+				if (timeThreshold < 0) {
+					nextVoid = splitDoc(this.RP[room].plot);
+					if (room == 'roleplaying') {
+						if (this.RP.void[room].length === 3) this.RP.void[room].shift();
+					} else {
+						if (this.RP.void[room].length === 2) this.RP.void[room].shift();
+					}
+					this.RP.void[room].push(nextVoid);
+				}
 
 			if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom') {
 				clearTimeout(this.freeroamTimeouts[room]);
@@ -1276,6 +1302,16 @@ exports.commands = {
 				}
 			}
 		}
+		if (toId(arg) == 'freeroam' || toId(arg) == 'prom'){
+			for (i = 0; i < config.rprooms.length; i++) {
+				if (this.RP[config.rprooms[i]].plot) {
+					if(toId(splitDoc(this.RP[config.rprooms[i]].plot)) == 'prom' || toId(splitDoc(this.RP[config.rprooms[i]].plot)) == 'freeroam') {
+						return this.say(room, 'That RP is voided by ' + splitDoc(this.RP[config.rprooms[i]].plot) +' currently ongoing in ' + config.rprooms[i]);
+					}
+				}
+			}
+			
+		}
     	if (pollRoom == 'amphyrp' && toId(arg) == 'freeroam'){
     	    return this.say(room, "Freeroam and its variants cannot be run in AmphyRP.");
     	}
@@ -1286,7 +1322,7 @@ exports.commands = {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
         if(toId(arg) == 'freeroam' || toId(arg) == 'prom') {
-        	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1)/* && pollRoom != 'rustyrp'*/) return this.say(room, 'That RP is void.');
+        	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1)) return this.say(room, 'That RP is void.');
         }
         if (toId(arg) == 'freeroam' || toId(arg) == 'prom'){
 	        if (toId(pollNoms.toString()).indexOf(toId('freeroam')) > -1 || toId(pollNoms.toString()).indexOf(toId('freeroam')) > -1) {
@@ -1454,6 +1490,7 @@ exports.commands = {
 				}.bind(this), 3 * 60 * 1000);
 				setTimeout(function() {
 					delete this.RP[room].endpollCalled;
+					delete this.RP[room].endpollProgress;
 				}.bind(this), 18 * 60 * 1000);
 		} else {
 			this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'lastendpoll');
@@ -1699,12 +1736,33 @@ exports.commands = {
 		}
 	},
 	report: function(arg, by, room) {		
-	if (config.serverid !== 'showdown') return false;
+		if (config.serverid !== 'showdown') return false;
 		if ((this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
 			var text = '';		
 		} else {		
 			var text = '/pm ' + by + ', ';		
 		}
 		this.say(room, text + 'Report bad behaviour here: https://docs.google.com/forms/d/1EXzyEuStwlhydYp_BK94JsLdnbJGBPYpPO85BKaHyIg/viewform');		
+	},
+	close: function(arg, by, room) {
+		if (config.serverid !== 'showdown') return false;
+		if (!(this.hasRank(by, '@#~')) || !(room in this.RP)) return false;
+		if (room != 'amphyrp') return false;
+		if (this.RP[room].plot) return "Please end the RP before closing amphy.";
+		this.say(room, '/modchat %');
+		this.say(room, '/modnote ' + by + ' has closed ' + room);
+		if (pollRoom == room) {
+			this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'vp');
+		}
+		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'vr');
+	},
+	open: function(arg, by, room) {
+		if (config.serverid !== 'showdown') return false;
+		if (!(this.hasRank(by, '@#~')) || !(room in this.RP)) return false;
+		if (room != 'amphyrp') return false;
+		this.say(room, '/modchat +');
+		this.say(room, 'Opening ' + room);
+		this.say(room, '/modnote ' + by + ' has opened ' + room);
+		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'rppoll');
 	}
 };

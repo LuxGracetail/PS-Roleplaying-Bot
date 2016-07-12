@@ -115,6 +115,9 @@ exports.voiceList = [];
 //This is a list of the staff because nom is PMs only.
 exports.staffList = [];
 
+//This is a list of moderators, so the banlist for main doesn't get leaked. 
+exports.modList = [];
+
 //Here, you specify something that the bot announces with .psa.
 exports.publicSeviceAnnouncement = '';
 
