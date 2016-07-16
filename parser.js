@@ -12,6 +12,7 @@ var sys = require('sys');
 var https = require('https');
 var url = require('url');
 
+
 const ACTION_COOLDOWN = 3*1000;
 const FLOOD_MESSAGE_NUM = 5;
 const FLOOD_PER_MSG_MIN = 200; // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
@@ -82,8 +83,7 @@ exports.parse = {
 		switch (spl[1]) {
 			case 'challstr':
 				info('received challstr, logging in...');
-				var id = spl[2];
-				var str = spl[3];
+				var challstr = spl.slice(2).join('|');
 
 				var requestOptions = {
 					hostname: this.actionUrl.hostname,
@@ -94,10 +94,11 @@ exports.parse = {
 
 				if (!config.pass) {
 					requestOptions.method = 'GET';
-					requestOptions.path += '?act=getassertion&userid=' + toId(config.nick) + '&challengekeyid=' + id + '&challenge=' + str;
+					requestOptions.path += 'act=getassertion&userid=' + toId(config.nick) + '&challstr=' + challstr;
+
 				} else {
 					requestOptions.method = 'POST';
-					var data = 'act=login&name=' + config.nick + '&pass=' + config.pass + '&challengekeyid=' + id + '&challenge=' + str;
+ 				        var data = 'act=login&name=' + config.nick + '&username=' + config.nick + '&pass=' + config.pass + '&challstr=' + challstr;
 					requestOptions.headers = {
 						'Content-Type': 'application/x-www-form-urlencoded',
 						'Content-Length': data.length
@@ -110,40 +111,28 @@ exports.parse = {
 					res.on('data', function(chunk) {
 						data += chunk;
 					});
+					console.log(data);
 					res.on('end', function() {
-						if (data === ';') {
-							error('failed to log in; nick is registered - invalid or no password given');
-							process.exit(-1);
-						}
-						if (data.length < 50) {
-							error('failed to log in: ' + data);
-							process.exit(-1);
-						}
+						if (!data) {
+	                            error('failed to log in: missing queries or invalid request');
+	                            process.exit(-1);
+	                    }
+	
+	                    if (res.statusCode !== 200) {
+	                            error('failed to log in: could not connect to the login server');
+	                            process.exit(-1);
+	                    }
 
-						if (data.indexOf('heavy load') !== -1) {
-							error('the login server is under heavy load; trying again in one minute');
-							setTimeout(function() {
-								this.message(message);
-							}.bind(this), 60 * 1000);
-							return;
-						}
-
-						if (data.substr(0, 16) === '<!DOCTYPE html>') {
-							error('Connection error 522; trying agian in one minute');
-							setTimeout(function() {
-								this.message(message);
-							}.bind(this), 60 * 1000);
-							return;
-						}
-
-						try {
+							if (data.startsWith(';;')) {
+    	                        error('failed to log in: ' + data.substr(2));
+        	                    process.exit(-1);
+        	            } try {
 							data = JSON.parse(data.substr(1));
-							if (data.actionsuccess) {
-								data = data.assertion;
-							} else {
+							if (!data.curuser.loggedin) {
 								error('could not log in; action was not successful: ' + JSON.stringify(data));
 								process.exit(-1);
 							}
+                                                        data = data.assertion;
 						} catch (e) {}
 						send('|/trn ' + config.nick + ',0,' + data);
 					}.bind(this));
@@ -624,7 +613,7 @@ exports.parse = {
 		// NOTE: this is still in early stages
 		if (toId(user) === toId(config.nick)) {
 			this.ranks[room] = user.charAt(0);
-			return;
+//			return;
 		}
 		user = toId(user);
 		if (!user || room.charAt(0) === ',') return;
@@ -668,15 +657,31 @@ exports.parse = {
 					}
 				}
 			}
-			// moderation for flooding (more than x lines in y seconds)
-			var times = roomData.times;
-			var timesLen = times.length;
-			var isFlooding = (timesLen >= FLOOD_MESSAGE_NUM && (now - times[timesLen - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
-				&& (now - times[timesLen - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
-			if ((useDefault || !('flooding' in modSettings)) && isFlooding) {
-				if (pointVal < 2) {
-					pointVal = 2;
-					muteMessage = ', Automated response: flooding';
+			if (this.RP[room].host) {
+				if (user !== toId(this.RP[room].host)){
+					// moderation for flooding (more than x lines in y seconds)
+					var times = roomData.times;
+					var timesLen = times.length;
+					var isFlooding = (timesLen >= FLOOD_MESSAGE_NUM && (now - times[timesLen - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
+						&& (now - times[timesLen - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
+					if ((useDefault || !('flooding' in modSettings)) && isFlooding) {
+						if (pointVal < 2) {
+							pointVal = 2;
+							muteMessage = ', Automated response: flooding';
+						}
+					}
+				}
+			} else {
+				// moderation for flooding (more than x lines in y seconds)
+				var times = roomData.times;
+				var timesLen = times.length;
+				var isFlooding = (timesLen >= FLOOD_MESSAGE_NUM && (now - times[timesLen - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
+					&& (now - times[timesLen - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
+				if ((useDefault || !('flooding' in modSettings)) && isFlooding) {
+					if (pointVal < 2) {
+						pointVal = 2;
+						muteMessage = ', Automated response: flooding';
+					}
 				}
 			}
 			// moderation for caps (over x% of the letters in a line of y characters are capital)
