@@ -125,7 +125,11 @@ exports.commands = {
 		}
 	},
 	uptime: function (arg, by, room) {
-		var text = config.excepts.indexOf(toId(by)) < 0 ? '/pm ' + by + ', **Uptime:** ' : '**Uptime:** ';
+		if (!room.charAt(0) === ',') {
+			var text = '**Uptime:** ';
+		} else {
+			var text = config.excepts.indexOf(toId(by)) < 0 ? '/pm ' + by + ', **Uptime:** ' : '**Uptime:** ';
+		}
 		var divisors = [52, 7, 24, 60, 60];
 		var units = ['week', 'day', 'hour', 'minute', 'second'];
 		var buffer = [];
@@ -659,7 +663,7 @@ exports.commands = {
 				this.say(room, '**Arceus, ' + /*Darkrai, Mewtwo,*/ 'Mega-Rayquaza, Kyogre, Yveltal, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
 				this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
 				this.say(room, "**Blaziken, Greninja, Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Soul Dew, Damp Rock, and Smooth Rock are banned. Ghost cannot have both Giratina-A and Aegislash on the same team.  Types are locked at two hours.**");
-				this.say(room, "__In addition to the primary Ace Slot, a knight or a ruler is allowed to, but not requird to, add an additional legend (in their types) of RU or lower to their team.__");
+				this.say(room, "__In addition to the primary Ace Slot, a knight or a ruler is allowed to, but not required to, add an additional legend (in their types) of RU or lower to their team.__");
 				this.say(room, "**Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.**");
 				this.say(room, "__Wanderers may challenge a Kingdom for knightship. This can't be declined, but if the Wanderer loses, they either die or cannot challenge the same kingdom again. They either fight the lone knight if there is only one, one of the knights of the Lord's choice if two, or the Lord himself.__");
 				this.say(room, "**If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights in this manner CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.**");
@@ -1193,7 +1197,6 @@ exports.commands = {
 		pollTimer[room] = setTimeout(function() {
 		    console.log(new Date().toString() + " Suggestion period has ended.");
 		    if(pollNoms.length == 1) {
-		    	pollON = false;
 		    	if (RPOpts.indexOf(toId(pollNoms[0])) > -1){
 		    		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp ' + rpcaps[RPOpts.indexOf(toId(pollNoms[0]))]);
 		    	} else {
@@ -1201,7 +1204,23 @@ exports.commands = {
 		    	}
 		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'prom') {
 		       		pollNoms = [];
-		       		return this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
+			       this.RP[room].rppollProgress = true;
+	   				setTimeout(function(){
+						now = new Date();
+						Parse.say(room, '/poll create Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Freeroam, Prom');
+						Parse.say(room, '/poll timer 3');
+					}, 1000);
+					setTimeout(function(){
+						Parse.say(room, '!poll display');
+					}, 60 * 1000 + 1000);
+					setTimeout(function(){
+						Parse.say(room, '!poll display');
+					}, 2 * 60 * 1000 + 1000);
+					setTimeout(function() {
+		 				delete this.RP[room].rppollProgress;
+		    		}.bind(this), 3 * 60 * 1000);
+					return;
+		       		//return this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
 		       	}
 		       	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + pollNoms[0]);
 		    	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
