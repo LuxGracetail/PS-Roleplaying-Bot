@@ -31,6 +31,20 @@ function splitDoc(voided) {
 	return voided;
 };
 
+function progressTime(model) {
+	console.log(model);
+	
+	var start = new Date(model.setAt);
+	var now = (model.pause) ? new Date(model.pause) : new Date();
+	var diff = (now.getTime() - start.getTime()) / 1000;
+	var seconds = Math.floor(diff % 60);
+	diff /= 60;
+	var minutes = Math.floor(diff % 60);
+	diff /= 60;
+	var hours = Math.floor(diff % 24);
+	return progress = hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
+}
+
 exports.commands = {
 	/**
 	 * Help commands
@@ -952,20 +966,9 @@ exports.commands = {
 				delete this.conquestLockouts[room];
 			}
 		}
-		
-		// How long it's been going for when it ends.
-		var start = new Date(this.RP[room].setAt);
-		var now = (this.RP[room].pause) ? new Date(this.RP[room].pause) : new Date();
-		var diff = (now.getTime() - start.getTime()) / 1000;
-		var seconds = Math.floor(diff % 60);
-		diff /= 60;
-		var minutes = Math.floor(diff % 60);
-		diff /= 60;
-		var hours = Math.floor(diff % 24);
-		var progress = hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
 
 		if (this.RP[room].setAt) {
-			console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended after "+ progress + ".");
+			console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended after "+ progressTime(this.RP[room]) + ".");
 		} else {
 			console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended.");
 		}
@@ -1099,16 +1102,7 @@ exports.commands = {
 				if (this.RP[toId(roomArray[i])].plot) {
 					text += " The RP in " + roomArray[i] + " is " + splitDoc(this.RP[toId(roomArray[i])].plot);
 					if (this.RP[toId(roomArray[i])].setAt) {
-						var start = new Date(this.RP[toId(roomArray[i])].setAt);
-						var now = (this.RP[toId(roomArray[i])].pause) ? new Date(this.RP[toId(roomArray[i])].pause) : new Date();
-						var diff = (now.getTime() - start.getTime()) / 1000;
-						var seconds = Math.floor(diff % 60);
-						diff /= 60;
-						var minutes = Math.floor(diff % 60);
-						diff /= 60;
-						var hours = Math.floor(diff % 24);
-						var progress = hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
-						text += ', in progress for ' + progress + '.';
+						text += ', in progress for ' + progressTime(this.RP[toId(roomArray[i])]) + '.';
 					} else {
 						text += '.';
 					}
@@ -1138,18 +1132,8 @@ exports.commands = {
 		if (!this.RP[room].plot) return this.say(room, text + 'There is no RP.');
 		if (!this.RP[room].setAt) return this.say(room, text + 'The RP is ' + this.RP[room].plot + ', but it has not started yet. (Use .start when it is ready)');
 
-		var start = new Date(this.RP[room].setAt);
-		var now = (this.RP[room].pause) ? new Date(this.RP[room].pause) : new Date();
-		var diff = (now.getTime() - start.getTime()) / 1000;
-		var seconds = Math.floor(diff % 60);
-		diff /= 60;
-		var minutes = Math.floor(diff % 60);
-		diff /= 60;
-		var hours = Math.floor(diff % 24);
-		var progress = hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
-
-		if (this.RP[room].pause) return this.say(room, text + 'The RP is ' + this.RP[room].plot + ', but it is paused. Paused at: ' + progress);
-		this.say(room, text + 'The RP is ' + this.RP[room].plot + ', in progress for ' + progress + '.');
+		if (this.RP[room].pause) return this.say(room, text + 'The RP is ' + this.RP[room].plot + ', but it is paused. Paused at: ' + progressTime(this.RP[room]));
+		this.say(room, text + 'The RP is ' + this.RP[room].plot + ', in progress for ' + progressTime(this.RP[room]) + '.');
 		if (toId(this.RP[room].plot) === 'freeroam') this.splitMessage('>' + room + '\n|c|~' + by + '|' + config.commandcharacter + 'mapassist');
 	},
 	host: function(arg, by, room) {
