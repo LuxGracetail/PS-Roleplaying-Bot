@@ -40,7 +40,7 @@ function progressTime(model) {
 	var minutes = Math.floor(diff % 60);
 	diff /= 60;
 	var hours = Math.floor(diff % 24);
-	return progress = hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
+	return hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
 }
 
 exports.commands = {
@@ -988,9 +988,9 @@ exports.commands = {
 		}
 		if (this.RP[room].setAt) {
 			if (this.hasRank(this.ranks[room] || ' ', '%@*#&~')) {
-				this.say(room, '/wall The RP has ended after ' + progress + '.');
+				this.say(room, '/wall The RP has ended after ' + progressTime(this.RP[room]) + '.');
 			} else {
-				this.say(room, '**The RP has ended after ' + progress + '.**');
+				this.say(room, '**The RP has ended after ' + progressTime(this.RP[room]) + '.**');
 			}
 		} else {
 			if (this.hasRank(this.ranks[room] || ' ', '%@*#&~')) {
