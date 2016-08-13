@@ -11,8 +11,8 @@ var pollON = false;
 var pollRoom = '';
 var pollTimer = {};
 var pollNoms = [];
-var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'prom', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom'];
-var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Prom', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom'];
+var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh'/*, 'prom'*/, 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom'];
+var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh'/*, 'Prom'*/, 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom'];
 
 var goodvsevilNom = [];
 var conquestNom = [];
@@ -293,7 +293,7 @@ exports.commands = {
 	ab: 'autoban',
 	autoban: function(arg, by, room) {
 		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
-		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!this.hasRank(this.ranks[room] || ' ', '@*&#~')) return this.say(room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
 		arg = arg.split(',');
 		var added = [];
@@ -329,7 +329,7 @@ exports.commands = {
 	unab: 'unautoban',
 	unautoban: function(arg, by, room) {
 		if (!this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
-		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!this.hasRank(this.ranks[room] || ' ', '@*&#~')) return this.say(room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 
 		arg = arg.split(',');
 		var removed = [];
@@ -361,7 +361,7 @@ exports.commands = {
 	rab: 'regexautoban',
 	regexautoban: function(arg, by, room) {
 		if (config.regexautobanwhitelist.indexOf(toId(by)) < 0 || !this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
-		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!this.hasRank(this.ranks[room] || ' ', '@*&#~')) return this.say(room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 		if (!arg) return this.say(room, 'You must specify a regular expression to (un)blacklist.');
 
 		try {
@@ -379,7 +379,7 @@ exports.commands = {
 	unrab: 'unregexautoban',
 	unregexautoban: function(arg, by, room) {
 		if (config.regexautobanwhitelist.indexOf(toId(by)) < 0 || !this.canUse('autoban', room, by) || room.charAt(0) === ',') return false;
-		if (!this.hasRank(this.ranks[room] || ' ', '@&#~')) return this.say(room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
+		if (!this.hasRank(this.ranks[room] || ' ', '@*&#~')) return this.say(room, config.nick + ' requires rank of @ or higher to (un)blacklist.');
 		if (!arg) return this.say(room, 'You must specify a regular expression to (un)blacklist.');
 
 		arg = '/' + arg.replace(/\\\\/g, '\\') + '/i';
@@ -672,18 +672,17 @@ exports.commands = {
 		}
 		
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
-				this.say(room, '**Arceus, ' + /*Darkrai, Mewtwo,*/ 'Mega-Rayquaza, Kyogre, Yveltal, and Primal forms are banned. A kingdom may have up to two knights and only three kingdoms are allowed in an alliance.**');
-				this.say(room, "__Please battle in the Ubers format. Warlords have a THREE minute grace period if the survive a Conquest attempt.  Knights/wanderers may have one mega. However, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, and Metagross are banned.__");
-				this.say(room, "**Blaziken, Greninja, Aegislash (for Steel ONLY), and Talonflame count as a legendary spot. The Evasion Clause is in effect, and Geomancy, Soul Dew, Damp Rock, and Smooth Rock are banned. Ghost cannot have both Giratina-A and Aegislash on the same team.  Types are locked at two hours.**");
-				this.say(room, "__In addition to the primary Ace Slot, a knight or a ruler is allowed to, but not required to, add an additional legend (in their types) of RU or lower to their team.__");
-				this.say(room, "**Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.**");
+				this.say(room, '**Arceus, Yveltal, and Kyogre are banned. Warlords can have one legendary OR one mega and one RU legend. They may have up to two knights and only three kingdoms are allowed in an alliance. Battle in the Ubers format. Kingdoms can accept battles once every FIVE minutes.**');
+				this.say(room, "__All participants may have one mega and one RU (or below) legend. Meloetta, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, Altaria, Blaziken, Metagross, Sableye, Aegislash (for Steel), Greninja, Charizard-X, and Talonflame count as a legendary spot.__");				this.say(room, "**Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.**");
 				this.say(room, "__Wanderers may challenge a Kingdom for knightship. This can't be declined, but if the Wanderer loses, they either die or cannot challenge the same kingdom again. They either fight the lone knight if there is only one, one of the knights of the Lord's choice if two, or the Lord himself.__");
-				this.say(room, "**If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights in this manner CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.**");
-				this.say(room, "__All participants within the RP may only have ONE chance to coup any kingdom. PM the host any alliances, name changes, leaving, Conquests and cheating.  Post battle links in the chat.  There will be a 10 minute grace period at the start of the RP, and types will be locked at 2 hours.__");
-				this.say(room, "**Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.**");
-				this.say(room, "__Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). Lastly, if a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.__");
-				this.say(room, "**Finally, a reminder that, if you do not RP properly, you are liable to be ignored by the person you are challenging.**");
-
+				this.say(room, "**If the Wanderer wins, they replace the defeated Knight. If they battle the Lord because the Lord had no knights, they become the knight. Wanderers who become knights CANNOT coup against the Lord. The wanderer must battle with a mono team of the type he's challenging.**");
+				this.say(room, "__All participants within the RP may only have ONE chance to coup any kingdom. Mega Salamence, Mega Diancie and Mega Lati@s are allowed to warlords only. However, all other Primal Forms and Legend Megas are not.__");
+				this.say(room, "**If you attack a kingdom and lose to the knight, you can’t re-challenge until another kingdom that isn’t part of your alliance attacks. The Evasion/BP Clause is in effect, and Geomancy, Soul Dew, Smooth Rock, and Damp Rock are banned. No challenges in the first ten minutes.**");
+				this.say(room, "__Warlords may trade one Pokemon with each of their allies, up to a maximum of two trades. The Pokemon must be part of your original party and cannot be a legend or mega. The two Pokemon must be agreed upon by both warlords and reported to the host.__");
+				this.say(room, "**Trades may be canceled, but you may never trade with that kingdom again. If your ally is defeated, the trade isn't reversed. You can't trade a banned Pokemon to that type (e.g Aegislash to Steel). If a kingdom gets a new Warlord, the trades are only reset for THAT kingdom.**");
+				this.say(room, "__You may occupy a kingdom if the warlord isn't there. They must return within thirty minutes of occupation or risk losing their kingdom. If a knight is left at the kingdom, the occupier must battle them to occupy. If the opposing lord returns during that battle, it becomes a normal Conquest.__");
+				this.say(room, "**You may only free a type in your alliance, and you may not conquer a kingdom for someone outside your alliance.**");
+				this.say(room, "__Finally, a reminder that, if you do not RP properly, you are liable to be ignored by the person you are challenging.__");
 		}
 		
 		if (config.serverid == 'showdown' && !(room == "amphyrp")){
@@ -699,7 +698,7 @@ exports.commands = {
 		var now = new Date();
 		this.RP[room].setAt = now;
 		this.writeSettings();
-		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+		if (this.hasRank(this.ranks[room] || ' ', '%@*#&~')) {
 			this.say(room, '/wall The RP (' +  splitDoc(this.RP[room].plot) + ') has started.');
 		} else {
 			this.say(room, '**The RP (' +  splitDoc(this.RP[room].plot) + ') has started.**');
@@ -759,7 +758,7 @@ exports.commands = {
 		
 		this.writeSettings();
 
-		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+		if (this.hasRank(this.ranks[room] || ' ', '%@*#&~')) {
 			this.say(room, '/wall RP pause');
 		} else {
 			this.say(room, '**RP pause**');
@@ -830,7 +829,7 @@ exports.commands = {
 
 		delete this.RP[room].pause;
 		this.writeSettings();
-		if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+		if (this.hasRank(this.ranks[room] || ' ', '%@*#&~')) {
 			this.say(room, '/wall RP continue');
 		} else {
 			this.say(room, '**RP continue**');
@@ -994,7 +993,7 @@ exports.commands = {
 				this.say(room, '**The RP has ended after ' + progressTime(this.RP[room]) + '.**');
 			}
 		} else {
-			if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+			if (this.hasRank(this.ranks[room] || ' ', '%@*#&~')) {
 				this.say(room, '/wall The RP has ended.');
 			} else {
 				this.say(room, '**The RP has ended.**');
@@ -1019,7 +1018,7 @@ exports.commands = {
 	},
 	sv: 'setvoid',
 	setvoid: function(arg, by, room) {
-		if (!(room in this.RP) || this.RP[room].plot || !arg || !this.hasRank(by, '%@#&~')) return false;
+		if (!(room in this.RP) || this.RP[room].plot || !arg || !this.hasRank(by, '%@*#&~')) return false;
 		var spl = arg.split(', ');
 		console.log(spl);
 		if (room == 'roleplaying') {
@@ -1035,25 +1034,45 @@ exports.commands = {
 	void: function(arg, by, room) {
 		if (!(room in this.RP) || this.RP[room].plot) return false;
 		var text = '';
-
-
 		var voided = this.RP.void[room];
-		switch (voided.length) {
-			case 3:
-				text += voided[0] + ', ' + voided[1] + ' and ' + voided[2] + ' are void';
-				break;
-			case 2:
-				text += voided[0] + ' and ' + voided[1] + ' are void';
-				break;
-			case 1:
-				text += voided[0] + ' is void. The second-last RP in this room is unknown';
-				break;
-			case 0:
-				text += 'The last 2 RPs in this room are unknown.';
-				break;
-			default:
-				return this.say(room, 'Something went wrong with how void RPs are stored');
+
+
+		if (this.RP[room].plot) {
+			switch (voided.length) {
+				case 3:
+					text +=  voided[1] + ', ' + voided[2] + ' and ' + splitDoc(this.RP[room].plot) + ' will be void after this RP';
+					break;
+				case 2:
+					text += voided[1] + ' and ' + splitDoc(this.RP[room].plot) + ' will be void after this RP';
+					break;
+				case 1:
+					text += voided[0] + ' and ' + splitDoc(this.RP[room].plot) + ' will be void after this RP';
+					break;
+				case 0:
+					text += splitDoc(this.RP[room].plot) + ' will be void after this RP. The second-last RP in this room is unknown';
+					break;
+				default:
+					return this.say(room, 'Something went wrong with how void RPs are stored');
+			}
+		} else {
+			switch (voided.length) {
+				case 3:
+					text += voided[0] + ', ' + voided[1] + ' and ' + voided[2] + ' are void';
+					break;
+				case 2:
+					text += voided[0] + ' and ' + voided[1] + ' are void';
+					break;
+				case 1:
+					text += voided[0] + ' is void. The second-last RP in this room is unknown';
+					break;
+				case 0:
+					text += 'The last 2 RPs in this room are unknown.';
+					break;
+				default:
+					return this.say(room, 'Something went wrong with how void RPs are stored');
+			}
 		}
+
 		
 		if (room === 'rustyrp' && config.serverid === 'showdown'){
 			if (this.RP['roleplaying'].plot) {
@@ -1184,7 +1203,7 @@ exports.commands = {
 		    	} else {
 		    		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp ' + pollNoms[0]);
 		    	}
-		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'prom') {
+/*		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'prom') {
 		       		pollNoms = [];
 			       this.RP[room].rppollProgress = true;
 	   				setTimeout(function(){
@@ -1203,7 +1222,7 @@ exports.commands = {
 		    		}.bind(this), 3 * 60 * 1000);
 					return;
 		       		//return this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
-		       	}
+		       	}*/
 		       	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + pollNoms[0]);
 		    	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
 		    	pollON = false;
@@ -1257,7 +1276,7 @@ exports.commands = {
         } //  Why not an if else?
         switch (toId(arg)) {
         	case 'fr':
-        	case 'prom':
+//        	case 'prom':
         		arg = 'Freeroam';
         		break;
         	case 'cq':
@@ -1322,7 +1341,7 @@ exports.commands = {
         if(RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
-        if(toId(arg) == 'freeroam' || toId(arg) == 'prom') {
+/*        if(toId(arg) == 'freeroam' || toId(arg) == 'prom') {
         	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1)) return this.say(room, 'That RP is void.');
         }
         if (toId(arg) == 'freeroam' || toId(arg) == 'prom'){
@@ -1331,7 +1350,7 @@ exports.commands = {
 	        }
 	        
         }
-/*        if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
+        if(toId(arg) == 'freeroam' || toId(arg) == 'cruise' || toId(arg) == 'prom' || toId(arg) == 'kingdom') {
         	if((toId(this.RP.void[pollRoom].toString()).indexOf('freeroam') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('cruise') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('prom') > -1 || toId(this.RP.void[pollRoom].toString()).indexOf('kingdom') > -1) && pollRoom != 'rustyrp') return this.say(room, 'That RP is void.');
         }*/
        	if(toId(arg) == 'pokemonmysterydungeon') {
