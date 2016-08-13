@@ -987,7 +987,7 @@ exports.commands = {
 			customPriorityFlag = false;
 		}
 		if (this.RP[room].setAt) {
-			if (this.hasRank(this.ranks[room] || ' ', '%@#&~')) {
+			if (this.hasRank(this.ranks[room] || ' ', '%@*#&~')) {
 				this.say(room, '/wall The RP has ended after ' + progressTime(this.RP[room]) + '.');
 			} else {
 				this.say(room, '**The RP has ended after ' + progressTime(this.RP[room]) + '.**');
