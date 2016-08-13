@@ -11,8 +11,8 @@ var pollON = false;
 var pollRoom = '';
 var pollTimer = {};
 var pollNoms = [];
-var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh'/*, 'prom'*/, 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom'];
-var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh'/*, 'Prom'*/, 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom'];
+var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh', 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom'];
+var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh', 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom'];
 
 var goodvsevilNom = [];
 var conquestNom = [];
@@ -1032,7 +1032,7 @@ exports.commands = {
 		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'void');
 	},
 	void: function(arg, by, room) {
-		if (!(room in this.RP) || this.RP[room].plot) return false;
+		if (!(room in this.RP)) return false;
 		var text = '';
 		var voided = this.RP.void[room];
 
@@ -1099,7 +1099,7 @@ exports.commands = {
 			}
 		}
 
-		if (!this.canUse('setrp', room, by) || this.RP[room].voidCalled) {
+		if (!this.canUse('setrp', room, by) || this.RP[room].voidCalled || this.RP[room].setAt) {
 			this.say(room, '/pm ' + by + ', ' + text + " (" + room + ")");
 		} else {
 			this.say(room, '**' + text + '**');
