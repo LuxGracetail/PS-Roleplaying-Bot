@@ -32,8 +32,6 @@ function splitDoc(voided) {
 };
 
 function progressTime(model) {
-	console.log(model);
-	
 	var start = new Date(model.setAt);
 	var now = (model.pause) ? new Date(model.pause) : new Date();
 	var diff = (now.getTime() - start.getTime()) / 1000;
