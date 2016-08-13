@@ -12,7 +12,7 @@ var pollRoom = '';
 var pollTimer = {};
 var pollNoms = [];
 var RPOpts = ['freeroam', 'goodvsevil', 'conquest', 'trainer', 'pokehigh'/*, 'prom'*/, 'cruise', 'murdermystery', 'pokemonmysterydungeon', 'dungeonsndragonites', 'kingdom'];
-var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh'/*, 'Prom',*/ 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom'];
+var rpcaps = ['Freeroam', 'Good vs Evil', 'Conquest', 'Trainer', 'PokeHigh'/*, 'Prom'*/, 'Cruise', 'Murder Mystery', 'Pokemon Mystery Dungeon', 'Dungeons \'n Dragonites', 'Kingdom'];
 
 var goodvsevilNom = [];
 var conquestNom = [];
@@ -1034,6 +1034,7 @@ exports.commands = {
 	void: function(arg, by, room) {
 		if (!(room in this.RP) || this.RP[room].plot) return false;
 		var text = '';
+		var voided = this.RP.void[room];
 
 
 		if (this.RP[room].plot) {
