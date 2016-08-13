@@ -679,7 +679,7 @@ exports.commands = {
 				this.say(room, '/modchat off');
 			}
 		}
-		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
+		if (pollRoom == room) this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
 		if (customPriorityFlag && room == 'amphyrp') {
 			this.say(room, '/modnote ' + this.RP[room].host + ' has started the custom RP ' + splitDoc(this.RP[room].plot));
 			customPriorityFlag = false;
@@ -923,7 +923,7 @@ exports.commands = {
 		}
 		if (this.RP[room].setAt) {
 			var setAt = new Date(this.RP[room].setAt);
-			var timeThreshold =  5 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
+			var timeThreshold =  8 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
 
 				if (timeThreshold < 0) {
 					nextVoid = splitDoc(this.RP[room].plot);
@@ -1668,13 +1668,15 @@ exports.commands = {
 	legend: 'legends',
 	legends: function(arg, by, room) {
 		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
+			if ((toId(arg) == 'deoxys') || (toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Deoxys or Arceus.');
+			if (config.legendtoIdList.indexOf(toId(arg)) == -1) arg = null;
 			if (arg) {
 				if (config.legendtoIdList.indexOf(toId(arg)) > -1) {
-					var legendNum = config.legendtoIdList.indexOf(toId(arg))
-					return this.say(room, ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.')
+					var legendNum = config.legendtoIdList.indexOf(toId(arg));
+					return this.say(room, ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.');
 				}
 			} else {
-				return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions Legend AFK Check (July 2016) http://psroleplaying.forumotion.com/t1590-legendary-permission-afk-check');
+				return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
 			}
 		}
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP))
@@ -1683,13 +1685,15 @@ exports.commands = {
 		} else {
 			var text = '';
 		}
+		if ((toId(arg) == 'deoxys') || (toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Deoxys or Arceus.');
+		if (config.legendtoIdList.indexOf(toId(arg)) == -1) arg = null;
 		if (arg) {
 			if (config.legendtoIdList.indexOf(toId(arg)) > -1) {
-				var legendNum = config.legendtoIdList.indexOf(toId(arg))
-				 return this.say(room, text + ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.')
+				var legendNum = config.legendtoIdList.indexOf(toId(arg));
+				return this.say(room, text + ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.');
 			}
 		} else {
-		this.say(room, text + ' Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions Legend AFK Check (July 2016) http://psroleplaying.forumotion.com/t1590-legendary-permission-afk-check');
+		this.say(room, text + ' Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
 		}
 	},
 	site: function(arg, by, room) {
@@ -1766,10 +1770,16 @@ exports.commands = {
 	close: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
 		if (!(this.hasRank(by, '@#~')) || !(room in this.RP)) return false;
-		if (room != 'amphyrp') return false;
-		if (this.RP[room].plot) return "Please end the RP before closing amphy.";
+		if (room == 'roleplaying') return false;
+		if (room == 'amphyrp') {
+			this.say(room, '/modchat %');
+		}
+		if (room == 'rustyrp') {
+			this.say(room, '/modchat +');
+		}
+		if (this.RP[room].plot) return "Please end the RP before closing " + room + ".";
 		this.say(room, '/modchat %');
-		this.say(room, '/modnote ' + by + ' has closed ' + room);
+		this.say(room, '/modnote ' + by + ' has closed ' + room + '.');
 		if (pollRoom == room) {
 			this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'vp');
 		}
@@ -1778,10 +1788,15 @@ exports.commands = {
 	open: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
 		if (!(this.hasRank(by, '@#~')) || !(room in this.RP)) return false;
-		if (room != 'amphyrp') return false;
-		this.say(room, '/modchat +');
-		this.say(room, 'Opening ' + room);
-		this.say(room, '/modnote ' + by + ' has opened ' + room);
+		if (room == 'roleplaying') return false;
+		if (room == 'amphyrp') {
+			this.say(room, '/modchat +');
+		}
+		if (room == 'rustyrp') {
+			this.say(room, '/modchat off');
+		}
+		this.say(room, 'Opening ' + room + '.');
+		this.say(room, '/modnote ' + by + ' has opened ' + room + ".");
 		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'rppoll');
 	}
 };

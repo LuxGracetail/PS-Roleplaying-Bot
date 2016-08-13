@@ -111,7 +111,6 @@ exports.parse = {
 					res.on('data', function(chunk) {
 						data += chunk;
 					});
-					console.log(data);
 					res.on('end', function() {
 						if (!data) {
 	                            error('failed to log in: missing queries or invalid request');
