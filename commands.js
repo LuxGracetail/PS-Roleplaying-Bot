@@ -1099,7 +1099,7 @@ exports.commands = {
 			}
 		}
 
-		if (!this.canUse('setrp', room, by) || this.RP[room].voidCalled || this.RP[room].setAt) {
+		if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || this.RP[room].voidCalled || this.RP[room].setAt) {
 			this.say(room, '/pm ' + by + ', ' + text + " (" + room + ")");
 		} else {
 			this.say(room, '**' + text + '**');
