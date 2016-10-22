@@ -250,7 +250,7 @@ exports.parse = {
 				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 
 				spl = spl.slice(3).join('|');
-				if ('%@#&~'.indexOf(by.charAt(0)) < 0){
+				if ('%@*#&~'.indexOf(by.charAt(0)) < 0){
 					this.processChatData(toId(by), room, spl);
 				} else {
 					this.updateSeen(toId(by), 'c', room);
@@ -262,7 +262,7 @@ exports.parse = {
 				if (this.isBlacklisted(toId(by), room)) return this.say(room, '/roomban ' + by + ', Blacklisted user');
 
 				spl = spl.slice(4).join('|');
-				if ('%@#&~'.indexOf(by.charAt(0)) < 0){
+				if ('%@*#&~'.indexOf(by.charAt(0)) < 0){
 					this.processChatData(toId(by), room, spl);
 				} else {
 					this.updateSeen(toId(by), 'c', room);
@@ -430,27 +430,13 @@ exports.parse = {
 								Parse.say(room, '!poll display');
 							}, 2 * 60 * 1000 + 1000);
 						} else {
+							Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
+							this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
+							this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + winopt);
 							if (toId(winopt) == 'freeroam' || toId(winopt) == 'prom') {
-								setTimeout(function(){
-									now = new Date();
-									Parse.say(room, '/poll create Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Freeroam, Prom');
-									Parse.say(room, '/poll timer 3');
-								}, 1000);
-								setTimeout(function(){
-									Parse.say(room, '!poll display');
-								}, 60 * 1000 + 1000);
-								setTimeout(function(){
-									Parse.say(room, '!poll display');
-								}, 2 * 60 * 1000 + 1000);
-							} else{
-								Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
-								this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
-								this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + winopt);
-								if (toId(winopt) == 'freeroam' || toId(winopt) == 'prom') {
-									this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'start ' + winopt);
-								} else {
-									this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + winopt);
-								}
+								this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'start ' + winopt);
+							} else {
+								this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + winopt);
 							}
 						}
 					}
@@ -542,7 +528,7 @@ exports.parse = {
 	},
 	canUse: function(cmd, room, user) {
 		var canUse = false;
-		var ranks = ' +%@&#~';
+		var ranks = ' +%@*&#~';
 		if (!this.settings[cmd] || !this.settings[cmd][room]) {
 			canUse = this.hasRank(user, ranks.substr(ranks.indexOf((cmd === 'autoban' || cmd === 'banword') ? '#' : config.defaultrank)));
 		} else if (this.settings[cmd][room] === true) {
@@ -638,7 +624,7 @@ exports.parse = {
 		roomData.times.push(now);
 
 		// this deals with punishing rulebreakers, but note that the bot can't think, so it might make mistakes
-		if (config.allowmute && this.hasRank(this.ranks[room] || ' ', '%@&#~') && config.whitelist.indexOf(user) === -1) {
+		if (config.allowmute && this.hasRank(this.ranks[room] || ' ', '%@*&#~') && config.whitelist.indexOf(user) === -1) {
 			var useDefault = !(this.settings.modding && this.settings.modding[room]);
 			var pointVal = 0;
 			var muteMessage = '';
@@ -713,10 +699,10 @@ exports.parse = {
 				}
 				if (config.privaterooms.indexOf(room) > -1 && cmd === 'warn') cmd = 'mute'; // can't warn in private rooms
 				// if the bot has % and not @, it will default to hourmuting as its highest level of punishment instead of roombanning
-				if (roomData.points >= 4 && !this.hasRank(this.ranks[room] || ' ', '@&#~')) cmd = 'hourmute';
+				if (roomData.points >= 4 && !this.hasRank(this.ranks[room] || ' ', '@*&#~')) cmd = 'hourmute';
 				if (userData.zeroTol > 4) { // if zero tolerance users break a rule they get an instant roomban or hourmute
 					muteMessage = ', Automated response: zero tolerance user';
-					cmd = this.hasRank(this.ranks[room] || ' ', '@&#~') ? 'roomban' : 'hourmute';
+					cmd = this.hasRank(this.ranks[room] || ' ', '@*&#~') ? 'roomban' : 'hourmute';
 				}
 				if (roomData.points > 1) userData.zeroTol++; // getting muted or higher increases your zero tolerance level (warns do not)
 				roomData.lastAction = now;
