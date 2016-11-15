@@ -625,7 +625,7 @@ exports.commands = {
 			this.RP[room].plot = arg;
 		}
 		
-		if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom'){
+		if (toId(this.RP[room].plot) === 'freeroam'){
 			if (this.freeroamTimeouts) {
 				this.freeroamTimeouts[room] = setTimeout(function() {
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
@@ -722,12 +722,12 @@ exports.commands = {
 		}
 
 		this.RP[room].pause = new Date();
-		if (this.freeroamTimeouts[room] && (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom')) {
+		if (this.freeroamTimeouts[room] && (toId(this.RP[room].plot) === 'freeroam')) {
 			clearTimeout(this.freeroamTimeouts[room]);
 			delete this.freeroamTimeouts[room];
 		}
 		
-		if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom'){
+		if (toId(this.RP[room].plot) === 'freeroam'){
 			if (this.freeroamTimeouts[room]) {
 				clearTimeout(this.freeroamTimeouts[room]);
 				delete this.freeroamTimeouts[room];
@@ -812,7 +812,7 @@ exports.commands = {
 			}
 		}
 
-		if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom') {
+		if (toId(this.RP[room].plot) === 'freeroam') {
 			if (!this.freeroamTimeouts[room]) {
 				this.freeroamTimeouts[room] = setTimeout(function() {
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
@@ -955,7 +955,7 @@ exports.commands = {
 					this.RP.void[room].push(nextVoid);
 				}
 
-			if (toId(this.RP[room].plot) === 'freeroam' || toId(this.RP[room].plot) === 'prom') {
+			if (toId(this.RP[room].plot) === 'freeroam') {
 				clearTimeout(this.freeroamTimeouts[room]);
 				delete this.freeroamTimeouts[room];
 			} else {
@@ -1239,26 +1239,6 @@ exports.commands = {
 		    	} else {
 		    		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp ' + pollNoms[0]);
 		    	}
-/*		       	if (toId(pollNoms[0]) == 'freeroam' || toId(pollNoms[0]) == 'prom') {
-		       		pollNoms = [];
-			       this.RP[room].rppollProgress = true;
-	   				setTimeout(function(){
-						now = new Date();
-						Parse.say(room, '/poll create Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Freeroam, Prom');
-						Parse.say(room, '/poll timer 3');
-					}, 1000);
-					setTimeout(function(){
-						Parse.say(room, '!poll display');
-					}, 60 * 1000 + 1000);
-					setTimeout(function(){
-						Parse.say(room, '!poll display');
-					}, 2 * 60 * 1000 + 1000);
-					setTimeout(function() {
-		 				delete this.RP[room].rppollProgress;
-		    		}.bind(this), 3 * 60 * 1000);
-					return;
-		       		//return this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
-		       	}*/
 		       	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + pollNoms[0]);
 		    	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
 		    	pollON = false;
@@ -1313,7 +1293,6 @@ exports.commands = {
         } //  Why not an if else?
         switch (toId(arg)) {
         	case 'fr':
-//        	case 'prom':
         		arg = 'Freeroam';
         		break;
         	case 'cq':
@@ -1358,16 +1337,6 @@ exports.commands = {
 					return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
 				}
 			}
-		}
-		if (toId(arg) == 'freeroam' || toId(arg) == 'prom'){
-			for (i = 0; i < config.rprooms.length; i++) {
-				if (this.RP[config.rprooms[i]].plot) {
-					if(toId(splitDoc(this.RP[config.rprooms[i]].plot)) == 'prom' || toId(splitDoc(this.RP[config.rprooms[i]].plot)) == 'freeroam') {
-						return this.say(room, 'That RP is voided by ' + splitDoc(this.RP[config.rprooms[i]].plot) +' currently ongoing in ' + config.rprooms[i]);
-					}
-				}
-			}
-			
 		}
     	if (pollRoom == 'amphyrp' && toId(arg) == 'freeroam'){
     	    return this.say(room, "Freeroam and its variants cannot be run in AmphyRP.");
