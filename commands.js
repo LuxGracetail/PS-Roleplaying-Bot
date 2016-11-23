@@ -903,9 +903,9 @@ exports.commands = {
 		}
 		if (!this.RP[room].host) return this.say(room, 'There is no host to remove.');
 		if (config.serverid == 'showdown'){
-			if (room == 'amphyrp' || room == 'rustyrp' || ((config.voiceList.indexOf(toId(this.RP[room].host)) == -1) && (config.staffList.indexOf(toId(this.RP[room].host)) == -1))) {
+			if ((config.staffList.indexOf(toId(this.RP[room].host)) == -1) && (config.voiceList.indexOf(toId(this.RP[room].host)) == -1)) {
 				this.say(room, '/roomdevoice '+ this.RP[room].host);
-				}
+			}
 			if (!(this.RP[room].setAt)){
 				if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat off');
@@ -979,9 +979,9 @@ exports.commands = {
 			console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has ended.");
 		}
 		if (this.RP[room].host){
-			if (room == 'amphyrp' || room == 'rustyrp' || ((config.voiceList.indexOf(toId(this.RP[room].host)) == -1) && (config.staffList.indexOf(toId(this.RP[room].host)) == -1))) {
+			if ((config.staffList.indexOf(toId(this.RP[room].host)) == -1) && (config.voiceList.indexOf(toId(this.RP[room].host)) == -1)) {
 				this.say(room, '/roomdevoice '+ this.RP[room].host);
-				}
+			}
 			if (!(this.RP[room].setAt)){
 				if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat off');
