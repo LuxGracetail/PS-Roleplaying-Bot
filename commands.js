@@ -1678,6 +1678,7 @@ exports.commands = {
 			var text = '';
 		}
 		if ((toId(arg) == 'deoxys') || (toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Deoxys or Arceus.');
+		if (toId(arg) == 'cosmoem') arg = 'cosmog';
 		if (config.legendtoIdList.indexOf(toId(arg)) == -1) arg = null;
 		if (arg) {
 			if (config.legendtoIdList.indexOf(toId(arg)) > -1) {
