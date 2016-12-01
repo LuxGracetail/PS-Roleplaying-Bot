@@ -92,7 +92,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		text += 'http://www.smogon.com/stats/2016-06/';
+		text += 'http://www.smogon.com/stats/';
 		this.say(room, text);
 	},
 
