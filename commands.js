@@ -1733,7 +1733,7 @@ exports.commands = {
 		} else {		
 			var text = '/pm ' + by + ', ';		
 		}
-		this.say(room, text + 'httpshttp://psroleplaying.forumotion.com/t1458-list-of-official-roleplays#33869');
+		this.say(room, text + 'List of Official RPs: http://psroleplaying.forumotion.com/t1458-list-of-official-roleplays#33869');
 	},
 	RPQuickstart: function(arg, by, room) {		
 	if (config.serverid !== 'showdown' ||  !(room in this.RP)) return false;
@@ -1742,7 +1742,7 @@ exports.commands = {
 		} else {		
 			var text = '/pm ' + by + ', ';		
 		}
-		this.say(room, text + 'https://docs.google.com/document/d/1JFMLzrbTHg7Q6qcMN9hEfY7aofZrEC5lC4lYpwV1pQY/edit');
+		this.say(room, text + 'RP Quickstart guide: https://docs.google.com/document/d/1JFMLzrbTHg7Q6qcMN9hEfY7aofZrEC5lC4lYpwV1pQY/edit');
 	},
 	mapassist: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP) || toId(this.RP[room].plot) !== 'freeroam') return false;
