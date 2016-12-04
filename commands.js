@@ -1727,6 +1727,7 @@ exports.commands = {
 		}
 		this.say(room, text + 'Check out the RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');		
 	},
+	orp: 'officialRPList',
 	officialRPList: function(arg, by, room) {		
 	if (config.serverid !== 'showdown' ||  !(room in this.RP)) return false;
 		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
@@ -1736,6 +1737,7 @@ exports.commands = {
 		}
 		this.say(room, text + 'List of Official RPs: http://psroleplaying.forumotion.com/t1458-list-of-official-roleplays#33869');
 	},
+	rpq: 'RPQuickstart',
 	RPQuickstart: function(arg, by, room) {		
 	if (config.serverid !== 'showdown' ||  !(room in this.RP)) return false;
 		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
@@ -1853,6 +1855,38 @@ exports.commands = {
 				case 'outofcharacter':
 					text += "Out of Character, or OOC, refers to the double parentheses around text used to distinguish such speech from the RPing.";
 					break;
+				// RPs:
+				// FR and Variants
+				case 'fr':
+				case 'freeroam':
+					text += "Freeroam is an RP in which you have the capacity to craft your own stories. In this RP, there is no host, which gives the users free reign over the world as long as it stays within the rules (No godmodding, religious imagery, outside fandoms, gore, etc.) to create their own adventures and plots.";
+					break;
+				case 'cruise':
+					text += "Cruise is a freeform RP in which the action takes place entirely on a cruise of some description. Let your imagination run wild within the limits of a boat. Go swimming! Play shuffleboard! Explore the stores and cafeterias! The possibilities are endless."'
+					break;
+				case 'kingdom':
+					text += "Kingdom is a structured freeform RP with a host and a document displaying information on a world and the kinds of abilities any given OC may choose. This RP is almost always hosted in a medieval setting, however this is not always the case, nor does it have to be.";
+					break;
+				// Non FR RPs.
+				case 'gve':
+				case 'goodvsevil':
+					text += "Good vs Evil consists of two sides, Good and Evil. There is one leader for each side, and they are the only Pokemon in the roleplay who may be of Uber tier, legendaries (no uber legendaries), or mega-evolve. \n Each side will contain warriors who will attempt to overtake the opposing side by killing off the other team's warriors. Whoever can kill the leader twice and all of their warriors first, wins.";
+					break;
+				case 'pu':
+				case 'pokehigh':
+				case 'pokhigh':
+					text +="Pokehigh is a roleplay where participants are sent to a school based on a normal high school. Of course, there can be many variations to this high school. It may look different, have different classes and teachers.";
+					break;
+				case 'pmd':
+				case 'pokmonmysterydungeon':
+				case 'pokemonmysterydungeon':
+					text += "Pokemon Mystery Dungeon is essentially like the game franchise, you are thrown into a new world inhabited by Pokemon on a scale never seen before. Difficult dungeons and bosses await you and your newly acquired teammates. \n You usually start out as either a LC (Little Cup) Pokemon, or a Pokemon that can not evolve (such as Volbeat), and evolve when the host says you may.";
+					break;
+				case 'trainer':
+					text += "Trainer is a roleplay that is centered around user-created regions that can create vast new worlds and experiences. You'll be taken on a journey throughout the region by fighting criminal orginizations, gym leaders, and even special user-made events. \n Usually hosts will decide which Pokemon will appear on a certain route, and you may only catch one Pokemon per route, unless stated otherwise!";
+					break;
+
+					
 				default:
 					text += "I do not have a definition of that word at the moment, if it is a reasonable RP term, please PM Lux to add the word and its definition.";
 				break;
