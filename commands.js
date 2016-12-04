@@ -677,6 +677,7 @@ exports.commands = {
 		}
 		
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
+				this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'timer');
 				this.say(room, '**Arceus, Yveltal, and Kyogre are banned. Warlords can have one legendary OR one mega and one RU legend. They may have up to two knights and only three kingdoms are allowed in an alliance. Battle in the Ubers format. Kingdoms can accept battles once every FIVE minutes.**');
 				this.say(room, "__All participants may have one mega and one RU (or below) legend . Meloetta, Mega Kanga, Gengar, Mawile, Lucario, Slowbro, Salamence, Altaria, Blaziken, Metagross, Sableye, Aegislash, Greninja, Charizard-X, and Talonflame count as a legendary spot.__");
 				this.say(room, "**Only ONE person may battle a defending kingdom at a time. For example, a lord cannot take their knight to fight the lord's while they themselves battle the lord. If there is more than one kingdom trying to attack, the defending kingdom chooses whose challenge to accept.**");
