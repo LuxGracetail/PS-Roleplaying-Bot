@@ -1862,7 +1862,7 @@ exports.commands = {
 					text += "Freeroam is an RP in which you have the capacity to craft your own stories. In this RP, there is no host, which gives the users free reign over the world as long as it stays within the rules (No godmodding, religious imagery, outside fandoms, gore, etc.) to create their own adventures and plots.";
 					break;
 				case 'cruise':
-					text += "Cruise is a freeform RP in which the action takes place entirely on a cruise of some description. Let your imagination run wild within the limits of a boat. Go swimming! Play shuffleboard! Explore the stores and cafeterias! The possibilities are endless."'
+					text += "Cruise is a freeform RP in which the action takes place entirely on a cruise of some description. Let your imagination run wild within the limits of a boat. Go swimming! Play shuffleboard! Explore the stores and cafeterias! The possibilities are endless.";
 					break;
 				case 'kingdom':
 					text += "Kingdom is a structured freeform RP with a host and a document displaying information on a world and the kinds of abilities any given OC may choose. This RP is almost always hosted in a medieval setting, however this is not always the case, nor does it have to be.";
