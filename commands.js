@@ -1830,6 +1830,10 @@ exports.commands = {
 				case 'bold':
 					text += "Bold is a formatting reserved for pollmakers to make announcements related to their poll and the current roleplay's host(s) to narrate. Bold text can be entered by surrounding the text you want to bold with two asterisks";
 					break;
+				case "italic":
+				case "italics":
+					text += "Italics are a formatting used by surrounding your text with double underscores, ____like this____. It's not required to be used for when you roleplay, but many people do. It is usually used when typing out multiple paragraphs of describing scenery.";
+					break;
 				case 'connectionracing':
 					text += 'Connection racing is attempting to "place" after a server restart or after modchat is taken down. For example: Saying "first" or "third". Connection racing is mutable.';
 					break;
@@ -1840,10 +1844,8 @@ exports.commands = {
 				case 'godmodding':
 					text += "Godmodding is performing god-like or overpowered actions that may or may not disrupt the flow or enjoyment of a certain roleplay.";
 					break;
-				case "italic":
-				case "italics":
-					text += "Italics are a formatting used by surrounding your text with double underscores, ____like this____. It's not required to be used for when you roleplay, but many people do. It is usually used when typing out multiple paragraphs of describing scenery.";
-					break;
+				case 'lennyclause':
+					text += "The Lenny Clause is a rule set in place, prohibiting the usage of lenny faces or any similar ASCII faces."
 				case 'minimod':
 				case 'minimodding':
 					text += "Minimodding is when a non-staff user who makes a statement in chat calling for a moderator action to be taken upon other users, despite not being able to use it themselves, e.g 'That guy needs to be banned.'";
