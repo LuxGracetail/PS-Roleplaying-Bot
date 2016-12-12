@@ -1015,6 +1015,8 @@ exports.commands = {
 		}
 		this.writeSettings();
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'void');
+		if (this.RP[room].endpollProgress)
+			this.splitMessage('>' + room + '\n|c|~' + by + '|' + config.commandcharacter + voidendpoll);
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'rppoll');
 	},
 	vr: 'voidreset',
@@ -1147,8 +1149,6 @@ exports.commands = {
 		} else {
 			this.say(room, text);
 		}
-		if (this.RP[room].endpollProgress)
-			this.splitMessage('>' + room + '\n|c|~' + by + '|' + config.commandcharacter + voidendpoll);
 	},
 	roleplay: 'rp',
 	arpee: 'rp',
