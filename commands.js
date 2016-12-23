@@ -1861,6 +1861,7 @@ exports.commands = {
 				case 'powerplay':
 				case 'powerplaying':
 					text += "Powerplaying is taking control of another person's actions, either directly or indirectly, without given permission or in a disruptive manner.";
+					break;
 				case 'ooc':
 				case 'outofcharacter':
 					text += "Out of Character, or OOC, refers to the double parentheses around text used to distinguish such speech from the RPing.";
