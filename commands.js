@@ -1849,9 +1849,11 @@ exports.commands = {
 					text += "Godmodding is performing god-like or overpowered actions that may or may not disrupt the flow or enjoyment of a certain roleplay.";
 					break;
 				case 'hooting':
-					text += "Hooting is when a roleplayer uses the name of the Pokémon they are RPing as the only thing they say."
+					text += "Hooting is when a roleplayer uses the name of the Pokémon they are RPing as the only thing they say.";
+					break;
 				case 'lennyclause':
 					text += "The Lenny Clause is a rule that prohibits the usage of lenny faces or any similar ASCII faces.";
+					break;
 				case 'minimod':
 				case 'minimodding':
 					text += "Minimodding is when a non-staff user who makes a statement in chat calling for a moderator action to be taken upon other users, despite not being able to use it themselves, e.g 'That guy needs to be banned.'";
