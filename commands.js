@@ -946,7 +946,7 @@ exports.commands = {
 		}
 		if (this.RP[room].setAt) {
 			var setAt = new Date(this.RP[room].setAt);
-			var timeThreshold =  8 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
+			var timeThreshold =  10 * 60 * 1000 - ((new Date()).getTime() - setAt.getTime());
 
 				if (timeThreshold < 0) {
 					nextVoid = splitDoc(this.RP[room].plot);
