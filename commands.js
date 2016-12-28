@@ -694,6 +694,10 @@ exports.commands = {
 				this.say(room, "__Finally, a reminder that, if you do not RP properly, you are liable to be ignored by the person you are challenging.__");
 		}
 		
+		if .(/conquest/i.test(toId(this.RP[room].plot)) || /murdermystery/i.test(toId(this.RP[room].plot))) {
+			this.say(room, "**Due to the nature of this RP, character death is common and expected. This is not an excuse to post graphic violence or gore in this chat. Please keep your violence PG.**");
+		}
+		
 		if (config.serverid == 'showdown'){
 			if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 				this.say(room, '/modchat off');
