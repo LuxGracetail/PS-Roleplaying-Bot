@@ -74,7 +74,9 @@ function runNpm(command) {
 	console.log('Running `npm ' + command + '`...');
 
 	var child_process = require('child_process');
-	var npm = child_process.spawn('npm', [command]);
+	// Windows will actually error on "npm", so check the platform before continuing.
+	var baseCommand = (process.platform === 'win32' ? 'npm.cmd' : 'npm');
+	var npm = child_process.spawn(baseCommand, [command]);
 
 	npm.stdout.on('data', function(data) {
 		process.stdout.write(data);
