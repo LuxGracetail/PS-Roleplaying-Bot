@@ -586,7 +586,7 @@ exports.parse = {
 			path: '/documents'
 		};
 
-		var req = require('http').request(reqOpts, function(res) {
+		var req = require('https').request(reqOpts, function(res) {
 			res.on('data', function(chunk) {
 				if (callback && typeof callback === "function") callback("hastebin.com/raw/" + JSON.parse(chunk.toString())['key']);
 			});
