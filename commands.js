@@ -700,6 +700,9 @@ exports.commands = {
 		
 		if (config.serverid == 'showdown'){
 			if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
+			if (room === 'amphyrp' || room === 'rustyrp') {
+				this.say(room, '/modchat ac');
+			} else {
 				this.say(room, '/modchat off');
 			}
 		}
