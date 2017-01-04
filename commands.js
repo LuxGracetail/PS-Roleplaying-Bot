@@ -700,26 +700,27 @@ exports.commands = {
 		
 		if (config.serverid == 'showdown'){
 			if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
-			if (room === 'amphyrp' || room === 'rustyrp') {
-				this.say(room, '/modchat ac');
-			} else {
-				this.say(room, '/modchat off');
+				if (room === 'amphyrp' || room === 'rustyrp') {
+					this.say(room, '/modchat ac');
+				} else {
+					this.say(room, '/modchat off');
+				}
 			}
-		}
-		if (pollRoom == room) this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
-		if (customPriorityFlag && room == 'amphyrp') {
-			this.say(room, '/modnote ' + this.RP[room].host + ' has started the custom RP ' + splitDoc(this.RP[room].plot));
-			customPriorityFlag = false;
-		}
-		var now = new Date();
-		this.RP[room].setAt = now;
-		this.writeSettings();
-		if (this.hasRank(this.ranks[room] || ' ', '%@*#&~')) {
-			this.say(room, '/wall The RP (' +  splitDoc(this.RP[room].plot) + ') has started.');
-		} else {
-			this.say(room, '**The RP (' +  splitDoc(this.RP[room].plot) + ') has started.**');
-		}
+			if (pollRoom == room) this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
+			if (customPriorityFlag && room == 'amphyrp') {
+				this.say(room, '/modnote ' + this.RP[room].host + ' has started the custom RP ' + splitDoc(this.RP[room].plot));
+				customPriorityFlag = false;
+			}
+			var now = new Date();
+			this.RP[room].setAt = now;
+			this.writeSettings();
+			if (this.hasRank(this.ranks[room] || ' ', '%@*#&~')) {
+				this.say(room, '/wall The RP (' +  splitDoc(this.RP[room].plot) + ') has started.');
+			} else {
+				this.say(room, '**The RP (' +  splitDoc(this.RP[room].plot) + ') has started.**');
+			}
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has started.");
+		}
 	},
 	pause: 'rppause',
 	pauserp: 'rppause',
