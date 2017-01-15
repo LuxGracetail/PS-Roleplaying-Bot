@@ -1673,7 +1673,7 @@ exports.commands = {
 	legend: 'legends',
 	legends: function(arg, by, room) {
 		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
-			if ((toId(arg) == 'deoxys') || (toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Deoxys or Arceus.');
+			if ((toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Arceus.');
 			if (toId(arg) == 'cosmoem') arg = 'cosmog';
 			if (config.legendtoIdList.indexOf(toId(arg)) == -1) arg = null;
 			if (arg) {
@@ -1690,7 +1690,7 @@ exports.commands = {
 		} else {
 			var text = '';
 		}
-		if ((toId(arg) == 'deoxys') || (toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Deoxys or Arceus.');
+		if ((toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Arceus.');
 		if (toId(arg) == 'cosmoem') arg = 'cosmog';
 		if (config.legendtoIdList.indexOf(toId(arg)) == -1) arg = null;
 		if (arg) {
