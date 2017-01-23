@@ -1833,6 +1833,9 @@ exports.commands = {
 			if (!(room.charAt(0) === ',')) {
 				if (this.RP[room].setAt && !(this.RP[room].pause)) {
 					text += '((';
+					if (toId(arg) == "ooc" || toId(arg) == "outofcharacter") {
+						text += "<-- ";
+					}
 				}
 			}
 			switch (toId(arg)) {
@@ -1912,6 +1915,9 @@ exports.commands = {
 			}
 			if (!(room.charAt(0) === ',')) {
 				if (this.RP[room].setAt && !(this.RP[room].pause)) {
+					if (toId(arg) == "ooc" || toId(arg) == "outofcharacter") {
+						text += " -->";
+					}
 					text += '))';
 				}
 			}
