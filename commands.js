@@ -1924,4 +1924,50 @@ exports.commands = {
 			this.say(room, text);
 		}
 	},
+	addmotd: function(arg, by, room) {
+		if (config.serverid !== 'showdown') return false;
+		if (!this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) == -1) return false;
+		if (!arg) return this.say(room, 'Please enter a motd announcement to add.');
+		this.RP.motd.push(arg);
+		this.writeSettings();
+		return this.say (room, 'MoTD added.  There are currently ' + this.RP.motd.length + ' motd announcements in circulation.');
+
+	},
+	editmotd: function(arg, by, room) {
+		if (config.serverid !== 'showdown') return false;
+		if (!this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) == -1) return false;
+		if (!arg) return this.say(room, 'Please enter the number of the motd you wish to edit, followed by the message you wish to overwrite it with.');
+		var spl = arg.split(', ');
+		if (spl.length !== 2) return this.say(room, 'Please enter the number of the motd you wish to edit, followed by the message you wish to overwrite it with.');
+		if (spl[0] > this.RP.motd.length || spl[0] < 0) return this.say(room, 'There are only ' + this.RP.motd.length + ' motd announcements in circulation, please target a valid motd.');
+		this.RP.motd[spl[0] - 1] = spl[1];
+		this.writeSettings();
+		return this.say (room, 'MoTD edited.  There are currently ' + this.RP.motd.length + ' motd announcements in circulation.');
+
+	},
+	removemotd: function(arg, by, room) {
+		if (config.serverid !== 'showdown') return false;
+		if (!this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) == -1) return false;
+		if (!arg) {
+			this.RP.motd.pop();
+			this.writeSettings();
+			return this.say(room, 'The most recently added motd was removed');
+		} else {
+			if (arg > this.RP.motd.length || arg < 0) return this.say(room, 'There are only ' + this.RP.motd.length + ' motd announcements in circulation, please target a valid motd.');
+			this.RP.motd.splice(arg-1, 1)
+			this.writeSettings();
+			return this.say (room, 'MoTD ' + arg + ' was removed');
+		}
+	},
+	motd: function(arg, by, room) {
+	if (config.serverid !== 'showdown') return false;
+		if (!this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) == -1) return false;
+		arg = arg - 1;
+		if (arg < this.RP.motd.length && arg > 0) {
+			var num = arg;
+		} else {
+			var num = Math.floor((Math.random() * 100 % this.RP.motd.length));
+		}
+		this.say(room, this.RP.motd[num]);
+	}
 };

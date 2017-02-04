@@ -183,7 +183,14 @@ exports.parse = {
 					this.endpollTimerSet = {};
 					if (this.settings && this.settings.RP) {
 						this.RP.void = {};
-
+						
+						if (this.settings.RP.motd) {
+							this.RP.motd = this.settings.RP.motd;
+						} else {
+							this.RP.motd = [];
+						}
+						
+						
 						for (var i = config.rprooms.length; i--;) {
 							var roomid = toId(config.rprooms[i]);
 							var roleplay = this.settings.RP[roomid];
