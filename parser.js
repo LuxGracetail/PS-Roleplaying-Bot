@@ -1,4 +1,4 @@
-/**
+﻿/**
  * This is the file where commands get parsed
  *
  * Some parts of this code are taken from the Pokémon Showdown server code, so
@@ -187,7 +187,7 @@ exports.parse = {
 						if (this.settings.RP.motd) {
 							this.RP.motd = this.settings.RP.motd;
 						} else {
-							this.RP.motd = [];
+							this.RP.motd = this.settings.RP.motd = [];
 						}
 						
 						
@@ -250,6 +250,11 @@ exports.parse = {
 						this.updateBlacklistRegex(room);
 					}
 				}
+
+				// Any data created in `this.settings` when loading information for `this.RP` should probably
+				// be saved to `settings.json`.
+				this.writeSettings();
+
 				setInterval(this.cleanChatData.bind(this), 30 * 60 * 1000);
 				break;
 			case 'c':
