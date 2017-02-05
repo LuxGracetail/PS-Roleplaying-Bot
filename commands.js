@@ -1926,7 +1926,7 @@ exports.commands = {
 	},
 	addmotd: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
-		if (!this.hasRank(by, '%@#~') || config.rprooms.indexOf(room) == -1) return false;
+		if (!this.hasRank(by, '#~') || config.rprooms.indexOf(room) == -1) return false;
 		if (!arg) return this.say(room, 'Please enter a motd announcement to add.');
 		this.RP.motd.push(arg);
 		this.writeSettings();
@@ -1934,7 +1934,7 @@ exports.commands = {
 	},
 	editmotd: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
-		if (!this.hasRank(by, '%@#~') || config.rprooms.indexOf(room) == -1) return false;
+		if (!this.hasRank(by, '#~') || config.rprooms.indexOf(room) == -1) return false;
 		if (!arg) return this.say(room, 'Please enter the number of the MotD you wish to edit, followed by the message you wish to overwrite it with.');
 		var spl = arg.split(',').map(function (str) {
 			// It's simply safer to check for the comma and trim each string rather than
@@ -1953,9 +1953,10 @@ exports.commands = {
 		return this.say (room, 'MoTD edited. There are currently ' + this.RP.motd.length + ' MotD announcements in circulation.');
 
 	},
+	rmmotd: 'removemotd',
 	removemotd: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
-		if (!this.hasRank(by, '%@#~') || config.rprooms.indexOf(room) == -1) return false;
+		if (!this.hasRank(by, '#~') || config.rprooms.indexOf(room) == -1) return false;
 		if (!this.RP.motd.length) return this.say(room, 'There are currently no MotDs.');
 		if (!arg) {
 			this.RP.motd.pop();
@@ -1972,7 +1973,7 @@ exports.commands = {
 	},
 	motd: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
-		if (!this.hasRank(by, '%@#~') || config.rprooms.indexOf(room) == -1) return false;
+		if (!this.hasRank(by, '#~') || config.rprooms.indexOf(room) == -1) return false;
 		if (!this.RP.motd.length) return this.say(room, 'There are currently no MotDs.');
 		if (isNaN(Number(arg))) return this.say(room, 'The provided number should be a valid digit number.');
 		arg = Number(arg) - 1;
