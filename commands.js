@@ -1946,7 +1946,7 @@ exports.commands = {
 		// We need to coerce spl[0] into a number. If isNaN, then report so.
 		spl[0] = Number(spl[0]) - 1;
 		if (isNaN(spl[0])) return this.say(room, 'The provided number should be a valid digit number.');
-		if (spl[0] > this.RP.motd.length || spl[0] < 0) return this.say(room, 'There are only ' + this.RP.motd.length + ' MotD announcements in circulation, please target a valid MotD.');
+		if (spl[0] >= this.RP.motd.length || spl[0] < 0) return this.say(room, 'There are only ' + this.RP.motd.length + ' MotD announcements in circulation, please target a valid MotD.');
 		// By using `spl.slice(1).join(', ')`, we're allowing users to use commas in the edited motd.
 		this.RP.motd[spl[0]] = spl.slice(1).join(', ');
 		this.writeSettings();
@@ -1964,10 +1964,10 @@ exports.commands = {
 		} else {
 			arg = Number(arg) - 1;
 			if (isNaN(arg)) return this.say(room, 'The provided number should be a valid digit number.');
-			if (arg > this.RP.motd.length || arg < 0) return this.say(room, 'There are only ' + this.RP.motd.length + ' MotD announcements in circulation, please target a valid MotD.');
+			if (arg >= this.RP.motd.length || arg < 0) return this.say(room, 'There are only ' + this.RP.motd.length + ' MotD announcements in circulation, please target a valid MotD.');
 			this.RP.motd.splice(arg, 1);
 			this.writeSettings();
-			return this.say (room, 'MoTD #' + arg + ' was removed.');
+			return this.say (room, 'MoTD #' + (arg+1) + ' was removed.');
 		}
 	},
 	motd: function(arg, by, room) {
@@ -1977,7 +1977,7 @@ exports.commands = {
 		if (isNaN(Number(arg))) return this.say(room, 'The provided number should be a valid digit number.');
 		arg = Number(arg) - 1;
 		var num;
-		if (arg < this.RP.motd.length && arg > 0) {
+		if (arg < this.RP.motd.length && arg >= 0) {
 			num = arg;
 		} else {
 			num = Math.floor(Math.random() * this.RP.motd.length);
