@@ -1968,7 +1968,7 @@ exports.commands = {
 			arg = Number(arg) - 1;
 			if (isNaN(arg)) return this.say(room, 'The provided number should be a valid digit number.');
 			if (arg > this.RP.motd.length || arg < 0) return this.say(room, 'There are only ' + this.RP.motd.length + ' motd announcements in circulation, please target a valid motd.');
-			this.RP.motd.splice(arg-1, 1)
+			this.RP.motd.splice(arg, 1)
 			this.writeSettings();
 			return this.say (room, 'MoTD ' + arg + ' was removed');
 		}
