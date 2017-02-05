@@ -1928,9 +1928,7 @@ exports.commands = {
 		if (config.serverid !== 'showdown') return false;
 		if (!this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) == -1) return false;
 		if (!arg) return this.say(room, 'Please enter a motd announcement to add.');
-		// I dislike how repetitive this is, but it works...
 		this.RP.motd.push(arg);
-		this.settings.RP.motd.push(arg);
 		this.writeSettings();
 		return this.say (room, 'MoTD added. There are currently ' + this.RP.motd.length + ' MotD announcements in circulation.');
 	},
@@ -1944,14 +1942,13 @@ exports.commands = {
 			// or `.editmotd 0,Testing, testing`, which splits into ['0,Testing', 'testing'].
 			return str.trim();
 		});
-		if (spl.length !== 2) return this.say(room, 'Please enter the number of the MotD you wish to edit, followed by the message you wish to overwrite it with.');
+		if (spl.length < 2) return this.say(room, 'Please enter the number of the MotD you wish to edit, followed by the message you wish to overwrite it with.');
 		// We need to coerce spl[0] into a number. If isNaN, then report so.
 		spl[0] = Number(spl[0]) - 1;
-		if (isNaN(Number(spl[0]))) return this.say(room, 'The provided number should be a valid digit number.');
+		if (isNaN(spl[0])) return this.say(room, 'The provided number should be a valid digit number.');
 		if (spl[0] > this.RP.motd.length || spl[0] < 0) return this.say(room, 'There are only ' + this.RP.motd.length + ' MotD announcements in circulation, please target a valid MotD.');
 		// By using `spl.slice(1).join(', ')`, we're allowing users to use commas in the edited motd.
 		this.RP.motd[spl[0]] = spl.slice(1).join(', ');
-		this.settings.RP.motd[spl[0]] = spl.slice(1).join(', ');
 		this.writeSettings();
 		return this.say (room, 'MoTD edited. There are currently ' + this.RP.motd.length + ' MotD announcements in circulation.');
 
@@ -1959,17 +1956,16 @@ exports.commands = {
 	removemotd: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
 		if (!this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) == -1) return false;
+		if (!this.RP.motd.length) return this.say(room, 'There are currently no MotDs.');
 		if (!arg) {
 			this.RP.motd.pop();
-			this.settings.RP.motd.pop();
 			this.writeSettings();
 			return this.say(room, 'The most recently added MotD was removed.');
 		} else {
 			arg = Number(arg) - 1;
-			if (isNaN(Number(arg))) return this.say(room, 'The provided number should be a valid digit number.');
+			if (isNaN(arg)) return this.say(room, 'The provided number should be a valid digit number.');
 			if (arg > this.RP.motd.length || arg < 0) return this.say(room, 'There are only ' + this.RP.motd.length + ' MotD announcements in circulation, please target a valid MotD.');
 			this.RP.motd.splice(arg, 1);
-			this.settings.RP.motd.splice(arg, 1);
 			this.writeSettings();
 			return this.say (room, 'MoTD #' + arg + ' was removed.');
 		}
@@ -1977,13 +1973,14 @@ exports.commands = {
 	motd: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
 		if (!this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) == -1) return false;
+		if (!this.RP.motd.length) return this.say(room, 'There are currently no MotDs.');
 		if (isNaN(Number(arg))) return this.say(room, 'The provided number should be a valid digit number.');
 		arg = Number(arg) - 1;
 		var num;
 		if (arg < this.RP.motd.length && arg > 0) {
 			num = arg;
 		} else {
-			num = Math.floor((Math.random() * 100 % this.RP.motd.length));
+			num = Math.floor(Math.random() * this.RP.motd.length);
 		}
 		this.say(room, this.RP.motd[num]);
 	},
