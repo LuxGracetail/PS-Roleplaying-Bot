@@ -1026,6 +1026,7 @@ exports.commands = {
 		if (this.RP[room].endpollProgress)
 			this.splitMessage('>' + room + '\n|c|~' + by + '|' + config.commandcharacter + voidendpoll);
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'rppoll');
+		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'motd');
 	},
 	vr: 'voidreset',
 	voidreset: function(arg, by, room) {
@@ -1295,6 +1296,7 @@ exports.commands = {
 		        pollON = false;
 		       	pollNoms = [];  // Maybe?  I dunno.  Clear poll noms after a poll has failed.
 		       	pollroom = '';
+		       	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'motd');
 		    }
 		}.bind(this), 3 * 60 * 1000);
     },
