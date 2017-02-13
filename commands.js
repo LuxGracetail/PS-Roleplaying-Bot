@@ -699,7 +699,7 @@ exports.commands = {
 		}
 		
 		if (config.serverid == 'showdown'){
-			if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
+			if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 				if (room === 'amphyrp' || room === 'rustyrp') {
 					this.say(room, '/modchat ac');
 				} else {
@@ -873,7 +873,7 @@ exports.commands = {
 				}
 			}
 			if (!(this.RP[room].setAt)) {
-				if ((/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))) && !this.RP[room].host){
+				if ((/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))) && !this.RP[room].host){
 					this.say(room, '/modchat +');
 					this.say(room, '/wall A reminder for newcomers that Modchat + is only up temporarily. After the RP is set up modchat will come down and everyone can talk again.');
 				}
@@ -918,7 +918,7 @@ exports.commands = {
 				this.say(room, '/roomdevoice '+ this.RP[room].host);
 			}
 			if (!(this.RP[room].setAt)){
-				if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
+				if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat off');
 				}
 			}
@@ -994,7 +994,7 @@ exports.commands = {
 				this.say(room, '/roomdevoice '+ this.RP[room].host);
 			}
 			if (!(this.RP[room].setAt)){
-				if (/conquest/i.test(toId(this.RP[room].plot)) || /poke?high/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
+				if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
 					this.say(room, '/modchat off');
 				}
 			}
