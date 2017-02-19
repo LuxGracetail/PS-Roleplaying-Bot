@@ -1859,7 +1859,7 @@ exports.commands = {
 					break;
 				case 'custompriority':
 				case 'cp':
-				text += 'Custom Priority is the system for exclusively AmphyRP that prioritizes custom-made RPs ahead of that of mainstream RPs. A custom RP must be approved by a moderator, in order to be CP\'d.'
+				text += 'Custom Priority is the system for exclusively AmphyRP that prioritizes custom-made RPs ahead of that of mainstream RPs. A custom RP must be approved by a moderator, in order to be CP\'d. For more information: http://psroleplaying.forumotion.com/t1419-amphy-s-custom-priority'
 					break;
 				case "godmod":
 				case 'godmodding':
