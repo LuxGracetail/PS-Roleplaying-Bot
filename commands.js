@@ -1857,6 +1857,10 @@ exports.commands = {
 				case 'custom':
 					text += 'A custom is a usermade, staff approved RP, that does not fall under any of the offical RP categories.';
 					break;
+				case 'custompriority':
+				case 'cp':
+				text += 'Custom Priority is the system for exclusively AmphyRP that prioritizes custom-made RPs ahead of that of mainstream RPs. A custom RP must be approved by a moderator, in order to be CP\'d.'
+					break;
 				case "godmod":
 				case 'godmodding':
 					text += "Godmodding is performing god-like or overpowered actions that may or may not disrupt the flow or enjoyment of a certain roleplay.";
