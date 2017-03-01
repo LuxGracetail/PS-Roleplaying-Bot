@@ -678,7 +678,7 @@ exports.commands = {
 		
 		if (/conquest/i.test(toId(this.RP[room].plot))) {
 				this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'timer');
-				this.say(room, '**Read the offiical rules document here:** https://docs.google.com/document/d/1CqLuTfbgxKYplQfZOX1ImEUSlIVY4PP7ix5BteUiQO0/edit');
+				this.say(room, '**Please familiarise yourself with Conquest rules here:** https://docs.google.com/document/d/1CqLuTfbgxKYplQfZOX1ImEUSlIVY4PP7ix5BteUiQO0/edit');
 		}
 		
 		if (/conquest/i.test(toId(this.RP[room].plot)) || /murdermystery/i.test(toId(this.RP[room].plot))) {
