@@ -1711,40 +1711,40 @@ exports.commands = {
 	},
 	rustyrp: function(arg, by, room) {		
 	if (config.serverid !== 'showdown' || !(room in this.RP)) return false;
-		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
-			var text = '';		
-		} else {		
-			var text = '/pm ' + by + ', ';		
+		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'http://psroleplaying.forumotion.com/t1599-rustyrp-rebirth#36632');		
+		this.say(room, text + 'http://psroleplaying.forumotion.com/t1599-rustyrp-rebirth#36632');
 	},
 	worldmap: 'map',
-	map: function(arg, by, room) {		
+	map: function(arg, by, room) {
 	if (config.serverid !== 'showdown') return false;
-		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
-			var text = '';		
-		} else {		
-			var text = '/pm ' + by + ', ';		
+		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Check out the RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');		
+		this.say(room, text + 'Check out the RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
 	},
 	orp: 'officialRPList',
-	officialRPList: function(arg, by, room) {		
-	if (config.serverid !== 'showdown' ||  !(room in this.RP)) return false;
-		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
-			var text = '';		
-		} else {		
-			var text = '/pm ' + by + ', ';		
+	officialRPList: function(arg, by, room) {
+	if (config.serverid !== 'showdown') return false;
+		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
 		}
 		this.say(room, text + 'List of Official RPs: http://psroleplaying.forumotion.com/t1458-list-of-official-roleplays#33869');
 	},
 	rpq: 'RPQuickstart',
-	RPQuickstart: function(arg, by, room) {		
-	if (config.serverid !== 'showdown' ||  !(room in this.RP)) return false;
-		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
-			var text = '';		
-		} else {		
-			var text = '/pm ' + by + ', ';		
+	RPQuickstart: function(arg, by, room) {
+	if (config.serverid !== 'showdown') return false;
+		if ((this.hasRank(by, '+%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
 		}
 		this.say(room, text + 'RP Quickstart guide: https://docs.google.com/document/d/1JFMLzrbTHg7Q6qcMN9hEfY7aofZrEC5lC4lYpwV1pQY/edit');
 	},
@@ -1773,17 +1773,17 @@ exports.commands = {
 					break;
 				default:
 				break;
-				}
+			}
 		}
 	},
 	report: function(arg, by, room) {		
 		if (config.serverid !== 'showdown') return false;
-		if ((this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {		
-			var text = '';		
-		} else {		
-			var text = '/pm ' + by + ', ';		
+		if ((this.hasRank(by, '%@#~') && config.rprooms.indexOf(room) !== -1) || room.charAt(0) === ',') {
+			var text = '';
+		} else {
+			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Report bad behaviour here: https://docs.google.com/forms/d/1EXzyEuStwlhydYp_BK94JsLdnbJGBPYpPO85BKaHyIg/viewform');		
+		this.say(room, text + 'Report bad behaviour here: https://docs.google.com/forms/d/1EXzyEuStwlhydYp_BK94JsLdnbJGBPYpPO85BKaHyIg/viewform');
 	},
 	close: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
@@ -1944,7 +1944,6 @@ exports.commands = {
 		this.RP.motd[spl[0]] = spl.slice(1).join(', ');
 		this.writeSettings();
 		return this.say (room, 'MoTD edited. There are currently ' + this.RP.motd.length + ' MotD announcements in circulation.');
-
 	},
 	rmmotd: 'removemotd',
 	removemotd: function(arg, by, room) {
