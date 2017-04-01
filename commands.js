@@ -1774,6 +1774,8 @@ exports.commands = {
 				case 'goodvsevil':
 				    	this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1qnfG7LNHzCrwyekf1iaire3Em5JjytmzwsmTcJ3DBI0');
 					break;
+				case 'pokehigh':
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1L7p8cuDpWnit4pTW6jcwRuYeB8eEYiIvTHVa6UyCBB4');
 				default:
 					break;
 			}
