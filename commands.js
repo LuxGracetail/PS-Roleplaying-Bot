@@ -1245,8 +1245,6 @@ exports.commands = {
 		    	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
 		    	pollON = false;
 		    	if (toId(pollNoms[0]) == 'freeroam') this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
-		    	pollNoms = [];
-		    	pollroom = ''
 		    	if (toId(pollNoms[0]) == 'conquest') {
 					this.RP[room].rppollProgress = true;
 	   				setTimeout(function(){
@@ -1264,6 +1262,8 @@ exports.commands = {
 						delete this.RP[room].rppollProgress;
 					}.bind(this), 3 * 60 * 1000);
 				}
+				pollNoms = [];
+		    	pollroom = ''
 		    	return false;
 		    }
 		    if(pollNoms.length > 1) { //If there are enough options to make a poll?
