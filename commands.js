@@ -1242,7 +1242,7 @@ exports.commands = {
 		    		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp ' + pollNoms[0]);
 		    	}
 		       	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + pollNoms[0]);
-		    	this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
+				if (toId(pollNoms[0]) !== 'conquest') this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + pollNoms[0]);
 		    	pollON = false;
 		    	if (toId(pollNoms[0]) == 'freeroam') this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
 		    	if (toId(pollNoms[0]) == 'conquest') {
@@ -1379,7 +1379,7 @@ exports.commands = {
         }
        	if(toId(arg) == 'conquest') {
        		if(toId(this.RP.void[pollRoom].toString()).indexOf('conquest') > -1) return this.say(room, 'That RP is void.');
-        	
+
 		    for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
 					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('conquest') > -1) {
