@@ -1358,7 +1358,20 @@ exports.commands = {
 						}
 					}
 				}
-			}    			
+			}
+        }
+       	if(toId(arg) == 'conquest') {
+       		if(toId(this.RP.void[pollRoom].toString()).indexOf('conquest') > -1) return this.say(room, 'That RP is void.');
+        	
+		    for (i = 0; i < config.rprooms.length; i++) {
+				if (this.RP[config.rprooms[i]].plot) {
+					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('conqest') > -1) {
+						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
+							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
+						}
+					}
+				}
+			}
         }
         if(toId(arg) == 'pokehigh') {
        		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokhigh') > -1) return this.say(room, 'That RP is void.');
@@ -1371,7 +1384,7 @@ exports.commands = {
 						}
 					}
 				}
-			}    			
+			}
         }
     	if(toId(arg) == 'dungeonsndragonites' || toId(arg) == 'dungeonsndragons' || toId(arg) == 'dungeonsndruddigons') {
         	if((toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || (toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsd') > -1) || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1) && room != 'rustyrp') return this.say(room, 'That RP is void.');
