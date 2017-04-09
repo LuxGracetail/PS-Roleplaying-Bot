@@ -421,8 +421,7 @@ exports.parse = {
 							Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
 							this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
 							this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + winopt);
-							if (toId(winopt) == 'freeroam' || toId(winopt) == 'prom') {
-//								if (toId(winopt) == 'freeroam') this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setdoc http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
+							if (toId(winopt) == 'freeroam') {
 								this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'start ' + winopt);
 							} else {
 								this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + winopt);
@@ -445,7 +444,26 @@ exports.parse = {
 							Parse.say(room, '**' + winopt + ' wins with ' + winpercent + '%.**');
 							this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'setrp ' + winopt);
 							this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'defaultDoc ' + winopt);
-							if (toId(winopt) == 'freeroam' || toId(winopt) == 'prom') {
+							if (toId(winopt) == 'conquest') {
+								this.RP[room].rppollProgress = true;
+	   							setTimeout(function(){
+									now = new Date();
+									Parse.say(room, '/poll create Conquest Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString()
+now.getSeconds().toString()) + ', Regular CQ, Battleless CQ, and Variant CQ');
+									Parse.say(room, '/poll timer 3');
+								}, 1000);
+								setTimeout(function(){
+									Parse.say(room, '!poll display');
+								}, 60 * 1000 + 1000);
+								setTimeout(function(){
+									Parse.say(room, '!poll display');
+								}, 2 * 60 * 1000 + 1000);
+								setTimeout(function() {
+					 				delete this.RP[room].rppollProgress;
+		    					}.bind(this), 3 * 60 * 1000);
+								return;
+							}
+							if (toId(winopt) == 'freeroam') {
 								this.splitMessage('>' + room + '\n|c|~starbloom|' + config.commandcharacter + 'start ' + winopt);
 							} else {
 								this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'nominators ' + winopt);
