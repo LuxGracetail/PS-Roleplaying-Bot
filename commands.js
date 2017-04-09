@@ -1365,7 +1365,7 @@ exports.commands = {
         	
 		    for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
-					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('conqest') > -1) {
+					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('conquest') > -1) {
 						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
 							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
 						}
