@@ -1771,6 +1771,7 @@ exports.commands = {
 					break;
 				case 'conquest':
 				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc Battleless: https://docs.google.com/document/d/1FgUErxguKLsulNXX71h_oehfwm20dp1f3WPJwtPjJVE/edit, Regular: https://docs.google.com/document/d/1CqLuTfbgxKYplQfZOX1ImEUSlIVY4PP7ix5BteUiQO0/edit');
+				    break;
 				case 'battlelessconquest':
 				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1kuMbrynSH7k_8nmsCxZxvqWzlpGjrYIHAH9oDedvtHE/edit');
 					break;
@@ -1779,7 +1780,6 @@ exports.commands = {
 					break;
 				case 'variantconquest': 
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc "Your doc could be here!"');
-					break;
 					break;
 				case 'goodvsevil':
 				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1qnfG7LNHzCrwyekf1iaire3Em5JjytmzwsmTcJ3DBI0');
