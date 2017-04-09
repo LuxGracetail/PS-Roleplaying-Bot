@@ -448,7 +448,7 @@ exports.parse = {
 								this.RP[room].rppollProgress = true;
 	   							setTimeout(function(){
 									now = new Date();
-									Parse.say(room, '/poll create Conquest Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Regular CQ, Battleless CQ, Variant CQ');
+									Parse.say(room, '/poll create Conquest Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Regular Conquest, Battleless Conquest, Variant Conquest');
 									Parse.say(room, '/poll timer 3');
 								}, 1000);
 								setTimeout(function(){
