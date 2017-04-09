@@ -1247,6 +1247,23 @@ exports.commands = {
 		    	if (toId(pollNoms[0]) == 'freeroam') this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
 		    	pollNoms = [];
 		    	pollroom = ''
+		    	if (toId(winopt) == 'conquest') {
+					this.RP[room].rppollProgress = true;
+	   				setTimeout(function(){
+						now = new Date();
+						Parse.say(room, '/poll create Conquest Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Regular Conquest, Battleless Conquest, Variant Conquest');
+						Parse.say(room, '/poll timer 3');
+					}, 1000);
+					setTimeout(function(){
+						Parse.say(room, '!poll display');
+					}, 60 * 1000 + 1000);
+					setTimeout(function(){
+						Parse.say(room, '!poll display');
+					}, 2 * 60 * 1000 + 1000);
+					setTimeout(function() {
+						delete this.RP[room].rppollProgress;
+					}.bind(this), 3 * 60 * 1000);
+				}
 		    	return false;
 		    }
 		    if(pollNoms.length > 1) { //If there are enough options to make a poll?
