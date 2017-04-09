@@ -1251,7 +1251,7 @@ exports.commands = {
 					this.RP[room].rppollProgress = true;
 	   				setTimeout(function(){
 						now = new Date();
-						Parse.say(room, '/poll create Conquest Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Regular Conquest, Battleless Conquest, Variant Conquest');
+						this.say(room, '/poll create Conquest Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Regular Conquest, Battleless Conquest, Variant Conquest');
 						Parse.say(room, '/poll timer 3');
 					}, 1000);
 					setTimeout(function(){
@@ -1397,7 +1397,7 @@ exports.commands = {
 				if (this.RP[config.rprooms[i]].plot) {
 					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('pokhigh') > -1) {
 						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
-							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
+							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i]);
 						}
 					}
 				}
@@ -1410,7 +1410,7 @@ exports.commands = {
 				if (this.RP[config.rprooms[i]].plot) {
 					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsnd') > -1 || toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsd') > -1 || toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsandd') > -1) {
 						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
-							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
+							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i]);
 						}
 					}
 				}
