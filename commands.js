@@ -1775,10 +1775,10 @@ exports.commands = {
 				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1kuMbrynSH7k_8nmsCxZxvqWzlpGjrYIHAH9oDedvtHE/edit');
 					break;
 				case 'regularconquest':
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1LCocNrrmEUCurvQTqQ5NbIzWitFeDFvtHluKy4NpAwM/edit')l
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1LCocNrrmEUCurvQTqQ5NbIzWitFeDFvtHluKy4NpAwM/edit');
 					break;
 				case 'variantconquest': 
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc "Your doc could be here!"')l
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc "Your doc could be here!"');
 					break;
 					break;
 				case 'goodvsevil':
