@@ -1778,7 +1778,7 @@ exports.commands = {
 	},
 	defaultDoc: function (arg, by, room) {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP)) return false;
-		if (RPOpts.indexOf(toId(arg)) > -1 || /conquest/i.test(toId(arg)) {
+		if (RPOpts.indexOf(toId(arg)) > -1 || /conquest/i.test(toId(arg))) {
 			switch (toId(arg)) {
 				case 'cruise':
 				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1nkksfCr1X1YgpAA9M56Ny2mYstjC7mAW937oKgN6aYs');
