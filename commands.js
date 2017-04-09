@@ -1247,7 +1247,7 @@ exports.commands = {
 		    	if (toId(pollNoms[0]) == 'freeroam') this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'start');
 		    	pollNoms = [];
 		    	pollroom = ''
-		    	if (toId(winopt) == 'conquest') {
+		    	if (toId(pollNoms[0]) == 'conquest') {
 					this.RP[room].rppollProgress = true;
 	   				setTimeout(function(){
 						now = new Date();
