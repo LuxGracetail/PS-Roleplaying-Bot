@@ -447,7 +447,7 @@ exports.parse = {
 							if (toId(winopt) == 'conquest') {
 								this.RP[room].rppollProgress = true;
 								setTimeout(function(){
-									Parse.say(room, '/wall **A Variant Poll will be automatically started at xx:' + ((((now.getMinutes()+1)%60) < 10) ? '0' + (((now.getMinutes()+1)%60).toString()) : ((now.getMinutes()+1)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString() + '. If you have a variant to host please bold your document once in chat.**');
+									Parse.say(room, '/wall **A Variant Poll will be automatically started at xx:' + ((((now.getMinutes()+1)%60) < 10) ? '0' + (((now.getMinutes()+1)%60).toString()) : ((now.getMinutes()+1)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + '. If you have a variant to host please bold your document once in chat.**');
 								}, 1000);
 								setTimeout(function(){
 									now = new Date();
