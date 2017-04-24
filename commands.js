@@ -1249,22 +1249,22 @@ exports.commands = {
 					this.RP[room].rppollProgress = true;
 					setTimeout(function(){
 						now = new Date();
-						Parse.say(room, '/wall **A Variant Poll will be automatically started at xx:' + ((((now.getMinutes()+1)%60) < 10) ? '0' + (((now.getMinutes()+1)%60).toString()) : ((now.getMinutes()+1)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + '. If you have a variant to host please bold your document once in chat.**');
+						Parse.say(room, '/wall **A Variant Poll will be automatically started at xx:' + ((((now.getMinutes()+2)%60) < 10) ? '0' + (((now.getMinutes()+2)%60).toString()) : ((now.getMinutes()+2)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + '. If you have a variant to host please bold your document once in chat.**');
 					}, 1000);
 					setTimeout(function(){
 						now = new Date();
 						Parse.say(room, '/poll create Conquest Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Regular Conquest, Battleless Conquest, Variant Conquest');
 						Parse.say(room, '/poll timer 3');
-					}.bind(this), 60 * 1000 + 1000);
-					setTimeout(function(){
-						Parse.say(room, '!poll display');
 					}.bind(this), 2 * 60 * 1000 + 1000);
 					setTimeout(function(){
 						Parse.say(room, '!poll display');
 					}.bind(this), 3 * 60 * 1000 + 1000);
+					setTimeout(function(){
+						Parse.say(room, '!poll display');
+					}.bind(this), 4 * 60 * 1000 + 1000);
 					setTimeout(function() {
 						delete this.RP[room].rppollProgress;
-					}.bind(this), 4 * 60 * 1000);
+					}.bind(this), 5 * 60 * 1000);
 				}
 				pollNoms = [];
 		    	pollroom = ''
