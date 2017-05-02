@@ -1822,7 +1822,7 @@ exports.commands = {
 				case 'goodvsevil':
 				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1qnfG7LNHzCrwyekf1iaire3Em5JjytmzwsmTcJ3DBI0');
 					break;
-				case 'kingdom';
+				case 'kingdom':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1i1b4-EszJUhmAifwqFs3piEIe8uEtxf3jVVFI2GCT7k');
 					break;
 				case 'murdermystery':
@@ -1830,10 +1830,10 @@ exports.commands = {
 				case 'pokehigh':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1L7p8cuDpWnit4pTW6jcwRuYeB8eEYiIvTHVa6UyCBB4');
 					break;
-				case 'pokemonmysterydungeon'
+				case 'pokemonmysterydungeon':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1HFb1gUCc5COCDmeTX6r4N6sxsf5vPcur90dWzXjjQiQ');
 					break;
-				case 'trainer'
+				case 'trainer':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1PbM9w4GpXg5IWUATfErdV1iBv2wmG4cbMxKfM9CZ19I/');
 					break;
 				default:
