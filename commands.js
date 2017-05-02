@@ -1805,22 +1805,37 @@ exports.commands = {
 				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1nkksfCr1X1YgpAA9M56Ny2mYstjC7mAW937oKgN6aYs');
 					break;
 				case 'conquest':
-				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc Battleless: https://docs.google.com/document/d/1FgUErxguKLsulNXX71h_oehfwm20dp1f3WPJwtPjJVE/edit, Regular: https://docs.google.com/document/d/1CqLuTfbgxKYplQfZOX1ImEUSlIVY4PP7ix5BteUiQO0/edit');
+				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc Battleless: https://docs.google.com/document/d/1FgUErxguKLsulNXX71h_oehfwm20dp1f3WPJwtPjJVE, Regular: https://docs.google.com/document/d/1CqLuTfbgxKYplQfZOX1ImEUSlIVY4PP7ix5BteUiQO0');
 				    break;
 				case 'battlelessconquest':
-				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1kuMbrynSH7k_8nmsCxZxvqWzlpGjrYIHAH9oDedvtHE/edit');
+				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1kuMbrynSH7k_8nmsCxZxvqWzlpGjrYIHAH9oDedvtHE');
 					break;
 				case 'regularconquest':
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1LCocNrrmEUCurvQTqQ5NbIzWitFeDFvtHluKy4NpAwM/edit');
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1LCocNrrmEUCurvQTqQ5NbIzWitFeDFvtHluKy4NpAwM');
 					break;
 				case 'variantconquest': 
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc "Your doc could be here!"');
 					break;
+				case 'dungeonsndragonites'
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1Z_VS0s7zqox8rKo_sySFbbQIS9yDjhPVd4JGCW1da7M');
+					break;
 				case 'goodvsevil':
 				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1qnfG7LNHzCrwyekf1iaire3Em5JjytmzwsmTcJ3DBI0');
 					break;
+				case 'kingdom';
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1i1b4-EszJUhmAifwqFs3piEIe8uEtxf3jVVFI2GCT7k');
+					break;
+				case 'murdermystery':
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1ESXrs5nl7IVSTID2wXesmzbMTh6Amj8Ewf5oHGJrk40');
 				case 'pokehigh':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1L7p8cuDpWnit4pTW6jcwRuYeB8eEYiIvTHVa6UyCBB4');
+					break;
+				case 'pokemonmysterydungeon'
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1HFb1gUCc5COCDmeTX6r4N6sxsf5vPcur90dWzXjjQiQ');
+					break;
+				case 'trainer'
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1PbM9w4GpXg5IWUATfErdV1iBv2wmG4cbMxKfM9CZ19I/');
+					break;
 				default:
 					break;
 			}
