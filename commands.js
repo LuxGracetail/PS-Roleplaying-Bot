@@ -1827,6 +1827,7 @@ exports.commands = {
 					break;
 				case 'murdermystery':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1ESXrs5nl7IVSTID2wXesmzbMTh6Amj8Ewf5oHGJrk40');
+					break;
 				case 'pokehigh':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1L7p8cuDpWnit4pTW6jcwRuYeB8eEYiIvTHVa6UyCBB4');
 					break;
