@@ -932,6 +932,16 @@ exports.commands = {
 		this.say(room, 'The cohost(s) has/have been removed.');
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "The cohost(s) has/have been removed.");
 	},
+	rd: 'rmdoc',
+	rmdoc: function(arg, by, room) {
+		if (!(room in this.RP) || !this.RP[room].plot) return false;
+		if (typeof this.RP[room].host != 'undefined') {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host))) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by)) return false;
+		}
+		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setrp ' + splitDoc(this.RP[room].plot));
+	},
 	rpend: 'endrp',
 	endrp: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
@@ -2031,7 +2041,7 @@ exports.commands = {
 	},
 	motd: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
-		if ((!this.hasRank(by, '+%@#~') && config.voiceList.indexOf(toId(by)) == -1) || config.rprooms.indexOf(room) == -1) return false;
+		if ((!this.hasRank(by, '+%@#~') && config.voiceList.indexOf(toId(by)) == -1) || config.rprooms.indexOf(room) == -1) &&  !((room.charAt(0) === ',') && config.excepts.indexOf(toId(by)) > -1)) return false;
 		if (!this.RP.motd.length) return this.say(room, 'There are currently no MotDs.');
 		if (isNaN(Number(arg))) return this.say(room, 'The provided number should be a valid digit number.');
 		arg = Number(arg) - 1;
