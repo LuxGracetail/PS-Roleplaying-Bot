@@ -2041,7 +2041,7 @@ exports.commands = {
 	},
 	motd: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
-		if ((!this.hasRank(by, '+%@#~') && config.voiceList.indexOf(toId(by)) == -1) || config.rprooms.indexOf(room) == -1) &&  !((room.charAt(0) === ',') && config.excepts.indexOf(toId(by)) > -1)) return false;
+		if ((!this.hasRank(by, '+%@#~') && config.voiceList.indexOf(toId(by)) == -1) || config.rprooms.indexOf(room) == -1 && !((room.charAt(0) === ',') && config.excepts.indexOf(toId(by)) > -1)) return false;
 		if (!this.RP.motd.length) return this.say(room, 'There are currently no MotDs.');
 		if (isNaN(Number(arg))) return this.say(room, 'The provided number should be a valid digit number.');
 		arg = Number(arg) - 1;
