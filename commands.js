@@ -1962,8 +1962,8 @@ exports.commands = {
 					text += "Kingdom is a structured freeform RP with a host and a document displaying information on a world and the kinds of abilities any given OC may choose. This RP is almost always hosted in a medieval setting, however this is not always the case, nor does it have to be.";
 					break;
 				// Non FR RPs.
-				case 'cq'
-				case 'conquest'
+				case 'cq':
+				case 'conquest':
 					text += "Conquest is a heavily mechanical roleplay where 18 kingdoms (one for each type) attempt to gain control of other kingdoms. This can be done through allying, trading, vassalizing, and/or battling.";
 					break;
 				case 'gve':
