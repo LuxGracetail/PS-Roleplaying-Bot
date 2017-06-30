@@ -1948,6 +1948,7 @@ exports.commands = {
 					break;
 				case 'shitpost':
 					text += "Shitpost is any message sent with no relevance to the topic of the room or the current RP. This can include highlighting mods for reasons irrelevant to moderating (greetbotting or just annoying them), \n using /me to be distracting or to banter with friends (which can be done in PMs), and being unruly or disruptive in general.";
+					break;
 				// RPs:
 				// FR and Variants
 				case 'fr':
@@ -1964,6 +1965,7 @@ exports.commands = {
 				case 'cq'
 				case 'conquest'
 					text += "Conquest is a heavily mechanical roleplay where 18 kingdoms (one for each type) attempt to gain control of other kingdoms. This can be done through allying, trading, vassalizing, and/or battling.";
+					break;
 				case 'gve':
 				case 'goodvsevil':
 					text += "Good vs Evil consists of two sides, Good and Evil. There is one leader for each side, and they are the only Pokemon in the roleplay who may be of Uber tier, legendaries (no uber legendaries), or mega-evolve. \n Each side will contain warriors who will attempt to overtake the opposing side by killing off the other team's warriors. Whoever can kill the leader twice and all of their warriors first, wins.";
