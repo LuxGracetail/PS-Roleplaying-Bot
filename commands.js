@@ -1946,6 +1946,8 @@ exports.commands = {
 				case 'outofcharacter':
 					text += "Out of Character, or OOC, refers to the double parentheses around text used to distinguish such speech from the RPing.";
 					break;
+				case 'shitpost':
+					text += "Shitpost is any message sent with no relevance to the topic of the room or the current RP. This can include highlighting mods for reasons irrelevant to moderating (greetbotting or just annoying them), \n using /me to be distracting or to banter with friends (which can be done in PMs), and being unruly or disruptive in general."
 				// RPs:
 				// FR and Variants
 				case 'fr':
@@ -1959,6 +1961,9 @@ exports.commands = {
 					text += "Kingdom is a structured freeform RP with a host and a document displaying information on a world and the kinds of abilities any given OC may choose. This RP is almost always hosted in a medieval setting, however this is not always the case, nor does it have to be.";
 					break;
 				// Non FR RPs.
+				case 'cq'
+				case 'conquest'
+					text += "Conquest is a heavily mechanical roleplay where 18 kingdoms (one for each type) attempt to gain control of other kingdoms. This can be done through allying, trading, vassalizing, and/or battling."
 				case 'gve':
 				case 'goodvsevil':
 					text += "Good vs Evil consists of two sides, Good and Evil. There is one leader for each side, and they are the only Pokemon in the roleplay who may be of Uber tier, legendaries (no uber legendaries), or mega-evolve. \n Each side will contain warriors who will attempt to overtake the opposing side by killing off the other team's warriors. Whoever can kill the leader twice and all of their warriors first, wins.";
@@ -1977,7 +1982,7 @@ exports.commands = {
 					text += "Trainer is a roleplay that is centered around user-created regions that can create vast new worlds and experiences. You'll be taken on a journey throughout the region by fighting criminal orginizations, gym leaders, and even special user-made events. \n Usually hosts will decide which Pokemon will appear on a certain route, and you may only catch one Pokemon per route, unless stated otherwise!";
 					break;
 
-					
+
 				default:
 					text += "I do not have a definition of that word at the moment, if it is a reasonable RP term, please PM Lux to add the word and its definition.";
 				break;
