@@ -951,20 +951,18 @@ exports.commands = {
 			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
 		}
 		if (!arg) return this.say(room, 'Please enter a time.');
-		var p = arg.split(':'),
+		if (isNaN(parseFloat(arg))) return this.say(room, 'Please enter a valid time.');
+		var p = arg.split(':'), // convert hh:mm:ss to seconds
   		s = 0, m = 1;
    		while (p.length > 0) {
      			s += m * parseInt(p.pop(), 10);
     			m *= 60;
  		}
-    		function toTimeString(seconds) {
-      			return (new Date(seconds * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
-    		}
-    		var settime = toTimeString(s);
+    var settime = new Date(s * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]; // convert seconds back to hh:mm:ss
 		var timenow = Math.round(new Date().getTime() / 1000);
     		var time = timenow - s;
 		this.say(room, 'The time was set to ' + settime + '.');
-		if (toId(this.RP[room].plot) === 'freeroam'){
+		if (toId(this.RP[room].plot) === 'freeroam'){ // resetting timers
 			if (this.freeroamTimeouts && s <= 7200) {
 				this.freeroamTimeouts[room] = setTimeout(function() {
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
