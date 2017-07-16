@@ -1,4 +1,4 @@
-﻿/**
+/**
  * This is the file where the bot commands are located
  *
  * @license MIT license
@@ -944,81 +944,20 @@ exports.commands = {
 	},
 	st: 'settimer',
 	settimer: function(arg, by, room) {
-		if (!(room in this.RP)) return false;
-		if (typeof this.RP[room].host != 'undefined') {
-			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
-		} else {
-			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
-		}
-		if (!arg) return this.say(room, 'Please enter a time.');
-		if (isNaN(parseFloat(arg))) return this.say(room, 'Please enter a valid time.');
+		if (!(room in this.RP) || !this.RP[room].plot || !this.RP[room].paused || !this.RP[room].setAt || !this.hasRank(by, '%@*#&~')) return false;
+		if (!arg) return this.say(room, 'Please enter a time in the format hh:mm:ss.');
+		if (isNaN(parseFloat(arg))) return this.say(room, 'Please enter a valid time in the format hh:mm:ss.');
 		var p = arg.split(':'), // convert hh:mm:ss to seconds
-  		s = 0, m = 1;
-   		while (p.length > 0) {
-     			s += m * parseInt(p.pop(), 10);
-    			m *= 60;
- 		}
-    var settime = new Date(s * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]; // convert seconds back to hh:mm:ss
-		var timenow = Math.round(new Date().getTime() / 1000);
-    		var time = timenow - s;
-		this.say(room, 'The time was set to ' + settime + '.');
-		if (toId(this.RP[room].plot) === 'freeroam'){ // resetting timers
-			if (this.freeroamTimeouts && s <= 7200) {
-				this.freeroamTimeouts[room] = setTimeout(function() {
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
-					delete this.freeroamTimeouts[room];
-				}.bind(this), (7200 - s) * 1000);
-			} else {
-        			delete this.freeroamTimeouts[room];
-			}
-		} else {
-			if (this.staffAnnounceEndTimeouts && s <= 10800) {
-				this.staffAnnounceEndTimeouts[room] = setTimeout(function() {
-					this.say(room, "/wall The RP has been in progress for **Three Hours**. Any Moderator or Driver may now end the RP. The RP will auto-end in **One Hour**");
-					delete this.staffAnnounceEndTimeouts[room];
-				}.bind(this), (10800 - s) * 1000);
-			} else {
-				delete this.staffAnnounceEndTimeouts[room];
-			}
-		if (this.autoTimeOut && s <= 14400) {
-			this.autoTimeOut[room] = setTimeout(function() {
-				this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
-				this.say(room, "/wall The RP has reached its time limit of 4 hours. Consider scheduling a time in Rusty to continue the RP with the same players.");
-				this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'rustyrp');
-				delete this.autoTimeOut[room];
-			}.bind(this), (14400 - s) * 1000);
-		} else {
-			delete this.autoTimeOut[room];
+		seconds = 0, minutes = 1;
+		while (p.length > 0) {
+			seconds += minutes * parseInt(p.pop(), 10);
+			minutes *= 60;
 		}
-		}
-		if (/conquest/i.test(toId(this.RP[room].plot))) {
-			if (/battleless/i.test(toId(this.RP[room].plot)) && s <= 1800){
-				var	gracePeriodDuration = 1800 - s;
-				this.conquestTimeouts[room] = setTimeout(function() {
-					this.say(room, '**Grace Period has ended.**');
-					delete this.conquestTimeouts[room];
-				}.bind(this), gracePeriodDuration * 1000);
-			} else {
-        			if (this.conquestTimeouts && s <= 900){
-        				var gracePeriodDuration = 900 - s;
-          				this.conquestTimeouts[room] = setTimeout(function() {
-            					this.say(room, '**Grace Period has ended.**');
-            					delete this.conquestTimeouts[room];
-          				}.bind(this), gracePeriodDuration * 1000);
-        			} else {
-          				delete this.conquestTimeouts[room];
-        			}
-     			}
-			if (this.conquestLockouts && s <= 7200){
-				this.conquestLockouts[room] = setTimeout(function() {
-         				this.say(room, '**Types are now locked.**');
-          				delete this.conquestLockouts[room];
-        			}.bind(this), (7200 - s) * 1000);
-      			} else {
-        			delete this.conquestLockouts[room];
-      			}
-		}
-		this.RP[room].setAt = time * 1000;
+		var setTime = new Date(seconds * 1000).toUTCString().match(/[0-9]{2}:[0-9]{2}:[0-9]{2}/)[0]; // convert seconds back to hh:mm:ss
+		var timeNow = new Date().getTime();
+		var time = timeNow - seconds * 1000;
+		this.say(room, 'The time was set to ' + setTime + '.');
+		this.RP[room].setAt = new Date(time);
 	},
 	rpend: 'endrp',
 	endrp: function(arg, by, room) {
@@ -1890,13 +1829,13 @@ exports.commands = {
 		if (RPOpts.indexOf(toId(arg)) > -1 || /conquest/i.test(toId(arg))) {
 			switch (toId(arg)) {
 				case 'cruise':
-				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1nkksfCr1X1YgpAA9M56Ny2mYstjC7mAW937oKgN6aYs');
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1nkksfCr1X1YgpAA9M56Ny2mYstjC7mAW937oKgN6aYs');
 					break;
 				case 'conquest':
-				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc Battleless: https://docs.google.com/document/d/1FgUErxguKLsulNXX71h_oehfwm20dp1f3WPJwtPjJVE, Regular: https://docs.google.com/document/d/1CqLuTfbgxKYplQfZOX1ImEUSlIVY4PP7ix5BteUiQO0');
-				    break;
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc Battleless: https://docs.google.com/document/d/1FgUErxguKLsulNXX71h_oehfwm20dp1f3WPJwtPjJVE, Regular: https://docs.google.com/document/d/1NFIU8PKExYvjfWx4UCPcuzxNTXBI65f6FOGF9P3w8eE');
+					break;
 				case 'battlelessconquest':
-				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1kuMbrynSH7k_8nmsCxZxvqWzlpGjrYIHAH9oDedvtHE');
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1kuMbrynSH7k_8nmsCxZxvqWzlpGjrYIHAH9oDedvtHE');
 					break;
 				case 'regularconquest':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1LCocNrrmEUCurvQTqQ5NbIzWitFeDFvtHluKy4NpAwM');
@@ -1905,10 +1844,10 @@ exports.commands = {
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc "Your doc could be here!"');
 					break;
 				case 'dungeonsndragonites':
-				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1Z_VS0s7zqox8rKo_sySFbbQIS9yDjhPVd4JGCW1da7M');
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1Z_VS0s7zqox8rKo_sySFbbQIS9yDjhPVd4JGCW1da7M');
 					break;
 				case 'goodvsevil':
-				    this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1qnfG7LNHzCrwyekf1iaire3Em5JjytmzwsmTcJ3DBI0');
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1qnfG7LNHzCrwyekf1iaire3Em5JjytmzwsmTcJ3DBI0');
 					break;
 				case 'kingdom':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1i1b4-EszJUhmAifwqFs3piEIe8uEtxf3jVVFI2GCT7k');
