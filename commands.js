@@ -942,6 +942,84 @@ exports.commands = {
 		}
 		this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setrp ' + splitDoc(this.RP[room].plot));
 	},
+	st: 'settimer',
+	settimer: function(arg, by, room) {
+		if (!(room in this.RP)) return false;
+		if (typeof this.RP[room].host != 'undefined') {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) && !(toId(by) == toId(this.RP[room].host)) || !this.RP[room].plot) return false;
+		} else {
+			if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || !this.RP[room].plot) return false;
+		}
+		if (!arg) return this.say(room, 'Please enter a time.');
+		if (isNaN(parseFloat(arg))) return this.say(room, 'Please enter a valid time.');
+		var p = arg.split(':'), // convert hh:mm:ss to seconds
+  		s = 0, m = 1;
+   		while (p.length > 0) {
+     			s += m * parseInt(p.pop(), 10);
+    			m *= 60;
+ 		}
+    var settime = new Date(s * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]; // convert seconds back to hh:mm:ss
+		var timenow = Math.round(new Date().getTime() / 1000);
+    		var time = timenow - s;
+		this.say(room, 'The time was set to ' + settime + '.');
+		if (toId(this.RP[room].plot) === 'freeroam'){ // resetting timers
+			if (this.freeroamTimeouts && s <= 7200) {
+				this.freeroamTimeouts[room] = setTimeout(function() {
+					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
+					delete this.freeroamTimeouts[room];
+				}.bind(this), (7200 - s) * 1000);
+			} else {
+        			delete this.freeroamTimeouts[room];
+			}
+		} else {
+			if (this.staffAnnounceEndTimeouts && s <= 10800) {
+				this.staffAnnounceEndTimeouts[room] = setTimeout(function() {
+					this.say(room, "/wall The RP has been in progress for **Three Hours**. Any Moderator or Driver may now end the RP. The RP will auto-end in **One Hour**");
+					delete this.staffAnnounceEndTimeouts[room];
+				}.bind(this), (10800 - s) * 1000);
+			} else {
+				delete this.staffAnnounceEndTimeouts[room];
+			}
+		if (this.autoTimeOut && s <= 14400) {
+			this.autoTimeOut[room] = setTimeout(function() {
+				this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
+				this.say(room, "/wall The RP has reached its time limit of 4 hours. Consider scheduling a time in Rusty to continue the RP with the same players.");
+				this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'rustyrp');
+				delete this.autoTimeOut[room];
+			}.bind(this), (14400 - s) * 1000);
+		} else {
+			delete this.autoTimeOut[room];
+		}
+		}
+		if (/conquest/i.test(toId(this.RP[room].plot))) {
+			if (/battleless/i.test(toId(this.RP[room].plot)) && s <= 1800){
+				var	gracePeriodDuration = 1800 - s;
+				this.conquestTimeouts[room] = setTimeout(function() {
+					this.say(room, '**Grace Period has ended.**');
+					delete this.conquestTimeouts[room];
+				}.bind(this), gracePeriodDuration * 1000);
+			} else {
+        			if (this.conquestTimeouts && s <= 900){
+        				var gracePeriodDuration = 900 - s;
+          				this.conquestTimeouts[room] = setTimeout(function() {
+            					this.say(room, '**Grace Period has ended.**');
+            					delete this.conquestTimeouts[room];
+          				}.bind(this), gracePeriodDuration * 1000);
+        			} else {
+          				delete this.conquestTimeouts[room];
+        			}
+     			}
+			if (this.conquestLockouts && s <= 7200){
+				this.conquestLockouts[room] = setTimeout(function() {
+         				this.say(room, '**Types are now locked.**');
+          				delete this.conquestLockouts[room];
+        			}.bind(this), (7200 - s) * 1000);
+      			} else {
+        			delete this.conquestLockouts[room];
+      			}
+		}
+		this.RP[room].setAt = time * 1000;
+	},
 	rpend: 'endrp',
 	endrp: function(arg, by, room) {
 		if (!(room in this.RP)) return false;
