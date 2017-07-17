@@ -954,7 +954,7 @@ exports.commands = {
 			minutes *= 60;
 		}
 		var setTime = new Date(seconds * 1000).toUTCString().match(/[0-9]{2}:[0-9]{2}:[0-9]{2}/)[0]; // convert seconds back to hh:mm:ss
-		var timeNow = new Date().getTime();
+		var timeNow = new Date(this.RP[room].pause).getTime();
 		var time = timeNow - seconds * 1000;
 		this.say(room, 'The time was set to ' + setTime + '.');
 		this.RP[room].setAt = new Date(time);
