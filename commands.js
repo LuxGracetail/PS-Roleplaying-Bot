@@ -944,7 +944,7 @@ exports.commands = {
 	},
 	st: 'settimer',
 	settimer: function(arg, by, room) {
-		if (!(room in this.RP) || !this.RP[room].plot || !this.RP[room].paused || !this.RP[room].setAt || !this.hasRank(by, '%@*#&~')) return false;
+		if (!(room in this.RP) || !this.RP[room].plot || !this.RP[room].pause || !this.RP[room].setAt || !this.hasRank(by, '%@*#&~')) return false;
 		if (!arg) return this.say(room, 'Please enter a time in the format hh:mm:ss.');
 		if (isNaN(parseFloat(arg))) return this.say(room, 'Please enter a valid time in the format hh:mm:ss.');
 		var p = arg.split(':'), // convert hh:mm:ss to seconds
