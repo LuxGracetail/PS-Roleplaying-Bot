@@ -1841,7 +1841,6 @@ exports.commands = {
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1LCocNrrmEUCurvQTqQ5NbIzWitFeDFvtHluKy4NpAwM');
 					break;
 				case 'variantconquest': 
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc "Your doc could be here!"');
 					break;
 				case 'dungeonsndragonites':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1Z_VS0s7zqox8rKo_sySFbbQIS9yDjhPVd4JGCW1da7M');
