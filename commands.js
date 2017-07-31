@@ -680,6 +680,7 @@ exports.commands = {
 				this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'timer');
 				this.say(room, '**A reminder that, if you do not RP properly, you are liable to be ignored by the person you are challenging.**');
 				this.say(room, '**Please familiarise yourself with Conquest rules here:** https://docs.google.com/document/d/1CqLuTfbgxKYplQfZOX1ImEUSlIVY4PP7ix5BteUiQO0/edit');
+				this.say(room, '/wall Conquest Battles are now going to be actively moderated. If you misbehave in a conquest battle you could end up muted in the room. http://psroleplaying.forumotion.com/t2248-conquest-battle-crackdown');
 		}
 		
 		if (/conquest/i.test(toId(this.RP[room].plot)) || /murdermystery/i.test(toId(this.RP[room].plot))) {
