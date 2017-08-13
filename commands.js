@@ -1281,7 +1281,7 @@ exports.commands = {
 					}, 1000);
 					setTimeout(function(){
 						now = new Date();
-						Parse.say(room, '/poll create Conquest Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Regular Conquest, Battleless Conquest, Variant Conquest');
+						Parse.say(room, '/poll create Conquest Variant RP Poll. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ', Regular Conquest/*, Battleless Conquest*/, Variant Conquest');
 						Parse.say(room, '/poll timer 3');
 					}.bind(this), 2 * 60 * 1000 + 1000);
 					setTimeout(function(){
@@ -1833,12 +1833,6 @@ exports.commands = {
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1nkksfCr1X1YgpAA9M56Ny2mYstjC7mAW937oKgN6aYs');
 					break;
 				case 'conquest':
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc Battleless: https://docs.google.com/document/d/1FgUErxguKLsulNXX71h_oehfwm20dp1f3WPJwtPjJVE, Regular: https://docs.google.com/document/d/1NFIU8PKExYvjfWx4UCPcuzxNTXBI65f6FOGF9P3w8eE');
-					break;
-				case 'battlelessconquest':
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1kuMbrynSH7k_8nmsCxZxvqWzlpGjrYIHAH9oDedvtHE');
-					break;
-				case 'regularconquest':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1LCocNrrmEUCurvQTqQ5NbIzWitFeDFvtHluKy4NpAwM');
 					break;
 				case 'variantconquest': 
