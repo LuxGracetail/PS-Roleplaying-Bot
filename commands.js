@@ -1980,6 +1980,7 @@ exports.commands = {
 				case 'mm':
 				case 'murdermystery':
 					text += "Murder Mystery is an RP that challenges the players' deduction skills. Those who play as innocents attempt to figure out who the killers are before they themselves are killed. Should all the innocents die, the killers win, and vice versa.";
+					break;
 				case 'gve':
 				case 'goodvsevil':
 					text += "Good vs Evil consists of two sides, Good and Evil. There is one leader for each side, and they are the only Pokemon in the roleplay who may be of Uber tier, legendaries (no uber legendaries), or mega-evolve. \n Each side will contain warriors who will attempt to overtake the opposing side by killing off the other team's warriors. Whoever can kill the leader twice and all of their warriors first, wins.";
