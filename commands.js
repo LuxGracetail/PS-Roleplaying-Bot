@@ -1727,33 +1727,15 @@ exports.commands = {
 	legends: function(arg, by, room) {
 		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
 			if ((toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Arceus.');
-			if (toId(arg) == 'cosmoem') arg = 'cosmog';
-			if (config.legendtoIdList.indexOf(toId(arg)) == -1) arg = null;
-			if (arg) {
-				if (config.legendtoIdList.indexOf(toId(arg)) > -1) {
-					var legendNum = config.legendtoIdList.indexOf(toId(arg));
-					return this.say(room, ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.');
-				}
-			} else {
-				return this.say(room, 'Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
-			}
+			return this.say(room, 'This information is no longer stored here, please use /roomfaq [legend name] instead.');
 		}
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) {
 			var text = '/w '+ by + ',';
 		} else {
 			var text = '';
 		}
-		if ((toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Arceus.');
-		if (toId(arg) == 'cosmoem') arg = 'cosmog';
-		if (config.legendtoIdList.indexOf(toId(arg)) == -1) arg = null;
-		if (arg) {
-			if (config.legendtoIdList.indexOf(toId(arg)) > -1) {
-				var legendNum = config.legendtoIdList.indexOf(toId(arg));
-				return this.say(room, text + ' Legend: ' + config.legendList[legendNum] + ', Owner: ' + config.legendOwnerList[legendNum] + ', Name: ' + config.legendOCList[legendNum] + '.');
-			}
-		} else {
-		this.say(room, text + ' Legend Permission List: http://psroleplaying.forumotion.com/t1210-legendary-permissions');
-		}
+		if ((toId(arg) == 'arceus')) return this.say(room, 'Permissions are unavailable for Arceus.');		
+		return this.say(room, text + 'This information is no longer stored here, please use /roomfaq [legend name] instead.');
 	},
 	site: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
@@ -1762,7 +1744,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Roleplaying\'s Website: http://psroleplaying.forumotion.com/t1165-rp-room-rules-and-guidelines');
+		this.say(room, text + 'This information is no longer stored here, please use /rules to introduce newcomers instead.');
 	},
 	forum: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
@@ -1771,7 +1753,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Roleplaying\'s Forum: http://psroleplaying.forumotion.com/');
+		this.say(room, text + 'This information is no longer stored here, please use /roomfaq forum instead.');
 	},
 	rustyrp: function(arg, by, room) {		
 	if (config.serverid !== 'showdown' || !(room in this.RP)) return false;
@@ -1780,7 +1762,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'http://psroleplaying.forumotion.com/t1599-rustyrp-rebirth#36632');
+		this.say(room, text + 'This information is no longer stored here, please use /roomfaq rustyrp instead.');
 	},
 	worldmap: 'map',
 	map: function(arg, by, room) {
@@ -1790,7 +1772,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Check out the RP Map: http://psroleplaying.forumotion.com/t1555-the-new-real-world-map');
+		this.say(room, text + 'This information is no longer stored here, please use /roomfaq worldmap instead.');
 	},
 	orp: 'officialRPList',
 	officialRPList: function(arg, by, room) {
@@ -1800,7 +1782,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'List of Official RPs: http://psroleplaying.forumotion.com/t1458-list-of-official-roleplays#33869');
+		this.say(room, text + 'This information is no longer stored here, please use /roomfaq OfficialRP instead.');
 	},
 	rpq: 'RPQuickstart',
 	RPQuickstart: function(arg, by, room) {
@@ -1810,7 +1792,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'RP Quickstart guide: https://docs.google.com/document/d/1JFMLzrbTHg7Q6qcMN9hEfY7aofZrEC5lC4lYpwV1pQY/edit');
+		this.say(room, text + 'This information is no longer stored here, please use /roomfaq quickstart instead.');
 	},
 	mapassist: function(arg, by, room) {
 		if (config.serverid !== 'showdown' || !this.hasRank(by, '~') || !(room in this.RP) || toId(this.RP[room].plot) !== 'freeroam') return false;
@@ -1870,7 +1852,7 @@ exports.commands = {
 		} else {
 			var text = '/pm ' + by + ', ';
 		}
-		this.say(room, text + 'Report bad behaviour here: https://docs.google.com/forms/d/1EXzyEuStwlhydYp_BK94JsLdnbJGBPYpPO85BKaHyIg/viewform');
+		this.say(room, text + 'This information is no longer stored here, please use /roomfaq report instead.');
 	},
 	close: function(arg, by, room) {
 		if (config.serverid !== 'showdown') return false;
@@ -1909,106 +1891,13 @@ exports.commands = {
 			if (!(room.charAt(0) === ',')) {
 				if (this.RP[room].setAt && !(this.RP[room].pause)) {
 					text += '((';
-					if (toId(arg) == "ooc" || toId(arg) == "outofcharacter") {
-						text += "<-- ";
-					}
 				}
 			}
-			switch (toId(arg)) {
-				case '':
-					text += "Please enter a word for me to explain.";
-					break;
-				case 'bold':
-					text += "Bold is a formatting reserved for pollmakers to make announcements related to their poll and the current roleplay's host(s) to narrate. Bold text can be entered by surrounding the text you want to bold with two asterisks";
-					break;
-				case "italic":
-				case "italics":
-					text += "Italics are a formatting used by surrounding your text with double underscores, ____like this____. It's not required to be used for when you roleplay, but many people do. It is usually used when typing out multiple paragraphs of describing scenery.";
-					break;
-				case 'connectionracing':
-					text += 'Connection racing is attempting to "place" after a server restart or after modchat is taken down. For example: Saying "first" or "third". Connection racing is mutable.';
-					break;
-				case 'custom':
-					text += 'A custom is a usermade, staff approved RP, that does not fall under any of the offical RP categories.';
-					break;
-				case 'custompriority':
-				case 'cp':
-				text += 'Custom Priority is the system for exclusively AmphyRP that prioritizes custom-made RPs ahead of that of mainstream RPs. A custom RP must be approved by a moderator, in order to be CP\'d. For more information: http://psroleplaying.forumotion.com/t1419-amphy-s-custom-priority'
-					break;
-				case "godmod":
-				case 'godmodding':
-					text += "Godmodding is performing god-like or overpowered actions that may or may not disrupt the flow or enjoyment of a certain roleplay.";
-					break;
-				case 'hooting':
-					text += "Hooting is when a roleplayer uses the name of the Pokémon they are RPing as the only thing they say.";
-					break;
-				case 'lennyclause':
-					text += "The Lenny Clause is a rule that prohibits the usage of lenny faces or any similar ASCII faces.";
-					break;
-				case 'minimod':
-				case 'minimodding':
-					text += "Minimodding is when a non-staff user who makes a statement in chat calling for a moderator action to be taken upon other users, despite not being able to use it themselves, e.g 'That guy needs to be banned.'";
-					break;
-				case 'powerplay':
-				case 'powerplaying':
-					text += "Powerplaying is taking control of another person's actions, either directly or indirectly, without given permission or in a disruptive manner.";
-					break;
-				case 'ooc':
-				case 'outofcharacter':
-					text += "Out of Character, or OOC, refers to the double parentheses around text used to distinguish such speech from the RPing.";
-					break;
-				case 'shitpost':
-					text += "Shitpost is any message sent with no relevance to the topic of the room or the current RP. This can include highlighting mods for reasons irrelevant to moderating (greetbotting or just annoying them), \n using /me to be distracting or to banter with friends (which can be done in PMs), and being unruly or disruptive in general.";
-					break;
-				// RPs:
-				// FR and Variants
-				case 'fr':
-				case 'freeroam':
-					text += "Freeroam is an RP in which you have the capacity to craft your own stories. In this RP, there is no host, which gives the users free reign over the world as long as it stays within the rules (No godmodding, religious imagery, outside fandoms, gore, etc.) to create their own adventures and plots.";
-					break;
-				case 'cruise':
-					text += "Cruise is a freeform RP in which the action takes place entirely on a cruise of some description. Let your imagination run wild within the limits of a boat. Go swimming! Play shuffleboard! Explore the stores and cafeterias! The possibilities are endless.";
-					break;
-				case 'kingdom':
-					text += "Kingdom is a structured freeform RP with a host and a document displaying information on a world and the kinds of abilities any given OC may choose. This RP is almost always hosted in a medieval setting, however this is not always the case, nor does it have to be.";
-					break;
-				// Non FR RPs.
-				case 'cq':
-				case 'conquest':
-					text += "Conquest is a heavily mechanical roleplay where 18 kingdoms (one for each type) attempt to gain control of other kingdoms. This can be done through allying, trading, vassalizing, and/or battling.";
-					break;
-				case 'mm':
-				case 'murdermystery':
-					text += "Murder Mystery is an RP that challenges the players' deduction skills. Those who play as innocents attempt to figure out who the killers are before they themselves are killed. Should all the innocents die, the killers win, and vice versa.";
-					break;
-				case 'gve':
-				case 'goodvsevil':
-					text += "Good vs Evil consists of two sides, Good and Evil. There is one leader for each side, and they are the only Pokemon in the roleplay who may be of Uber tier, legendaries (no uber legendaries), or mega-evolve. \n Each side will contain warriors who will attempt to overtake the opposing side by killing off the other team's warriors. Whoever can kill the leader twice and all of their warriors first, wins.";
-					break;
-				case 'pu':
-				case 'pokehigh':
-				case 'pokhigh':
-					text +="Pokehigh is a roleplay where participants are sent to a school based on a normal high school. Of course, there can be many variations to this high school. It may look different, have different classes and teachers.";
-					break;
-				case 'pmd':
-				case 'pokmonmysterydungeon':
-				case 'pokemonmysterydungeon':
-					text += "Pokemon Mystery Dungeon is essentially like the game franchise, you are thrown into a new world inhabited by Pokemon on a scale never seen before. Difficult dungeons and bosses await you and your newly acquired teammates. \n You usually start out as either a LC (Little Cup) Pokemon, or a Pokemon that can not evolve (such as Volbeat), and evolve when the host says you may.";
-					break;
-				case 'trainer':
-					text += "Trainer is a roleplay that is centered around user-created regions that can create vast new worlds and experiences. You'll be taken on a journey throughout the region by fighting criminal orginizations, gym leaders, and even special user-made events. \n Usually hosts will decide which Pokemon will appear on a certain route, and you may only catch one Pokemon per route, unless stated otherwise!";
-					break;
 
+			text+= 'This information is no longer stored here, please use /roomfaq ' + arg + ' instead.'
 
-				default:
-					text += "I do not have a definition of that word at the moment, if it is a reasonable RP term, please PM Lux to add the word and its definition.";
-				break;
-			}
 			if (!(room.charAt(0) === ',')) {
 				if (this.RP[room].setAt && !(this.RP[room].pause)) {
-					if (toId(arg) == "ooc" || toId(arg) == "outofcharacter") {
-						text += " -->";
-					}
 					text += '))';
 				}
 			}
