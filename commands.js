@@ -643,7 +643,7 @@ exports.commands = {
 				this.autoTimeOut[room] = setTimeout(function() {
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
 					this.say(room, "/wall The RP has reached its time limit of 4 hours. Consider scheduling a time in Rusty to continue the RP with the same players.");
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'rustyrp');
+					this.say(room, "!roomfaq rustyrp");
 					delete this.autoTimeOut[room];
 				}.bind(this), 4 * 60 * 60 * 1000);
 			}
@@ -830,7 +830,7 @@ exports.commands = {
 				this.autoTimeOut[room] = setTimeout(function() {
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'endrp');
 					this.say(room, "/wall The RP has reached its time limit of 4 hours. Consider scheduling a time in Rusty to continue the RP with the same players.");
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'rustyrp');
+					this.say(room, "!roomfaq rustyrp");
 					delete this.autoTimeOut[room];
 				}.bind(this), autoEndTimeLeft);
 			}
