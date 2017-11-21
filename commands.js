@@ -20,7 +20,6 @@ var trainerNom = [];
 var pokehighNom = [];
 var cruiseNom = [];
 var murdermysteryNom = [];
-var pokemonmysterydungeonNom = [];
 var dungeonsndragonitesNom = [];
 var kingdomNom = [];
 var customPriorityFlag = false;
@@ -592,7 +591,7 @@ exports.commands = {
 		}
 		if (!arg) return this.say(room, 'Please enter an RP.');
 
-		if(!this.RP[room]) this.RP[room] = {};
+		if (!this.RP[room]) this.RP[room] = {};
 		this.RP[room].plot = arg;
 		this.writeSettings();
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + 'The RP was set to ' + splitDoc(arg) + '.');
@@ -1061,7 +1060,7 @@ exports.commands = {
 			if (spl.length !== 3) return this.say(room, 'Void only accepts 3 arguments for main.');
 			this.RP.void[room] = [spl[0],spl[1],spl[2]];
 		} else {
-			if(spl.length !== 2) return this.say(room, 'Void only accepts 2 arguments.');
+			if (spl.length !== 2) return this.say(room, 'Void only accepts 2 arguments.');
 			this.RP.void[room] = [spl[0],spl[1]];
 		}
 		this.writeSettings();
@@ -1154,7 +1153,7 @@ exports.commands = {
 				var currentRust = (this.RP['rustyrp']) ? splitDoc(this.RP['rustyrp'].plot) : '';
 				if (concurrent) text += '. The RP in ' + ((arg === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent;
 				if (currentRust) text+= ', and the RP in RustyRP is ' + currentRust;
-				if(text.charAt(text.length - 1) !== '.') text += '.';
+				if (text.charAt(text.length - 1) !== '.') text += '.';
 			}
 		}
 		
@@ -1263,7 +1262,7 @@ exports.commands = {
 		this.say(room, '/wall **PM Roleplaying Bot** with .nom [RP] to nominate the RP you want to be next. **Remember to only PM RPs you can host** and PM staff your customs. Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()));
 		pollTimer[room] = setTimeout(function() {
 		    console.log(new Date().toString() + " Suggestion period has ended.");
-		    if(pollNoms.length == 1) {
+		    if (pollNoms.length == 1) {
 		    	if (RPOpts.indexOf(toId(pollNoms[0])) > -1){
 		    		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp ' + rpcaps[RPOpts.indexOf(toId(pollNoms[0]))]);
 		    	} else {
@@ -1298,16 +1297,16 @@ exports.commands = {
 		    	pollroom = ''
 		    	return false;
 		    }
-		    if(pollNoms.length > 1) { //If there are enough options to make a poll?
+		    if (pollNoms.length > 1) { //If there are enough options to make a poll?
 		    	pollON = true; //There's still a poll in progress marker from earlier on? I'm not sure why you're restating this.
-		    	for(var y = 0; y < pollNoms.length; y++) { // y is which poll option you are at.
-		    		if(RPOpts.indexOf(toId(pollNoms[y])) > -1) { //If it's in the offical RP list
+		    	for (var y = 0; y < pollNoms.length; y++) { // y is which poll option you are at.
+		    		if (RPOpts.indexOf(toId(pollNoms[y])) > -1) { //If it's in the offical RP list
 		    			pollNoms[y] = rpcaps[RPOpts.indexOf(toId(pollNoms[y]))]; //Translate it to the properly capitalised version.
 		    		}
 		    		pollNoms[y].capitalize(true);
 		    	}
 		    	var now = new Date();
-		        if(pollNoms.length > 8) {
+		        if (pollNoms.length > 8) {
 		            pollNoms = pollNoms.slice(0, 8);
                     this.say(room, '/poll create Next RP? Ends at xx:' + ((((now.getMinutes()+3)%60) < 10) ? '0' + (((now.getMinutes()+3)%60).toString()) : ((now.getMinutes()+3)%60).toString()) + ':' + (((now.getSeconds() < 10)) ? '0' + now.getSeconds().toString() : now.getSeconds().toString()) + ", " + pollNoms.join(', '));
 		            this.say(room, '/poll timer 3');
@@ -1339,7 +1338,7 @@ exports.commands = {
     },
     nom: "nominate",
     nominate: function(arg, by, room) {
-    	if(room.charAt(0) !== ',') return false; //Making it PM only to prevent changes.  Making these edits at 2 AM, feel free to like...  fix them if I screwed up.
+    	if (room.charAt(0) !== ',') return false; //Making it PM only to prevent changes.  Making these edits at 2 AM, feel free to like...  fix them if I screwed up.
         if (!pollON) {
             return this.say(room, 'There is no RP poll in progress.');
         } //  Why not an if else?
@@ -1362,6 +1361,9 @@ exports.commands = {
         	case 'ph':
         		arg = 'PokeHigh';
         		break;
+        	case 'pmd':
+        	case 'pokmonmysterydungeon':
+				this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + '.motd 14');
         	case 'dungeonsanddragonites':
         	case 'dungeonsanddragons':
         	case 'dungeonsanddruddigons':
@@ -1369,10 +1371,6 @@ exports.commands = {
         	case 'dungeonsndragons':
         	case 'dungeonsndruddigons':
         		arg = 'Dungeons \'n Dragonites';
-        		break;
-        	case 'pmd':
-        	case 'pokmonmysterydungeon':
-        		arg = 'Pokemon Mystery Dungeon';
         		break;
         	case 'hg':
         		arg = 'Hunger Games';
@@ -1393,55 +1391,39 @@ exports.commands = {
     	if (pollRoom == 'amphyrp' && toId(arg) == 'freeroam'){
     	    return this.say(room, "Freeroam and its variants cannot be run in AmphyRP.");
     	}
-        if(RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
+        if (RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
-       	if(toId(arg) == 'pokemonmysterydungeon') {
-       		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokmonmysterydungeon') > -1) return this.say(room, 'That RP is void.');
-        	
+       	if (toId(arg) == 'conquest') {
+       		if (toId(this.RP.void[pollRoom].toString()).indexOf('conquest') > -1) return this.say(room, 'That RP is void.');
 		    for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
-					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('pokmonmysterydungeon') > -1) {
-						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
+					if (toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('conquest') > -1) {
+						if ('regularconquest' == toId(splitDoc(this.RP[config.rprooms[i]].plot)) || 'variantconquest' == toId(splitDoc(this.RP[config.rprooms[i]].plot)) || 'battlelessconquest' == toId(splitDoc(this.RP[config.rprooms[i]].plot)) || toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
 							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
 						}
 					}
 				}
 			}
         }
-       	if(toId(arg) == 'conquest') {
-       		if(toId(this.RP.void[pollRoom].toString()).indexOf('conquest') > -1) return this.say(room, 'That RP is void.');
-
-		    for (i = 0; i < config.rprooms.length; i++) {
+        if (toId(arg) == 'pokehigh') {
+       		if (toId(this.RP.void[pollRoom].toString()).indexOf('pokhigh') > -1) return this.say(room, 'That RP is void.');
+        	for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
-					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('conquest') > -1) {
-						if('regularconquest' == toId(splitDoc(this.RP[config.rprooms[i]].plot)) || 'variantconquest' == toId(splitDoc(this.RP[config.rprooms[i]].plot)) || 'battlelessconquest' == toId(splitDoc(this.RP[config.rprooms[i]].plot)) || toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
-							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i])
-						}
-					}
-				}
-			}
-        }
-        if(toId(arg) == 'pokehigh') {
-       		if(toId(this.RP.void[pollRoom].toString()).indexOf('pokhigh') > -1) return this.say(room, 'That RP is void.');
-        	
-		    for (i = 0; i < config.rprooms.length; i++) {
-				if (this.RP[config.rprooms[i]].plot) {
-					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('pokhigh') > -1) {
-						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
+					if (toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('pokhigh') > -1) {
+						if (toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
 							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i]);
 						}
 					}
 				}
 			}
         }
-    	if(toId(arg) == 'dungeonsndragonites' || toId(arg) == 'dungeonsndragons' || toId(arg) == 'dungeonsndruddigons') {
-        	if((toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || (toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsd') > -1) || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1) && room != 'rustyrp') return this.say(room, 'That RP is void.');
-        	
+    	if (toId(arg) == 'dungeonsndragonites' || toId(arg) == 'dungeonsndragons' || toId(arg) == 'dungeonsndruddigons') {
+        	if ((toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsnd') > -1 || (toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsd') > -1) || toId(this.RP.void[pollRoom].toString()).indexOf('dungeonsandd') > -1) && room != 'rustyrp') return this.say(room, 'That RP is void.');
 		    for (i = 0; i < config.rprooms.length; i++) {
 				if (this.RP[config.rprooms[i]].plot) {
-					if(toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsnd') > -1 || toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsd') > -1 || toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsandd') > -1) {
-						if(toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
+					if (toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsnd') > -1 || toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsd') > -1 || toId((this.RP[config.rprooms[i]].plot).toString()).indexOf('dungeonsandd') > -1) {
+						if (toId(arg) == toId(splitDoc(this.RP[config.rprooms[i]].plot))) {
 							return this.say(room, 'That RP is currently ongoing in ' + config.rprooms[i]);
 						}
 					}
@@ -1470,9 +1452,6 @@ exports.commands = {
 		    case 'murdermystery':
 		    	if (murdermysteryNom.indexOf(by) == -1) murdermysteryNom.push(by);
 		        break;
-		    case 'pokemonmysterydungeon':
-		    	if (pokemonmysterydungeonNom.indexOf(by) == -1) pokemonmysterydungeonNom.push(by);
-		        break;
 		    case 'dungeonsndragonites':
 		    	if (dungeonsndragonitesNom.indexOf(by) == -1) dungeonsndragonitesNom.push(by);
 		        break;
@@ -1480,14 +1459,15 @@ exports.commands = {
 		    	if (kingdomNom.indexOf(by) == -1) kingdomNom.push(by);
 		        break;
 		    default:
-		    break;
+		    	break;
 		}
+
         if (toId(pollNoms.toString()).indexOf(toId(arg)) > -1) {
-        	return this.say(room, 'That RP has already been suggested.');
+        	return this.say(room, arg + ' has already been suggested.');
         } else {
     	    pollNoms.push(arg);
     	    if (RPOpts.indexOf(toId(arg)) == -1) this.say(pollRoom, 'Custom: ' + arg + ' has been added to the poll.');
-    	    this.say(room, 'Thank you for your suggestion! Please note that not all RPs may be added to poll.');
+			this.say(room, 'Thank you for nominating ' + arg + '! Please note that not all RPs may be added to poll.');
         }
     },
     nominators: function (arg, by, room) {
@@ -1513,9 +1493,6 @@ exports.commands = {
 				case 'murdermystery':
 				    this.say(room, 'Nominators for ' + arg + ' were ' + murdermysteryNom.join(', '));
 				    break;
-				case 'pokemonmysterydungeon':
-				    this.say(room, 'Nominators for ' + arg + ' were ' + pokemonmysterydungeonNom.join(', '));
-				    break;
 				case 'dungeonsndragonites':
 				    this.say(room, 'Nominators for ' + arg + ' were ' + dungeonsndragonitesNom.join(', '));
 				    break;
@@ -1532,7 +1509,6 @@ exports.commands = {
 		pokehighNom = [];
 		cruiseNom = [];
 		murdermysteryNom = [];
-		pokemonmysterydungeonNom = [];
 		dungeonsndragonitesNom = [];
 		kingdomNom = [];
 	},
@@ -1551,24 +1527,24 @@ exports.commands = {
 				console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + "End poll has been has been created by " + by + ".");
 				this.say(room, '/modnote ' + by + ' created an end poll.');
 			}
-				this.say(room, '/poll timer 3');
-				this.RP[room].endpollCalled = true;
-				this.RP[room].endpollProgress = true;
-				setTimeout(function() {
-					this.say(room, '!poll display');
-				}.bind(this), 60 * 1000);
-				setTimeout(function() {
-					this.say(room, '!poll display');
-				}.bind(this), 2 * 60 * 1000);
-				this.endpollTimerSet[room] = setTimeout(function() {
-					delete this.RP[room].endpollProgress;
-					this.RP[room].lastEndPoll = new Date();
-					delete this.endpollTimerSet[room];
-				}.bind(this), 3 * 60 * 1000);
-				setTimeout(function() {
-					delete this.RP[room].endpollCalled;
-					delete this.RP[room].endpollProgress;
-				}.bind(this), 18 * 60 * 1000);
+			this.say(room, '/poll timer 3');
+			this.RP[room].endpollCalled = true;
+			this.RP[room].endpollProgress = true;
+			setTimeout(function() {
+				this.say(room, '!poll display');
+			}.bind(this), 60 * 1000);
+			setTimeout(function() {
+				this.say(room, '!poll display');
+			}.bind(this), 2 * 60 * 1000);
+			this.endpollTimerSet[room] = setTimeout(function() {
+				delete this.RP[room].endpollProgress;
+				this.RP[room].lastEndPoll = new Date();
+				delete this.endpollTimerSet[room];
+			}.bind(this), 3 * 60 * 1000);
+			setTimeout(function() {
+				delete this.RP[room].endpollCalled;
+				delete this.RP[room].endpollProgress;
+			}.bind(this), 18 * 60 * 1000);
 		} else {
 			this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'lastendpoll');
 		}
@@ -1833,9 +1809,6 @@ exports.commands = {
 					break;
 				case 'pokehigh':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1L7p8cuDpWnit4pTW6jcwRuYeB8eEYiIvTHVa6UyCBB4');
-					break;
-				case 'pokemonmysterydungeon':
-					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1HFb1gUCc5COCDmeTX6r4N6sxsf5vPcur90dWzXjjQiQ');
 					break;
 				case 'trainer':
 					this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'setdoc https://docs.google.com/document/d/1PbM9w4GpXg5IWUATfErdV1iBv2wmG4cbMxKfM9CZ19I/');
