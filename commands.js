@@ -1363,7 +1363,7 @@ exports.commands = {
         		break;
         	case 'pmd':
         	case 'pokmonmysterydungeon':
-				this.say(room, '.motd 14');
+				this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'motd 14');
         	case 'dungeonsanddragonites':
         	case 'dungeonsanddragons':
         	case 'dungeonsanddruddigons':
