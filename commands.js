@@ -1252,7 +1252,7 @@ exports.commands = {
     rppoll: function(arg, by, room) {
         if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || this.RP[room].plot || !(room in this.RP)) return false; //setrp perms? is this RP room?
 		if (pollON) { //if there's a poll already
-			return this.say(room, 'A RP poll cannot be started, as one is in progress already in ' + pollRoom);
+			return this.say(room, 'A RP poll cannot be started, as one is already in ' + pollRoom);
 		}
 		pollRoom = room;
 		//No poll on
@@ -1389,9 +1389,6 @@ exports.commands = {
 				}
 			}
 		}
-    	if (pollRoom == 'amphyrp' && toId(arg) == 'freeroam'){
-    	    return this.say(room, "Freeroam and its variants cannot be run in AmphyRP.");
-    	}
         if (RPOpts.indexOf(toId(arg)) == -1 && !((this.hasRank(by, '+%@#&~')) || (config.voiceList.indexOf(toId(by)) > -1) || (config.staffList.indexOf(toId(by)) > -1))) {
             return this.say(room, 'Check your spelling, or if it\'s a custom, please suggest them to a voice or above.');
         }
@@ -1604,9 +1601,9 @@ exports.commands = {
 	},
 	cp: 'customPriority',
 	customPriority: function (arg, by, room) {
-		if (!this.hasRank(by, '%@#&~') || room != 'amphyrp' || typeof this.RP[room].setAt != 'undefined' || config.serverid != 'showdown') return false;
+		if (!this.hasRank(by, '%@#&~') || room != 'rustyrp' || typeof this.RP[room].setAt != 'undefined' || config.serverid != 'showdown') return false;
 		if (!arg || toId(arg).length > 19 || toId(arg) == 'requested') return this.say(room, 'Please specify the person claiming custom priority.');
-		if (pollRoom == 'amphyrp') this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'voidpoll');
+		if (pollRoom == 'rustyrp') this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'voidpoll');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'setrp CP');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'sethost ' + arg);
 		customPriorityFlag = true;
@@ -1666,21 +1663,6 @@ exports.commands = {
 		} else {
 			this.say (room, "The host has exhausted the time allotted for set up.  Highlighting mods.");
 		}
-	},
-	psa: 'publicserviceannouncement',
-	publicserviceannouncement: function(arg, by, room) {
-		if (config.serverid == 'showdown' && room.charAt(0) === ',') {
-			return this.say(room, config.publicSeviceAnnouncement);
-		}
-		if (config.serverid !== 'showdown' || !this.hasRank(by, '%@#&~') || !(room in this.RP)) {
-			var text = '/w '+ by + ',';
-		} else {
-			var text = '';
-			if (this.RP[room].setAt && !this.RP[room].pause) {
-				return this.say(room, text + ' ((' + config.publicSeviceAnnouncement + '))');
-			}
-		}
-		this.say(room, text + config.publicSeviceAnnouncement);
 	},
 	botissue: 'botsuggestions',
 	botissues: 'botsuggestions',
