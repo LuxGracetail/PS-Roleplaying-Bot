@@ -1250,6 +1250,7 @@ exports.commands = {
 		this.say(room, text + 'The host is ' + this.RP[room].host + '.');
 	},
     rppoll: function(arg, by, room) {
+    	if (config.rprooms.indexOf(room) == -1) return false
         if (config.voiceList.indexOf(toId(by)) == -1 && !this.canUse('setrp', room, by) || this.RP[room].plot || !(room in this.RP)) return false; //setrp perms? is this RP room?
 		if (pollON) { //if there's a poll already
 			return this.say(room, 'A RP poll cannot be started, as one is already in ' + pollRoom);
