@@ -1151,8 +1151,8 @@ exports.commands = {
 			if (config.serverid === 'showdown') {
 //				var concurrent = (arg === 'roleplaying') ? splitDoc(this.RP['amphyrp'].plot) : splitDoc(this.RP['roleplaying'].plot);
 				var currentRust = (this.RP['rustyrp']) ? splitDoc(this.RP['rustyrp'].plot) : splitDoc(this.RP['amphyrp'].plot);
-				if (concurrent) text += '. The RP in ' + ((arg === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent;
-				if (currentRust) text+= ', and the RP in RustyRP is ' + currentRust;
+//				if (concurrent) text += '. The RP in ' + ((arg === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent;
+				if (currentRust) text += 'The RP in ' + ((arg === 'amphyrp') ?  'RustyRP' : 'AmphyRP') + 'RustyRP is ' + currentRust;
 				if (text.charAt(text.length - 1) !== '.') text += '.';
 			}
 		}
