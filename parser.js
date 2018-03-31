@@ -674,17 +674,19 @@ exports.parse = {
 					}
 				}
 			}
-			if (this.RP[room].host) {
-				if (user !== toId(this.RP[room].host)){
-					// moderation for flooding (more than x lines in y seconds)
-					var times = roomData.times;
-					var timesLen = times.length;
-					var isFlooding = (timesLen >= FLOOD_MESSAGE_NUM && (now - times[timesLen - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
-						&& (now - times[timesLen - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
-					if ((useDefault || !('flooding' in modSettings)) && isFlooding) {
-						if (pointVal < 2) {
-							pointVal = 2;
-							muteMessage = ', Automated response: flooding';
+			if (config.rprooms.indexOf(room) !== -1){
+				if (this.RP[room].host) {
+					if (user !== toId(this.RP[room].host)){
+						// moderation for flooding (more than x lines in y seconds)
+						var times = roomData.times;
+						var timesLen = times.length;
+						var isFlooding = (timesLen >= FLOOD_MESSAGE_NUM && (now - times[timesLen - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
+							&& (now - times[timesLen - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
+						if ((useDefault || !('flooding' in modSettings)) && isFlooding) {
+							if (pointVal < 2) {
+								pointVal = 2;
+								muteMessage = ', Automated response: flooding';
+							}
 						}
 					}
 				}
