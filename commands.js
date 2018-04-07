@@ -1134,8 +1134,9 @@ exports.commands = {
 		
 		if (arg === 'rustyrp' && config.serverid === 'showdown'){
 			if (this.RP['amphyrp'].plot) {
-				text += "The RP in AmphyRP is " + splitDoc(this.RP['amphyrp'].plot) + ".";
+				text += ". The RP in AmphyRP is " + splitDoc(this.RP['amphyrp'].plot);
 			}
+			text += '.';
 		} else {
 			if (config.serverid === 'showdown') {
 //				var concurrent = (arg === 'roleplaying') ? splitDoc(this.RP['amphyrp'].plot) : splitDoc(this.RP['roleplaying'].plot);
