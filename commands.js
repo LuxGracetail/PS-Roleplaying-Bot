@@ -1072,10 +1072,10 @@ exports.commands = {
 		} else {
 			arg = toId(arg);
 		switch (arg) {
-			case 'rp':
+/*			case 'rp':
 			case 'main':
 				arg = 'roleplaying';
-				break;
+				break;*/
 			case 'arp':
 			case 'amphy':
 				arg = 'amphyrp';
@@ -1133,26 +1133,15 @@ exports.commands = {
 		}
 		
 		if (arg === 'rustyrp' && config.serverid === 'showdown'){
-			/*if (this.RP['roleplaying'].plot) {
-				text += ". The RP in Roleplaying is " + splitDoc(this.RP['roleplaying'].plot) + ".";
-			}*/
 			if (this.RP['amphyrp'].plot) {
-/*				if (this.RP['roleplaying'].plot) {
-					text += ' ';
-				} else {
-					text += '. ';
-				}*/
 				text += "The RP in AmphyRP is " + splitDoc(this.RP['amphyrp'].plot) + ".";
-			}
-			if (/*!this.RP['roleplaying'].plot && */!this.RP['amphyrp'].plot) {
-				text += ". No RPs are void.";
 			}
 		} else {
 			if (config.serverid === 'showdown') {
 //				var concurrent = (arg === 'roleplaying') ? splitDoc(this.RP['amphyrp'].plot) : splitDoc(this.RP['roleplaying'].plot);
 				var currentRust = (this.RP['rustyrp']) ? splitDoc(this.RP['rustyrp'].plot) : splitDoc(this.RP['amphyrp'].plot);
 //				if (concurrent) text += '. The RP in ' + ((arg === 'roleplaying') ? 'AmphyRP' : 'Roleplaying') + ' is ' + concurrent;
-				if (currentRust) text += 'The RP in ' + ((arg === 'amphyrp') ?  'RustyRP' : 'AmphyRP') + 'RustyRP is ' + currentRust;
+				if (currentRust) text += '. The RP in ' + ((arg === 'amphyrp') ?  'RustyRP' : 'AmphyRP') + ' is ' + currentRust;
 				if (text.charAt(text.length - 1) !== '.') text += '.';
 			}
 		}
