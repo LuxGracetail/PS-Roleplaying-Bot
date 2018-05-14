@@ -688,11 +688,7 @@ exports.commands = {
 		
 		if (config.serverid == 'showdown'){
 			if (/conquest/i.test(toId(this.RP[room].plot)) || /goodvsevil/i.test(toId(this.RP[room].plot))){
-				if (room === 'amphyrp' || room === 'rustyrp') {
 					this.say(room, '/modchat ac');
-				} else {
-					this.say(room, '/modchat ac');
-				}
 			}
 			if (pollRoom == room) this.splitMessage('>' + room + '\n|c|' + by + '|' + config.commandcharacter + 'voidpoll');
 			if (customPriorityFlag && room == 'amphyrp') {
@@ -707,6 +703,10 @@ exports.commands = {
 			} else {
 				this.say(room, '**The RP (' +  splitDoc(this.RP[room].plot) + ') has started.**');
 			}
+
+			if (room === 'amphyrp' || room === 'rustyrp') {
+				this.say(room, '/modchat ac');
+			}		
 		console.log(new Date().toString() + " "+ room.cyan + ': '.cyan + splitDoc(this.RP[room].plot) + " has started.");
 		}
 	},
@@ -1042,6 +1042,9 @@ exports.commands = {
 			this.splitMessage('>' + room + '\n|c|~' + by + '|' + config.commandcharacter + voidendpoll);
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'rppoll');
 		this.splitMessage('>' + room + '\n|c|~luxlucario|' + config.commandcharacter + 'motd');
+		if (room === 'amphyrp' || room === 'rustyrp') {
+			this.say(room, '/modchat +');
+		}
 	},
 	vr: 'voidreset',
 	voidreset: function(arg, by, room) {
